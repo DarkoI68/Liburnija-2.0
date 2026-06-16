@@ -35,6 +35,7 @@ body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--tp);displ
 .pg.dash{color:var(--tp);font-weight:600}
 .pg .own{margin-left:auto;font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.2px;padding:1px 4px;border-radius:3px;background:rgba(100,116,139,.14);color:var(--tm);flex-shrink:0}
 .pg.on .own{background:var(--accs);color:var(--acc)}
+.pg .own.live{background:rgba(34,197,94,.16);color:var(--grn)}
 /* nested sekcije (Promet) */
 .sec{margin:2px 0 2px 18px}
 .sec-h{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:6px;cursor:pointer;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--ts)}
@@ -77,14 +78,15 @@ body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--tp);displ
 .pgc{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .1s}
 .pgc:hover{border-color:var(--acc);transform:translateY(-1px)}
 .pgc .dot{width:6px;height:6px;border-radius:50%;background:var(--tm);flex-shrink:0}
+.pgc .dot.live{background:var(--grn)}
 .pgc .t{margin-left:auto;font-size:8px;font-weight:700;text-transform:uppercase;color:var(--ts)}
+.pgc .t.live{color:var(--grn)}
 .al{display:flex;align-items:center;gap:9px;padding:9px 14px;border-bottom:1px solid var(--bdr);font-size:12px}.al:last-child{border-bottom:none}
 .al .ad{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .al.r .ad{background:var(--red)}.al.y .ad{background:var(--yel)}.al.b .ad{background:var(--blu)}.al.g .ad{background:var(--grn)}
 .al .am{flex:1;font-weight:600}.al .an{font-weight:700;font-feature-settings:"tnum" 1}
 .al.r .an{color:var(--red)}.al.y .an{color:var(--yel)}.al.g .an{color:var(--grn)}.al.b .an{color:var(--blu)}
 
-/* MAP (Promet) */
 .map{height:300px;position:relative;background:var(--bg3)}
 .map svg{position:absolute;inset:0;width:100%;height:100%}
 .veh{position:absolute;width:11px;height:11px;border-radius:50%;border:2px solid var(--bg2);transform:translate(-50%,-50%)}
@@ -101,6 +103,7 @@ body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--tp);displ
 .ph{background:var(--bg2);border:1px solid var(--bdr);border-radius:11px;padding:32px;text-align:center;color:var(--ts)}
 .ph svg{width:28px;height:28px;stroke:var(--tm);stroke-width:1.6;fill:none;margin-bottom:9px}
 .ph h3{font-size:15px;color:var(--tp);font-weight:700;margin-bottom:5px}.ph p{font-size:12px;max-width:420px;margin:0 auto;line-height:1.5}
+.ph .open-btn{display:inline-flex;align-items:center;gap:7px;margin-top:14px;padding:9px 16px;background:var(--acc);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
 .note{margin-top:12px;font-size:11px;color:var(--ts);background:var(--bg2);border:1px dashed var(--bdr);border-radius:9px;padding:10px 13px;line-height:1.5}.note b{color:var(--tp)}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--tp);color:var(--bg2);padding:9px 16px;border-radius:8px;font-size:12px;font-weight:600;opacity:0;transition:all .25s;pointer-events:none;z-index:99}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
@@ -151,9 +154,9 @@ var ICON={
  mkt:'<path d="M3 11l18-5v12L3 14v-3z"/>',
  crm:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
  bi:'<path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/>'};
-var C={r:'r',y:'y',g:'g',b:'b'};
 
-/* MODULI: id,label,grp,ic, stats[[n,c,l]], alerts[[c,m,n]], pages[[name,tag]] | sections[] */
+/* MODULI: id,label,grp,ic, stats[[n,c,l]], alerts[[c,m,n]], pages[[name,tag,file?]] | sections[]
+   Treći element stranice = MAPIRANJE NA DATOTEKU. Kad postoji, klik otvara tu datoteku. */
 var M=[
  {id:'core',label:'CORE — matični podaci',grp:'Temelj',
   stats:[['142','b','Aktivni korisnici'],['7','y','Nepotpuni podaci'],['58','','Vozila'],['23','','Linije']],
@@ -161,7 +164,7 @@ var M=[
   pages:[['Djelatnici','Kadr'],['Odjeli',''],['Korisnici sustava',''],['Role i ovlasti',''],['Vozila',''],['Linije',''],['Stajališta',''],['Zone',''],['Tarife',''],['Partneri',''],['Dobavljači',''],['Poslovne jedinice',''],['Postavke sustava',''],['Audit log','']]},
  {id:'promet',label:'Upravljanje prometom',grp:'Operativa',sections:[
    ['Postavke',[['Linije','CORE'],['Vozni redovi',''],['Rute',''],['Radni zadaci',''],['Planiranje rute (GPS)',''],['Režimi prometovanja',''],['GTFS / GTFS-RT export','']]],
-   ['Knjiga vožnje — Plan rada',[['Kalendar',''],['Predlošci',''],['Grupe linija',''],['Postavke','']]],
+   ['Knjiga vožnje — Plan rada',[['Kalendar','','GLAVNA%20KNJIGA.html#kalendar'],['Predlošci','','GLAVNA%20KNJIGA.html#templati'],['Grupe linija','','GLAVNA%20KNJIGA.html#grupe'],['Postavke','','GLAVNA%20KNJIGA.html#postavke']]],
    ['Dispečerski centar',[['Glavni pregled rada sustava',''],['Linijski pregled',''],['Linije i rute / polasci',''],['Status vozila',''],['Radovi na cesti',''],['Prijava kvara','Teh'],['Incidenti',''],['Poruke i obavijesti','']]],
    ['Izvršenje voznog reda',[['Grafički prikaz izvršenja',''],['Kašnjenja',''],['Prerani polasci',''],['Neizvršeni polasci',''],['Izvanredni događaji',''],['Analiza vozača','']]],
    ['Evidencija izvršenja',[['Evidencija radnih zadataka',''],['Evidencija kilometara',''],['Potrošnja goriva i energije','Infra'],['Korekcije i odstupanja','']]],
@@ -231,7 +234,9 @@ var M=[
 ];
 var GROUPS=['Temelj','Operativa','Prihod','Flota','Tehnologija','Financije','Ljudi','Komercijala','Uvid'];
 var IDX={};M.forEach(function(m,i){IDX[m.id]=i;});
-var active={mi:IDX.promet,page:'__dash__'},openMod={promet:true},openSec={'Dispečerski centar':true};
+var active={mi:IDX.promet,page:'__dash__'},openMod={promet:true},openSec={'Knjiga vožnje — Plan rada':true};
+
+function goFile(u){window.location.href=u;}
 
 function renderSidebar(){
  var h='';
@@ -250,6 +255,7 @@ function renderSidebar(){
      var so=!!openSec[s[0]];
      h+='<div class="sec'+(so?' open':'')+'"><div class="sec-h" onclick="toggleSec(\''+s[0].replace(/'/g,"")+'\')"><span>'+s[0]+'</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div><div class="sec-body">';
      s[1].forEach(function(p){
+      if(p[2]){h+='<div class="pg" onclick="goFile(\''+p[2]+'\')"><span>'+p[0]+'</span><span class="own live">otvori ↗</span></div>';return;}
       var on=(isAct&&active.page===s[0]+'/'+p[0]);
       h+='<div class="pg'+(on?' on':'')+'" onclick="openP('+mi+',\''+s[0].replace(/'/g,"")+'/'+p[0].replace(/'/g,"")+'\')"><span>'+p[0]+'</span>'+(p[1]?'<span class="own">'+p[1]+'</span>':'')+'</div>';
      });
@@ -257,6 +263,7 @@ function renderSidebar(){
     });
    } else {
     m.pages.forEach(function(p){
+     if(p[2]){h+='<div class="pg" onclick="goFile(\''+p[2]+'\')"><span>'+p[0]+'</span><span class="own live">otvori ↗</span></div>';return;}
      var on=(isAct&&active.page===p[0]);
      h+='<div class="pg'+(on?' on':'')+'" onclick="openP('+mi+',\''+p[0].replace(/'/g,"")+'\')"><span>'+p[0]+'</span>'+(p[1]?'<span class="own">'+p[1]+'</span>':'')+'</div>';
     });
@@ -272,6 +279,10 @@ function openP(mi,page){active={mi:mi,page:page};openMod[M[mi].id]=true;renderSi
 function toggleSec(s){openSec[s]=!openSec[s];renderSidebar();}
 
 function pageCount(m){if(m.sections){var n=0;m.sections.forEach(function(s){n+=s[1].length;});return n;}return m.pages.length;}
+function fileFor(m,sec,pg){
+ if(m.sections){var f=null;m.sections.forEach(function(s){if(s[0]===sec)s[1].forEach(function(p){if(p[0]===pg&&p[2])f=p[2];});});return f;}
+ var r=null;m.pages.forEach(function(p){if(p[0]===pg&&p[2])r=p[2];});return r;
+}
 
 function renderContent(){
  var m=M[active.mi],C=document.getElementById('CONTENT');
@@ -282,15 +293,15 @@ function renderContent(){
   C.innerHTML=(m.id==='promet')?prometDash():modDash(m);
   return;
  }
- // page
  var parts=active.page.split('/'),sec=parts.length>1?parts[0]:null,pg=parts.length>1?parts[1]:parts[0];
  document.getElementById('CRUMB').innerHTML='<b>'+m.label.split('—')[0].trim()+'</b>'+(sec?' › '+sec:'');
  document.getElementById('TTITLE').textContent=pg;
  document.getElementById('TCOUNT').textContent='stranica';
+ var file=fileFor(m,sec,pg);
+ if(file){C.innerHTML='<div class="ph"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><h3>'+pg+'</h3><p>Ova stranica je <b>mapirana na datoteku</b> i otvara se kao zasebna stranica.</p><button class="open-btn" onclick="goFile(\''+file+'\')">Otvori '+pg+' ↗</button></div>';return;}
  if(m.id==='promet'&&pg==='Kašnjenja'&&sec==='Izvršenje voznog reda'){C.innerHTML=kasnjenja();return;}
  if(m.id==='promet'&&pg==='Neizvršeni polasci'&&sec==='Izvršenje voznog reda'){C.innerHTML=neizvrseni();return;}
- if(m.id==='promet'&&pg==='Dežurni vozači'){C.innerHTML=dezurni();return;}
- C.innerHTML='<div class="ph"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><h3>'+pg+'</h3><p>Stranica u modulu <b>'+m.label.split('—')[0].trim()+'</b>'+(sec?', sekcija <b>'+sec+'</b>':'')+'. Sadržaj (tablice, forme, akcije) razrađujemo po dogovoru — kao što su u Prometu razrađeni Kašnjenja, Neizvršeni i Dežurni vozači.</p></div>';
+ C.innerHTML='<div class="ph"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><h3>'+pg+'</h3><p>Stranica u modulu <b>'+m.label.split('—')[0].trim()+'</b>'+(sec?', sekcija <b>'+sec+'</b>':'')+'. Još nije mapirana na datoteku — kad je napraviš, upišemo joj naziv datoteke i otvarat će se odavde.</p></div>';
 }
 
 function modDash(m){
@@ -298,7 +309,7 @@ function modDash(m){
  m.stats.forEach(function(s){h+='<div class="st"><div class="st-n">'+(s[1]?'<span class="d '+s[1]+'"></span>':'')+s[0]+'</div><div class="st-l">'+s[2]+'</div></div>';});
  h+='</div><div class="grid">';
  h+='<div class="panel"><div class="panel-hdr"><div class="panel-title">'+sIcon()+'Stranice u modulu</div><div class="panel-cnt">'+m.pages.length+'</div></div><div class="pgrid">';
- m.pages.forEach(function(p){h+='<div class="pgc" onclick="openP('+active.mi+',\''+p[0].replace(/'/g,"")+'\')"><span class="dot"></span><span>'+p[0]+'</span>'+(p[1]?'<span class="t">'+p[1]+'</span>':'')+'</div>';});
+ m.pages.forEach(function(p){var live=!!p[2];h+='<div class="pgc" onclick="'+(live?'goFile(\''+p[2]+'\')':'openP('+active.mi+',\''+p[0].replace(/'/g,"")+'\')')+'"><span class="dot'+(live?' live':'')+'"></span><span>'+p[0]+'</span>'+(live?'<span class="t live">otvori ↗</span>':(p[1]?'<span class="t">'+p[1]+'</span>':''))+'</div>';});
  h+='</div></div>';
  h+='<div class="panel"><div class="panel-hdr"><div class="panel-title">'+wIcon()+'Upozorenja</div><div class="panel-cnt">'+m.alerts.length+'</div></div>';
  m.alerts.forEach(function(a){h+='<div class="al '+a[0]+'"><span class="ad"></span><span class="am">'+a[1]+'</span><span class="an">'+a[2]+'</span></div>';});
@@ -315,29 +326,18 @@ function prometDash(){
   '<div class="map"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><defs><pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M10 0H0V10" fill="none" stroke="currentColor" stroke-width=".3" opacity=".15"/></pattern></defs><rect width="100" height="100" fill="url(#g)" color="var(--tm)"/><path d="M8 30 Q40 20 60 55 T92 70" fill="none" stroke="var(--blu)" stroke-width="1.1" opacity=".55"/><path d="M20 88 Q45 60 55 40 T80 12" fill="none" stroke="var(--acc)" stroke-width="1.1" opacity=".55"/></svg>'+dots+'</div></div>'+
   '<div class="panel"><div class="panel-hdr"><div class="panel-title">'+wIcon()+'Upozorenja</div><div class="panel-cnt">5</div></div>'+
    al('r','Neizvršen polazak — linija 4, 08:10',4)+al('r','Incident — kvar, linija 8',11)+al('y','Kašnjenje 14′ — linija 2',6)+al('y','Radovi — Ul. kralja Tomislava','')+al('b','Bura — najava zatvaranja Maslenice','')+'</div></div>'+
- '<div class="panel mt12"><div class="panel-hdr"><div class="panel-title">'+sIcon()+'Aktivni polasci</div><div class="panel-cnt">6 / 214</div></div>'+
-  '<table class="tbl"><thead><tr><th>Linija</th><th>Polazak</th><th>Vozilo</th><th>Vozač</th><th>Status</th><th style="text-align:right">Odstup.</th></tr></thead><tbody>'+
-   rw('2','08:00','112','Brkljača A.','g','U redu','+1′')+rw('4','08:10','—','—','r','Neizvršen','—')+rw('5','08:05','088','Kulušić A.','y','Kašnjenje','+14′')+rw('8','07:55','054','Alić T.','r','Kvar','stao')+rw('11','08:12','097','Skoblar I.','g','U redu','0′')+rw('1','08:08','063','Alavanja D.','g','U redu','−2′')+
-  '</tbody></table></div>'+
- '<div class="note"><b>Vlasništvo:</b> linija je <b>CORE</b> (identitet), vozni red/rute/režimi su <b>Promet</b>. Oznake u izborniku (CORE, Infra, IT, Port, →Kadr, →Fin) pokazuju gdje modul samo čita ili prosljeđuje podatak.</div>';
+ '<div class="note"><b>Mapiranje:</b> stavke pod „Knjiga vožnje — Plan rada" otvaraju datoteku <b>GLAVNA KNJIGA.html</b> (zeleno „otvori ↗"). Ostali čvorovi čekaju svoju datoteku.</div>';
 }
 function kasnjenja(){return '<div class="strip" style="grid-template-columns:repeat(4,1fr)">'+st('5','y','Kašnjenja sad')+st('14′','r','Najveće')+st('+4.2′','b','Prosjek')+st('92%','g','U toleranciji')+'</div>'+
  '<div class="panel"><div class="panel-hdr"><div class="panel-title">'+sIcon()+'Kašnjenja — danas</div><div class="panel-cnt">±5′</div></div><table class="tbl"><thead><tr><th>Linija</th><th>Polazak</th><th>Stajalište</th><th>Vozilo</th><th>Vozač</th><th style="text-align:right">Kašnjenje</th></tr></thead><tbody>'+
- rk('5','08:05','Relja','088','Kulušić A.','+14′','r')+rk('2','07:40','Borik','112','Brkljača A.','+9′','y')+rk('11','08:12','Voštarnica','097','Skoblar I.','+7′','y')+rk('3','07:30','Bili Brig','071','Laća B.','+6′','y')+rk('1','08:08','Poluotok','063','Alavanja D.','+5′','y')+'</tbody></table></div>'+
- '<div class="note"><b>Isti podatak, tri pogleda:</b> Dashboard (live), ovdje (operativa), Izvještaji (povijesno) — jedan izvor, ne tri gradnje.</div>';}
+ rk('5','08:05','Relja','088','Kulušić A.','+14′','r')+rk('2','07:40','Borik','112','Brkljača A.','+9′','y')+rk('11','08:12','Voštarnica','097','Skoblar I.','+7′','y')+'</tbody></table></div>';}
 function neizvrseni(){return '<div class="strip" style="grid-template-columns:repeat(4,1fr)">'+st('2','r','Danas')+st('1','r','U tijeku')+st('1','y','Zamjena')+st('0.9%','b','Udio')+'</div>'+
  '<div class="panel"><div class="panel-hdr"><div class="panel-title">'+sIcon()+'Neizvršeni polasci</div><div class="panel-cnt">2</div></div><table class="tbl"><thead><tr><th>Linija</th><th>Polazak</th><th>Razlog</th><th>Vozilo</th><th>Status</th><th style="text-align:right">Vrijeme</th></tr></thead><tbody>'+
- rk('4','08:10','Nedostatak vozila','—','r','08:10')+rk('8','07:55','Kvar u prometu','054','y','07:58')+'</tbody></table></div>'+
- '<div class="note"><b>Veza s Ugovorima:</b> neizvršeni ulaze u obračun izvršenih km prema Gradu/Županiji (penali). Promet evidentira, Financije obračunavaju.</div>';}
-function dezurni(){return '<div class="panel"><div class="panel-hdr"><div class="panel-title">'+sIcon()+'Dežurni vozači — danas</div><div class="panel-cnt">06–14</div></div><table class="tbl"><thead><tr><th>Vozač</th><th>Linija</th><th>Vozilo</th><th>Smjena</th><th>Status</th></tr></thead><tbody>'+
- rd('Brkljača Anđela','2','112','06–14','g','Na liniji')+rd('Kulušić Ante','5','088','06–14','y','Kašnjenje')+rd('Alavanja Darko','1','063','05:45–13:45','g','Na liniji')+rd('Alić Tomislav','8','054','06–14','r','Kvar')+rd('Skoblar Igor','11','097','06:30–14:30','g','Na liniji')+rd('Pričuva 1','—','—','06–14','b','Dostupan')+'</tbody></table></div>'+
- '<div class="note"><b>Veza s Kadrovskom:</b> raspored se planira ovdje (Promet), stvarni sati iz izvršenja idu u Pregled sati → Kadrovska za plaću.</div>';}
+ rk('4','08:10','Nedostatak vozila','—','r','08:10')+rk('8','07:55','Kvar u prometu','054','y','07:58')+'</tbody></table></div>';}
 
 function st(n,c,l){return '<div class="st"><div class="st-n">'+(c?'<span class="d '+c+'"></span>':'')+n+'</div><div class="st-l">'+l+'</div></div>';}
 function al(c,m,n){return '<div class="al '+c+'"><span class="ad"></span><span class="am">'+m+'</span>'+(n!==''?'<span class="an">'+n+'</span>':'')+'</div>';}
-function rw(ln,t,v,vo,s,sl,o){return '<tr><td class="ln">'+ln+'</td><td class="num">'+t+'</td><td class="num">'+v+'</td><td>'+vo+'</td><td><span class="pill '+s+'"><span class="pd"></span>'+sl+'</span></td><td class="num" style="text-align:right">'+o+'</td></tr>';}
 function rk(ln,t,sj,v,vo,o,c){return '<tr><td class="ln">'+ln+'</td><td class="num">'+t+'</td><td>'+sj+'</td><td class="num">'+v+'</td><td>'+vo+'</td><td class="num" style="text-align:right;color:var(--'+(c==='r'?'red':'yel')+')">'+o+'</td></tr>';}
-function rd(vo,ln,v,sm,c,s){return '<tr><td style="font-weight:600">'+vo+'</td><td class="ln">'+ln+'</td><td class="num">'+v+'</td><td class="num">'+sm+'</td><td><span class="pill '+c+'"><span class="pd"></span>'+s+'</span></td></tr>';}
 function sIcon(){return '<svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 2 5-6"/></svg>';}
 function wIcon(){return '<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';}
 
