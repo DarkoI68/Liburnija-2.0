@@ -1,0 +1,3394 @@
+<!DOCTYPE html>
+<html lang="hr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liburnija — Prometni ured — Knjiga vožnje</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+html[data-theme="dark"]{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2330;--bgh:#212936;--bdr:#2d3748;--tp:#f0f4f8;--ts:#8b95a1;--tm:#4b5563;--acc:#f97316;--accs:rgba(249,115,22,.12);--blu:#3b82f6;--grn:#22c55e;--red:#ef4444;--pur:#a855f7;--yel:#eab308;--ink:#7eb3ff}
+html[data-theme="light"]{--bg:#f0f4f8;--bg2:#fff;--bg3:#f8fafc;--bgh:#f1f5f9;--bdr:#e2e8f0;--tp:#0f172a;--ts:#64748b;--tm:#94a3b8;--acc:#f97316;--accs:rgba(249,115,22,.09);--blu:#3b82f6;--grn:#16a34a;--red:#dc2626;--pur:#9333ea;--yel:#ca8a04;--ink:#1d4ed8}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--tp);display:flex;height:100vh;font-size:13px;overflow:hidden}
+
+/* ═══ KPI dashboard ispod kalendara ═══ */
+.kpi-wrap{margin-top:22px;display:flex;flex-direction:column;gap:16px}
+.kpi-grupa-tit{font-size:11px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.kpi-tile{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:10px;padding:13px 15px;transition:all .12s}
+.kpi-clickable{cursor:pointer}
+.kpi-clickable:hover{border-color:var(--acc);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.07)}
+.kpi-ic{width:38px;height:38px;border-radius:9px;background:var(--bg3);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.kpi-ic svg{width:19px;height:19px;stroke:var(--ts);stroke-width:2;fill:none}
+.kpi-num{font-size:21px;font-weight:800;color:var(--tp);line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi-lbl{font-size:11.5px;font-weight:600;color:var(--tp);margin-top:2px}
+.kpi-ctx{font-size:10px;color:var(--ts);margin-top:1px}
+.kpi-ctx-alarm{color:#b91c1c;font-weight:700}
+/* Iskoristivost kapaciteta — desni blok u Ukupno sati kartici */
+.kpi-tile-wide{position:relative}
+.kpi-util{margin-left:auto;text-align:right;padding-left:14px;border-left:1.5px solid var(--bdr);flex-shrink:0}
+.kpi-util-pct{font-size:20px;font-weight:800;color:var(--grn);line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi-util-lbl{font-size:9.5px;color:var(--ts);font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+.kpi-util-red .kpi-util-pct{color:#dc2626}
+.kpi-util-yel .kpi-util-pct{color:#b45309}
+.kpi-util-blu .kpi-util-pct{color:#1d4ed8}
+.kpi-util-grn .kpi-util-pct{color:var(--grn)}
+.drill-row-alarm td{background:#fef2f2}
+.drill-row-alarm .drill-a{color:#b91c1c;font-weight:700}
+.drill-row-alarm .drill-c{color:#dc2626;font-weight:600}
+.kpi-tile-danger .kpi-ic{background:#fee2e2}.kpi-tile-danger .kpi-ic svg{stroke:#dc2626}.kpi-tile-danger .kpi-num{color:#b91c1c}
+.kpi-tile-warn .kpi-ic{background:#fef3c7}.kpi-tile-warn .kpi-ic svg{stroke:#d97706}.kpi-tile-warn .kpi-num{color:#b45309}
+.kpi-tile-info .kpi-ic{background:#dbeafe}.kpi-tile-info .kpi-ic svg{stroke:#2563eb}.kpi-tile-info .kpi-num{color:#1d4ed8}
+.kpi-tile-ok .kpi-ic{background:#dcfce7}.kpi-tile-ok .kpi-ic svg{stroke:#16a34a}
+/* Odsustva — kompaktni redak */
+.kpi-row-ods{grid-template-columns:repeat(6,1fr)}
+.kpi-ods{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;padding:11px 6px;transition:all .12s}
+.kpi-ods.kpi-clickable:hover{border-color:var(--acc);transform:translateY(-1px)}
+.kpi-ods-num{font-size:19px;font-weight:800;color:var(--tp);font-variant-numeric:tabular-nums}
+.kpi-ods-lbl{font-size:9.5px;color:var(--ts);font-weight:600;text-align:center}
+@media (max-width:900px){.kpi-row,.kpi-row-ods{grid-template-columns:repeat(2,1fr)}}
+
+/* Drill-down modal */
+.drill-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:9750;padding:20px}
+.drill-bg.on{display:flex}
+.drill{background:var(--bg);border:1px solid var(--bdr);border-radius:12px;width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.drill-hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--bdr)}
+.drill-tit{font-size:14px;font-weight:700;color:var(--tp)}
+.drill-close{width:28px;height:28px;border:none;background:var(--bg3);border-radius:6px;color:var(--ts);font-size:15px;cursor:pointer}
+.drill-close:hover{background:var(--bgh);color:var(--tp)}
+.drill-body{overflow-y:auto;padding:8px 18px 16px}
+.drill-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.drill-tbl td{padding:7px 4px;border-bottom:1px solid var(--bdr)}
+.drill-a{font-weight:600;color:var(--tp)}
+.drill-b{text-align:right;color:var(--ts);font-variant-numeric:tabular-nums;white-space:nowrap}
+.drill-c{text-align:right;color:var(--tm);font-size:11px;padding-left:10px}
+.drill-empty{padding:24px;text-align:center;color:var(--ts);font-size:12.5px}
+
+/* ═══ SIDEBAR ═══ */
+.sb{width:200px;background:var(--bg2);border-right:1px solid var(--bdr);display:flex;flex-direction:column;padding:14px 10px;flex-shrink:0;height:100vh}
+.sb-logo{display:flex;align-items:center;gap:9px;padding:6px 6px 14px;border-bottom:1px solid var(--bdr);margin-bottom:10px}
+.sb-icon{width:32px;height:32px;border-radius:7px;border:1.5px solid var(--acc);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(249,115,22,.1)}
+.sb-icon svg{width:17px;height:17px;stroke:var(--acc);stroke-width:2;fill:none}
+.sb-nm{font-size:13.5px;font-weight:700;color:var(--tp)}
+.sb-sub{font-size:10px;color:var(--ts);text-transform:uppercase;letter-spacing:.5px}
+.sb-sec{margin-bottom:14px}
+.sb-lbl{font-size:9.5px;color:var(--ts);text-transform:uppercase;font-weight:700;letter-spacing:.7px;padding:0 6px 6px}
+.nav{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;cursor:pointer;font-size:12.5px;font-weight:500;color:var(--ts);transition:background .12s,color .12s;margin-bottom:1px}
+.nav svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.8;fill:none;flex-shrink:0}
+.nav:hover{background:var(--bgh);color:var(--tp)}
+.nav.on{background:rgba(249,115,22,.1);color:var(--acc)}
+.sb-foot{margin-top:auto;border-top:1px solid var(--bdr);padding-top:10px}
+.sb-settings{display:flex;gap:5px;margin-bottom:8px}
+.sb-settings button{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 6px;border:1px solid var(--bdr);background:var(--bg3);border-radius:7px;color:var(--ts);font-family:inherit;font-size:10.5px;font-weight:500;cursor:pointer;transition:all .12s}
+.sb-settings button:hover{border-color:var(--acc);color:var(--acc)}
+.sb-settings button svg{width:12px;height:12px;stroke:currentColor;stroke-width:1.8;fill:none}
+.ucard{display:flex;align-items:center;gap:9px;padding:7px;background:var(--bg3);border-radius:8px;border:1px solid var(--bdr)}
+.uavt{width:30px;height:30px;border-radius:50%;background:var(--acc);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.unm{font-size:12px;font-weight:600;color:var(--tp)}
+.url{font-size:10px;color:var(--ts)}
+
+/* ═══ MAIN ═══ */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.hdr{padding:12px 22px;border-bottom:1px solid var(--bdr);background:var(--bg2);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.hdr-tit{font-size:15px;font-weight:700;color:var(--tp)}
+.hdr-sub{font-size:11px;color:var(--ts);margin-top:1px}
+.content{flex:1;overflow-y:auto;padding:18px 22px}
+
+/* Toolbar gumbi */
+.tbtn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:7px;color:var(--tp);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all .12s}
+.tbtn:hover{border-color:var(--acc);color:var(--acc)}
+.tbtn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2;fill:none}
+.tbtn-magic{color:#7c3aed;border-color:#e9d8fd}
+.tbtn-magic:hover{background:#f5f0ff;border-color:#7c3aed;color:#5b21b6}
+.tbtn-primary{background:var(--acc);border-color:var(--acc);color:#fff}
+.tbtn-primary:hover{opacity:.88;color:#fff}
+
+/* ═══ KALENDAR ═══ */
+.kal-top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.kal-nav{display:flex;align-items:center;gap:10px}
+.kal-mo-btn{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:7px;cursor:pointer;color:var(--tp);font-size:15px;font-weight:700;transition:all .12s}
+.kal-mo-btn:hover{border-color:var(--acc);color:var(--acc)}
+.kal-mo-tit{font-size:17px;font-weight:800;color:var(--tp);min-width:170px;text-align:center}
+.kal-actions{display:flex;gap:8px;align-items:center}
+.kal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.kal-dow{font-size:10px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.5px;text-align:center;padding:4px 0}
+.kal-day{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;min-height:86px;padding:8px 10px;cursor:pointer;transition:all .12s;position:relative;display:flex;flex-direction:column}
+.kal-day:hover{border-color:var(--acc);transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.07)}
+.kal-day-out{opacity:.32;pointer-events:none}
+.kal-day-num{font-size:14px;font-weight:800;color:var(--tp)}
+.kal-day-nd .kal-day-num{color:var(--red)}
+.kal-day-sub{font-size:9.5px;color:var(--ts);font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.kal-day-status{margin-top:auto;display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600}
+.kal-status-dot{width:7px;height:7px;border-radius:50%}
+.kal-day-filled .kal-status-dot{background:var(--grn)}
+.kal-day-filled .kal-day-status{color:var(--grn)}
+.kal-day-empty .kal-status-dot{background:var(--tm)}
+.kal-day-empty .kal-day-status{color:var(--tm)}
+.kal-day-today{border-color:var(--acc);border-width:2px;background:var(--accs)}
+
+/* ═══ DNEVNI LIST — knjiga vožnje ═══ */
+.dn-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.dn-top-l{display:flex;align-items:center;gap:10px}
+.dn-back{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:7px;cursor:pointer;color:var(--ts);font-family:inherit;font-size:12px;font-weight:600;transition:all .12s}
+.dn-back:hover{border-color:var(--acc);color:var(--acc)}
+.dn-back svg{width:13px;height:13px;stroke:currentColor;stroke-width:2;fill:none}
+.dn-tit{font-size:15px;font-weight:800;color:var(--tp)}
+.dn-tit-day{color:var(--acc)}
+
+/* Papir — kontejner koji izgleda kao knjiga */
+.papir{background:#fff;color:#111;border:1px solid var(--bdr);border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.08);padding:26px 30px;max-width:1340px;margin:0 auto}
+html[data-theme="dark"] .papir{background:#fbfbf8;color:#111}
+.papir-hdr{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2.5px solid #2c4a8a;padding-bottom:8px;margin-bottom:14px;gap:14px;flex-wrap:wrap}
+.papir-tit{font-size:14px;font-weight:800;color:#2c4a8a;text-transform:uppercase;letter-spacing:.4px}
+.papir-tit .dn-dan{border-bottom:1.5px dashed #94a3b8;padding:0 8px;color:#0f172a}
+.papir-datum{font-size:13px;font-weight:700;color:#2c4a8a}
+
+.papir-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+@media (max-width:1200px){.papir-grid{grid-template-columns:1fr}}
+
+/* Tablice — stil knjige (plave linije) */
+.kn-sect{margin-bottom:16px}
+.kn-sect-tit{font-size:10.5px;font-weight:800;color:#2c4a8a;text-transform:uppercase;letter-spacing:.5px;padding:4px 0;border-bottom:1.5px solid #2c4a8a;margin-bottom:0}
+.kn-tbl{width:100%;border-collapse:collapse;font-size:11px}
+.kn-tbl th{background:#e8eef9;color:#2c4a8a;font-weight:700;font-size:9px;text-transform:uppercase;letter-spacing:.3px;padding:4px 6px;border:1px solid #b6c6e4;text-align:center}
+.kn-tbl td{border:1px solid #b6c6e4;padding:2.5px 6px;height:24px;vertical-align:middle;color:#0f172a}
+.kn-tbl td.kn-rb{width:26px;text-align:center;color:#64748b;font-size:10px;background:#f4f7fc}
+.kn-tbl td.kn-lin{font-weight:700;font-size:10px;text-transform:uppercase;color:#1e3a6e;width:115px}
+.kn-tbl td.kn-gbr{width:52px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums;color:#0f172a}
+.kn-tbl td.kn-brl{width:34px;text-align:center;font-variant-numeric:tabular-nums;color:#475569}
+.kn-tbl td.kn-edit{cursor:text;min-width:70px}
+.kn-tbl td.kn-edit:hover{background:#fefce8}
+.kn-tbl td.kn-edit:focus{outline:2px solid var(--acc);outline-offset:-2px;background:#fffbeb}
+.kn-tbl td.kn-edit:empty::before{content:"—";color:#cbd5e1}
+.kn-vozac{font-family:"DM Sans",sans-serif;font-weight:600;color:#1e293b;letter-spacing:.2px}
+
+/* Stvarni vozač (prigrad — neformalna zamjena) */
+.kn-stvarni-tgl{margin-left:5px;cursor:pointer;color:#cbd5e1;font-size:12px;transition:color .12s}
+.kn-stvarni-tgl:hover{color:#f59e0b}
+.kn-stvarni{background:#fef9e7 !important;box-shadow:inset 3px 0 0 #f59e0b}
+.kn-stvarni .kn-vozac{color:#92400e;font-weight:800}
+.kn-stvarni .kn-stvarni-tgl{color:#f59e0b}
+.kn-zamijenjen .kn-vozac{color:#9ca3af;text-decoration:line-through;font-weight:500}
+.kn-zamjena{color:#9333ea;font-style:italic}
+
+/* Ćelija s izborom vozača (dropdown) */
+.kn-pick{cursor:pointer}
+.kn-pick:hover{background:#eef5ff !important}
+/* Neaktivna smjena (ne postoji u templatu) */
+.kn-nema{color:#cbd5e1;text-align:center;background:#fafbfd;font-size:10px}
+/* Linija koja ne vozi taj dan */
+.kn-row-nevoz td{opacity:.45;background:#fafbfd}
+.kn-row-nevoz td.kn-nema{opacity:1}
+/* ALARM — nedostaje vozač, pulsira crveno */
+.kn-alarm{background:#fee2e2 !important;animation:knAlarmPulse 1.3s ease-in-out infinite}
+.kn-alarm-txt{color:#b91c1c;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+/* Slobodan partner (prekrižen, "vadi krumpire" — kandidat za povratak) */
+.kn-slobodan{background:#fff7ed !important;box-shadow:inset 3px 0 0 #fb923c}
+.kn-slobodan .kn-vozac{color:#9ca3af;text-decoration:line-through;font-weight:500}
+/* Praznina koja je dio pričuva-para — dodatni narančasti okvir uz crveni alarm */
+.kn-alarm-par{box-shadow:inset 0 0 0 2px #fb923c !important}
+@keyframes knAlarmPulse{
+  0%,100% { background-color:#fee2e2; box-shadow:inset 0 0 0 1.5px #fca5a5 }
+  50%     { background-color:#fecaca; box-shadow:inset 0 0 0 1.5px #ef4444 }
+}
+
+/* Dropdown combobox za vozače */
+.voz-pop{position:fixed;z-index:9900;width:230px;background:var(--bg);border:1.5px solid var(--bdr);border-radius:9px;box-shadow:0 12px 36px rgba(0,0,0,.22);display:flex;flex-direction:column;overflow:hidden}
+.voz-pop-search{margin:8px;padding:7px 10px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:6px;color:var(--tp);font-family:inherit;font-size:12px;font-weight:600;outline:none}
+.voz-pop-search:focus{border-color:var(--acc)}
+.voz-pop-list{max-height:220px;overflow-y:auto;padding:0 6px}
+.voz-pop-it{padding:6px 9px;border-radius:5px;cursor:pointer;font-size:12px;font-weight:600;color:var(--tp);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.voz-pop-it:hover,.voz-pop-it-first{background:var(--accs);color:var(--acc)}
+.voz-pop-rez{font-size:9px;font-weight:700;text-transform:uppercase;background:#f5f0ff;color:#7c3aed;padding:1px 6px;border-radius:4px;letter-spacing:.3px}
+.voz-pop-prio{background:#dcfce7;color:#15803d}
+.voz-pop-slobodan{background:#fef3c7;color:#b45309;font-weight:800}
+.voz-pop-grp{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--ts);padding:6px 9px 3px;border-top:1px solid var(--bdr);margin-top:2px}
+.voz-pop-grp:first-child{border-top:none;margin-top:0}
+.voz-pop-it-prio{background:rgba(34,197,94,.05)}
+/* Grupe linija */
+.grp-list{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+@media (max-width:1100px){.grp-list{grid-template-columns:1fr}}
+.grp-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;overflow:hidden}
+.grp-card-hdr{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg3);border-bottom:1px solid var(--bdr)}
+.grp-naziv-inp{flex:1;padding:4px 8px;background:transparent;border:1px solid transparent;border-radius:5px;color:var(--tp);font-family:inherit;font-size:12.5px;font-weight:700}
+.grp-naziv-inp:hover{border-color:var(--bdr)}
+.grp-naziv-inp:focus{outline:none;border-color:var(--acc);background:var(--bg)}
+.grp-count{font-size:10px;color:var(--ts);font-weight:600;white-space:nowrap}
+.grp-chips{display:flex;flex-wrap:wrap;gap:5px;padding:11px 12px}
+.grp-chip{display:inline-flex;align-items:center;gap:5px;background:var(--bg3);border:1px solid var(--bdr);border-radius:6px;padding:3px 4px 3px 9px;font-size:10.5px;font-weight:600;color:var(--tp)}
+.grp-chip-x{cursor:pointer;color:var(--tm);font-size:13px;line-height:1;padding:0 3px;border-radius:3px}
+.grp-chip-x:hover{background:#fee2e2;color:#dc2626}
+.grp-chip-off{opacity:.55;border-style:dashed}
+.grp-chip-add{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:1.5px dashed var(--bdr);border-radius:6px;cursor:pointer;color:var(--ts);font-size:13px;font-weight:700}
+.grp-chip-add:hover{border-color:var(--acc);color:var(--acc);background:var(--accs)}
+.grp-addrow{max-width:200px;margin:28px auto 8px;border-radius:7px;border-style:solid}
+.grp-nesvrstane{margin-top:18px;padding:12px;background:var(--bg3);border:1px dashed var(--bdr);border-radius:9px}
+.grp-nesvrstane-tit{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--ts);margin-bottom:8px}
+
+/* Postavke */
+.set-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+@media (max-width:1000px){.set-grid{grid-template-columns:1fr}}
+.set-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;overflow:hidden}
+.set-card-tit{padding:11px 15px;background:var(--bg3);border-bottom:1px solid var(--bdr);font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+.set-count{background:var(--accs);color:var(--acc);font-size:10px;padding:1px 8px;border-radius:10px}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 15px;border-bottom:1px solid var(--bdr)}
+.set-row:last-child{border-bottom:none}
+.set-row-lbl{font-size:12.5px;font-weight:600;color:var(--tp)}
+.set-stepper{display:flex;align-items:center;gap:8px}
+.set-step{width:28px;height:28px;border:1.5px solid var(--bdr);background:var(--bg);border-radius:7px;color:var(--tp);font-size:16px;font-weight:700;cursor:pointer;transition:all .12s}
+.set-step:hover{border-color:var(--acc);color:var(--acc)}
+.set-val{min-width:54px;text-align:center;font-size:13px;font-weight:700;color:var(--tp);font-variant-numeric:tabular-nums}
+.set-val-inp{border:1.5px solid var(--bdr);border-radius:6px;background:var(--bg);font-family:inherit;padding:4px 6px;width:48px}
+.set-val-inp:focus{outline:none;border-color:var(--acc)}
+.set-val-inp-sm{width:40px;min-width:0}
+.set-valwrap{display:inline-flex;align-items:center;gap:5px}
+.set-val-jed{font-size:12px;font-weight:600;color:var(--ts)}
+.set-chips{display:flex;flex-wrap:wrap;gap:6px;padding:13px 15px}
+.set-hint{padding:0 15px 13px;font-size:11px;color:var(--ts);line-height:1.5}
+
+/* Postavke — periodi prometovanja */
+.set-card-full{margin-top:18px}
+.set-period-hint{padding:11px 15px;font-size:11.5px;color:var(--ts);line-height:1.6}
+.set-period-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.set-period-tbl th{text-align:left;padding:6px 10px;font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--ts);border-bottom:1px solid var(--bdr);font-weight:700}
+.set-period-tbl td{padding:6px 10px;border-bottom:1px solid var(--bdr)}
+.set-period-inp{width:100%;padding:5px 8px;background:var(--bg);border:1px solid var(--bdr);border-radius:6px;color:var(--tp);font-family:inherit;font-size:12px;font-weight:600}
+.set-period-inp:focus{outline:none;border-color:var(--acc)}
+.set-period-dt{width:64px;padding:5px 6px;background:var(--bg);border:1px solid var(--bdr);border-radius:6px;color:var(--tp);font-family:inherit;font-size:12px;text-align:center;font-variant-numeric:tabular-nums}
+.set-period-dt:focus{outline:none;border-color:var(--acc)}
+.set-rezim-btn{padding:5px 10px;border:1.5px solid var(--bdr);border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;background:var(--bg)}
+.set-rezim-skola{color:#15803d;border-color:#bbf7d0;background:#f0fdf4}
+.set-rezim-bezskole{color:#b45309;border-color:#fed7aa;background:#fffbeb}
+.set-period-del{width:30px;text-align:center}
+.set-period-del .kn-trash:hover{color:#dc2626;background:#fee2e2}
+.set-stepper-sm .set-step{width:24px;height:24px;font-size:14px}
+.set-stepper-sm .set-val{min-width:34px;font-size:12px}
+
+/* Odsutno osoblje — prazna ćelija (klik → popup) */
+.kn-ods-prazna{cursor:pointer;color:#cbd5e1;text-align:left;padding:3px 8px !important}
+.kn-ods-prazna:hover{background:#f0f9ff}
+.kn-ods-prazna-txt{font-size:10.5px;color:#94a3b8;font-weight:500}
+.kn-ods-prazna:hover .kn-ods-prazna-txt{color:var(--acc)}
+
+/* Predlošci — vozač ćelija (picker) */
+.tpl-voz-cell{cursor:pointer;padding:5px 8px !important;border-radius:5px}
+.tpl-voz-cell:hover{background:#eef5ff}
+.tpl-voz-ph{color:#cbd5e1}
+.tpl-voz-off{color:#cbd5e1;opacity:.4;text-align:center}
+
+/* Popup za unos odsustva */
+.ods-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:9800;padding:20px}
+.ods-bg.on{display:flex}
+#ODS-BG{z-index:9850}   /* unos odsustva (kalendar) uvijek iznad popisa mjeseca (#ODSM-BG, 9800) */
+.ods-pop{background:var(--bg);border:1px solid var(--bdr);border-radius:12px;width:100%;max-width:400px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.ods-pop-wide{max-width:560px}
+.ods-pop-hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--bdr)}
+.ods-pop-tit{font-size:14px;font-weight:700;color:var(--tp)}
+.ods-pop-body{overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:16px}
+.ods-fld{display:flex;flex-direction:column;gap:7px}
+.ods-fld-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--ts)}
+.ods-fld-hint{font-weight:500;text-transform:none;letter-spacing:0;color:var(--tm)}
+.ods-sel{display:flex;align-items:center;justify-content:space-between;width:100%;padding:9px 12px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--tp)}
+.ods-sel:hover{border-color:var(--acc)}
+.ods-sel-arr{color:var(--ts)}
+.ods-ph{color:#94a3b8;font-weight:500}
+.ods-tipovi{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ods-tip-btn{display:flex;align-items:center;gap:7px;padding:8px 10px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:8px;cursor:pointer;font-family:inherit;font-size:11.5px;font-weight:600;color:var(--tp);text-align:left}
+.ods-tip-btn:hover{border-color:var(--acc)}
+.ods-tip-btn.on{border-color:var(--acc);background:var(--accs)}
+.ods-povratak{font-size:11.5px;color:var(--ts);margin-top:4px}
+/* Mini-kalendar u odsustvo popupu */
+.ods-pop-cal{max-width:380px}
+.ods-stari-go{margin-top:6px;font-size:11.5px;color:var(--ts)}
+.ods-stari-go strong{color:var(--tp)}
+.ods-go-opasna{color:#dc2626;font-weight:700;margin-left:4px}
+.ods-cal{border:1px solid var(--bdr);border-radius:9px;padding:8px;background:var(--bg2)}
+.ods-cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.ods-cal-tit{font-size:12.5px;font-weight:700;color:var(--tp)}
+.ods-cal-nav{width:26px;height:26px;border:1px solid var(--bdr);background:var(--bg);border-radius:6px;cursor:pointer;color:var(--tp);font-size:14px}
+.ods-cal-nav:hover{border-color:var(--acc);color:var(--acc)}
+.ods-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.ods-cal-dow{text-align:center;font-size:9px;font-weight:700;color:var(--ts);text-transform:uppercase;padding:3px 0}
+.ods-cal-cell{text-align:center;padding:6px 0;font-size:12px;border-radius:6px;cursor:pointer;color:var(--tp);user-select:none}
+.ods-cal-cell:hover:not(.ods-cal-empty):not(.ods-cal-disabled){background:var(--bgh)}
+.ods-cal-empty{cursor:default}
+.ods-cal-vikend{color:#cbd5e1}
+.ods-cal-disabled{color:#e2e8f0;cursor:not-allowed}
+.ods-cal-raspon{background:#fff3e6}
+.ods-cal-od,.ods-cal-do{background:var(--acc) !important;color:#fff !important;font-weight:700}
+.ods-raspon{margin-top:8px;font-size:11.5px;color:var(--ts);min-height:16px}
+.ods-raspon strong{color:var(--tp)}
+.ods-raspon-rd{color:var(--acc);font-weight:700}
+/* Odsustva mjeseca tablica — stupci */
+.odsm-tbl tr[onclick]{cursor:pointer}
+.odsm-tbl tr[onclick]:hover td{background:var(--bgh)}
+.odsm-dt{font-variant-numeric:tabular-nums;white-space:nowrap;font-size:11.5px}
+.odsm-num{text-align:right;font-variant-numeric:tabular-nums;color:var(--ts);white-space:nowrap}
+.odsm-go{text-align:center;font-size:11px;color:var(--ts);font-variant-numeric:tabular-nums}
+.odsm-go-opasna{color:#dc2626;font-weight:700}
+.ods-pop-foot{display:flex;justify-content:flex-end;gap:9px;padding:13px 18px;border-top:1px solid var(--bdr)}
+
+/* Odsustva mjeseca tablica */
+.odsm-info{padding:10px 13px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:11.5px;color:#1e40af;margin-bottom:14px;line-height:1.5}
+.odsm-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.odsm-tbl th{text-align:left;padding:7px 8px;font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--ts);border-bottom:1px solid var(--bdr);font-weight:700}
+.odsm-tbl td{padding:7px 8px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.odsm-ime{cursor:pointer;font-weight:600;color:var(--tp);border-radius:5px}
+.odsm-ime:hover{background:#eef5ff}
+.odsm-tag{margin-left:7px;font-size:9px;font-weight:700;text-transform:uppercase;background:#dbeafe;color:#1d4ed8;padding:1px 6px;border-radius:4px;letter-spacing:.3px}
+.odsm-preneseno{background:rgba(59,130,246,.03)}
+.odsm-tip-btn{background:none;border:none;cursor:pointer;padding:2px}
+.odsm-del{width:34px;text-align:center}
+.odsm-del .kn-trash:hover{color:#dc2626;background:#fee2e2}
+
+/* Pregled rada */
+.ods-pop-xwide{max-width:720px}
+.pr-search{flex:1;margin:0 12px;padding:7px 12px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:8px;font-family:inherit;font-size:12.5px;color:var(--tp)}
+.pr-search:focus{outline:none;border-color:var(--acc)}
+.pr-sub{display:flex;gap:16px;padding:10px 18px;border-bottom:1px solid var(--bdr);font-size:11.5px;color:var(--ts);flex-wrap:wrap}
+.pr-stat b{color:var(--tp);font-variant-numeric:tabular-nums}
+.pr-stat-ispod b{color:#1d4ed8}
+.pr-stat-iznad b{color:#b45309}
+.pr-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.pr-tbl thead th{position:sticky;top:0;background:var(--bg);text-align:left;padding:8px 10px;font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--ts);border-bottom:1.5px solid var(--bdr);font-weight:700;z-index:1}
+.pr-tbl td{padding:7px 10px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.pr-ime{font-weight:600;color:var(--tp)}
+.pr-num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pr-fond{color:var(--ts)}
+.pr-raz-iznad{color:#b45309;font-weight:700}
+.pr-raz-ispod{color:#1d4ed8;font-weight:700}
+.pr-raz-ok{color:var(--grn);font-weight:700}
+.pr-bar-cell{display:flex;align-items:center;gap:8px;min-width:150px}
+.pr-bar-track{flex:1;height:7px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.pr-bar{height:100%;border-radius:4px}
+.pr-bar-iznad{background:#f59e0b}
+.pr-bar-ispod{background:#3b82f6}
+.pr-bar-ok{background:#22c55e}
+.pr-pct{font-size:10.5px;color:var(--ts);font-variant-numeric:tabular-nums;min-width:32px;text-align:right}
+.pr-row-ispod .pr-ime{color:#1d4ed8}
+
+/* Pričuva popup — tablica vozača s podacima */
+.prc-sub{padding:11px 18px;border-bottom:1px solid var(--bdr);font-size:11.5px;color:var(--ts);line-height:1.6}
+.prc-act-ok-inline,.prc-act-no-inline{display:inline-flex;width:16px;height:16px;align-items:center;justify-content:center;border-radius:4px;font-size:10px;font-weight:800;vertical-align:middle}
+.prc-act-ok-inline{background:#dcfce7;color:#15803d}
+.prc-act-no-inline{background:#fee2e2;color:#dc2626}
+.prc-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.prc-tbl thead th{position:sticky;top:0;background:var(--bg);text-align:left;padding:8px 10px;font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--ts);border-bottom:1.5px solid var(--bdr);font-weight:700;z-index:1}
+.prc-tbl td{padding:6px 10px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.prc-sekcija td{background:var(--bg3);font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--ts);padding:5px 10px}
+.prc-ime{font-weight:600;color:var(--tp);white-space:nowrap}
+.prc-tag{margin-left:7px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;padding:1px 6px;border-radius:4px}
+.prc-tag-slobodan{background:#fef3c7;color:#b45309}
+.prc-tag-prio{background:#dcfce7;color:#15803d}
+.prc-tel{font-family:"DM Mono",monospace;font-size:11.5px;color:var(--ts);white-space:nowrap}
+.prc-num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.prc-sati{color:var(--ts)}
+.prc-pct{font-weight:700;padding:1px 7px;border-radius:10px;font-size:11px}
+.prc-pct-hi{background:#dcfce7;color:#15803d}
+.prc-pct-mid{background:#fef9c3;color:#a16207}
+.prc-pct-lo{background:#fee2e2;color:#dc2626}
+.prc-akcije{text-align:center;white-space:nowrap}
+.prc-act{width:26px;height:26px;border-radius:6px;border:1.5px solid var(--bdr);background:var(--bg);cursor:pointer;font-size:13px;font-weight:800;margin:0 2px;transition:all .12s}
+.prc-act-ok{color:#16a34a}
+.prc-act-ok:hover{background:#16a34a;color:#fff;border-color:#16a34a}
+.prc-act-no{color:#dc2626}
+.prc-act-no:hover{background:#dc2626;color:#fff;border-color:#dc2626}
+/* Vozač koji je odbio (✕) — posivi redak, ali ✓ ostaje aktivan za drugi poziv */
+.prc-row-odbio .prc-ime,.prc-row-odbio .prc-tel,.prc-row-odbio .prc-num{color:#cbd5e1}
+.prc-row-odbio .prc-ime{text-decoration:line-through;text-decoration-color:#cbd5e1}
+.prc-row-odbio .prc-pct{filter:grayscale(1);opacity:.6}
+.prc-row-odbio .prc-tag-slobodan,.prc-row-odbio .prc-tag-prio{filter:grayscale(1);opacity:.6}
+.prc-tag-odbio{background:#fee2e2;color:#dc2626}
+.prc-podsjetnik{margin-top:8px;padding:7px 11px;background:#fffbeb;border:1px solid #fde68a;border-radius:7px;color:#92400e;font-weight:600;font-size:11.5px}
+.prc-row-odbio .prc-act-no{opacity:.35;pointer-events:none}
+.voz-pop-foot{border-top:1px solid var(--bdr);padding:6px}
+.voz-pop-clear{width:100%;padding:6px;background:transparent;border:0;color:var(--ts);font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;border-radius:5px}
+.voz-pop-clear:hover{background:#fef2f2;color:#b91c1c}
+
+/* Badge-evi u headeru papira */
+.papir-hdr-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dn-badge{font-size:9.5px;font-weight:800;padding:3px 9px;border-radius:5px;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+/* R-P toggle (plan / realni plan) */
+.dn-rp{display:inline-flex;border:1.5px solid var(--bdr);border-radius:6px;overflow:hidden;height:22px}
+.dn-rp-opt{display:inline-flex;align-items:center;justify-content:center;width:24px;font-size:11px;font-weight:800;cursor:pointer;color:var(--ts);background:var(--bg);transition:all .12s}
+.dn-rp-opt:first-child{border-right:1px solid var(--bdr)}
+.dn-rp-opt:hover{background:var(--bgh)}
+.dn-rp-opt.on{background:var(--acc);color:#fff}
+.dn-badge-rad{background:#dcfce7;color:#15803d;border:1px solid #86efac}
+.dn-badge-sub{background:#dbeafe;color:#1d4ed8;border:1px solid #93c5fd}
+.dn-badge-ned{background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5}
+.dn-badge-skola{background:#fef3c7;color:#92400e;border:1px solid #fcd34d;cursor:pointer}
+.dn-badge-bezskole{background:#e5e7eb;color:#475569;border:1px solid #cbd5e1;cursor:pointer}
+.dn-badge-skola:hover,.dn-badge-bezskole:hover{filter:brightness(.95)}
+
+/* Sekcije s vremenima (invalidi, izvanredne) */
+.kn-tbl td.kn-sat{width:54px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+.kn-tbl td.kn-naruc{min-width:110px}
+.kn-tbl td.kn-rel{min-width:130px}
+
+/* Obavijesti — slobodni tekst */
+.kn-obav{width:100%;min-height:200px;border:1px solid #b6c6e4;padding:8px 10px;font-family:"DM Mono",monospace;font-size:10.5px;line-height:1.6;color:#1e293b;background:#fff;resize:vertical;border-radius:0}
+.kn-obav:focus{outline:2px solid var(--acc);outline-offset:-2px}
+
+/* Dvostruki box (dežurni/kombiji) */
+.kn-mini{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+
+/* "+ redak" — decentni gumb za dodavanje retka */
+.kn-addrow{display:block;width:100%;margin-top:2px;padding:3px 8px;background:transparent;border:1.5px dashed #b6c6e4;border-top:none;border-radius:0 0 5px 5px;color:#7a93c4;font-family:"DM Sans",sans-serif;font-size:10px;font-weight:700;letter-spacing:.4px;cursor:pointer;transition:all .12s;text-transform:uppercase}
+.kn-addrow:hover{background:#eef5ff;color:#2c4a8a;border-color:#2c4a8a;border-style:solid}
+
+/* Polasci — Zračna luka: 2 stupca (odlasci / dolasci) */
+.kn-zrl{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+
+/* Koš za smeće — pojavi se na hover retka, briše redak */
+.kn-trash{position:absolute;right:2px;top:50%;transform:translateY(-50%);width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;color:#cbd5e1;cursor:pointer;opacity:0;transition:opacity .12s,color .12s,background .12s;background:transparent}
+.kn-trash svg{width:12px;height:12px;pointer-events:none}
+.kn-delrow:hover .kn-trash{opacity:1}
+.kn-trash:hover{color:#dc2626;background:#fee2e2}
+/* Brisanje grupe — koš je UVIJEK jasno vidljiv (nije ovisan o hoveru retka) */
+.grp-card-hdr .grp-del{position:static;transform:none;opacity:1;width:26px;height:26px;color:#ef4444;background:#fef2f2;border:1px solid #fecaca;flex-shrink:0}
+.grp-card-hdr .grp-del svg{width:13px;height:13px}
+.grp-card-hdr .grp-del:hover{color:#fff;background:#ef4444;border-color:#ef4444}
+
+/* Odsutno osoblje — 3 stupca, ime + badge kratice */
+.kn-ods-tbl td.kn-ods-cell{width:33.33%;padding:2px 18px 2px 7px;height:24px;vertical-align:middle}
+.kn-ods-ime{font-weight:600;color:#1e293b;outline:none;min-width:20px;display:inline-block}
+.kn-ods-pick{cursor:pointer;border-radius:3px;padding:0 2px}
+.kn-ods-pick:hover{background:#eef5ff}
+.kn-ods-ime-empty{color:#cbd5e1;font-weight:500;font-style:italic}
+.kn-ods-ime:empty::before{content:"—";color:#cbd5e1}
+.kn-ods-ime:focus{background:#fffbeb}
+.kn-ods-tipwrap{margin-left:6px;cursor:pointer;vertical-align:middle}
+.kn-ods-tipadd{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px dashed #cbd5e1;border-radius:3px;color:#cbd5e1;font-size:11px;opacity:0;transition:opacity .12s}
+.kn-ods-cell:hover .kn-ods-tipadd{opacity:1}
+.kn-ods-badge{display:inline-flex;align-items:center;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:800;letter-spacing:.3px;font-variant-numeric:tabular-nums}
+.kn-ods-SD{background:#e2e8f0;color:#475569}
+.kn-ods-GO{background:#dcfce7;color:#15803d}
+.kn-ods-B{background:#fef3c7;color:#92400e}
+.kn-ods-ND{background:#fee2e2;color:#b91c1c}
+.kn-ods-PD{background:#cffafe;color:#0e7490}
+.kn-ods-RD{background:#fce7f3;color:#be185d}
+.kn-ods-cell .kn-trash{right:3px}
+
+/* Predlošci — editabilni naziv/GBR + trash */
+.tpl-lin-inp{width:100%;padding:3px 6px;background:transparent;border:1px solid transparent;border-radius:5px;color:var(--tp);font-family:inherit;font-size:10.5px;font-weight:700;text-transform:uppercase}
+.tpl-lin-inp:hover{border-color:var(--bdr)}
+.tpl-lin-inp:focus{outline:none;border-color:var(--acc);background:var(--bg)}
+.tpl-gbr-inp{width:54px;padding:3px 4px;background:transparent;border:1px solid transparent;border-radius:5px;color:var(--ts);font-family:inherit;font-size:11px;text-align:center;font-variant-numeric:tabular-nums}
+.tpl-gbr-inp:hover{border-color:var(--bdr)}
+.tpl-gbr-inp:focus{outline:none;border-color:var(--acc);background:var(--bg)}
+.tpl-tbl td.tpl-del{width:26px;text-align:center;position:relative}
+.tpl-trash{position:static;transform:none;opacity:0}
+.tpl-tbl tr:hover .tpl-trash{opacity:1}
+
+/* ═══ TEMPLATI ═══ */
+.tpl-tabs{display:flex;gap:6px;margin-bottom:16px}
+.tpl-tab{padding:8px 18px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:8px;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ts);transition:all .12s}
+.tpl-tab:hover{color:var(--tp);border-color:var(--ts)}
+.tpl-tab.on{background:var(--accs);border-color:var(--acc);color:var(--acc)}
+.tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+@media (max-width:1100px){.tpl-grid{grid-template-columns:1fr}}
+.tpl-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;overflow:hidden}
+.tpl-card-tit{padding:10px 14px;background:var(--bg3);border-bottom:1px solid var(--bdr);font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.5px}
+.tpl-tbl{width:100%;border-collapse:collapse;font-size:11.5px}
+.tpl-tbl th{background:var(--bg3);color:var(--ts);font-weight:700;font-size:9.5px;text-transform:uppercase;padding:6px 8px;text-align:left;border-bottom:1px solid var(--bdr)}
+.tpl-tbl td{padding:4px 8px;border-bottom:1px solid var(--bdr);color:var(--tp)}
+.tpl-tbl td.tpl-lin{font-weight:700;font-size:10.5px;width:130px}
+.tpl-tbl td.tpl-gbr{width:60px;text-align:center;color:var(--ts);font-variant-numeric:tabular-nums}
+.tpl-tbl input{width:100%;padding:4px 7px;background:var(--bg);border:1px solid var(--bdr);border-radius:5px;color:var(--tp);font-family:inherit;font-size:11px;font-weight:600}
+.tpl-tbl input:focus{outline:none;border-color:var(--acc)}
+.tpl-tbl input::placeholder{color:var(--tm);font-weight:400}
+
+/* Toast */
+.toast-wrap{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center}
+.toast{padding:10px 18px;border-radius:8px;font-size:12.5px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,.18);animation:toastIn .25s ease;background:var(--bg2);border:1.5px solid var(--bdr);color:var(--tp)}
+.toast.success{border-color:#86efac;background:#f0fdf4;color:#15803d}
+.toast.danger{border-color:#fca5a5;background:#fef2f2;color:#b91c1c}
+.toast.info{border-color:#93c5fd;background:#eff6ff;color:#1d4ed8}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Confirm modal */
+.conf-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9700;padding:20px}
+.conf-bg.on{display:flex}
+.conf{background:var(--bg);border:1px solid var(--bdr);border-radius:12px;width:100%;max-width:430px;padding:22px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.conf-ic{width:44px;height:44px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;background:#f5f0ff}
+.conf-ic svg{width:22px;height:22px;stroke:#7c3aed;stroke-width:2;fill:none}
+.conf-tit{font-size:15px;font-weight:700;color:var(--tp);margin-bottom:6px}
+.conf-msg{font-size:12.5px;color:var(--ts);line-height:1.55;margin-bottom:16px}
+.conf-foot{display:flex;justify-content:center;gap:8px}
+.cbtn{padding:8px 18px;border-radius:7px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--bdr);background:var(--bg2);color:var(--tp);transition:all .12s}
+.cbtn:hover{border-color:var(--ts)}
+.cbtn-primary{background:var(--acc);border-color:var(--acc);color:#fff}
+.cbtn-primary:hover{opacity:.88}
+
+/* ═══ PRINT ═══ */
+@media print{
+  @page{size:A4 portrait;margin:9mm}
+  body{display:block;overflow:visible;background:#fff}
+  .sb,.hdr,.dn-top,.toast-wrap,.conf-bg{display:none !important}
+  .content{overflow:visible;padding:0}
+  .papir{border:none;box-shadow:none;border-radius:0;padding:0;max-width:none}
+  .papir-grid{display:block}
+  .papir-col-l{page-break-after:always}
+  .kn-tbl{font-size:9px}
+  .kn-tbl td{height:20px;padding:1.5px 4px}
+  .kn-tbl th{font-size:7.5px;padding:2px 4px}
+  .kn-obav{border:1px solid #b6c6e4;min-height:140px}
+  .kn-tbl td.kn-edit:empty::before{content:""}
+  .kn-alarm{animation:none !important;background:#fee2e2 !important;box-shadow:inset 0 0 0 1.5px #ef4444 !important}
+  .voz-pop{display:none !important}
+  .kn-addrow{display:none !important}
+  .kn-trash{display:none !important}
+  .kn-stvarni-tgl{display:none !important}
+  .dn-rp{display:none !important}
+  .kn-stvarni{box-shadow:inset 3px 0 0 #f59e0b !important;background:#fef9e7 !important}
+  .kn-zamijenjen .kn-vozac{text-decoration:line-through;color:#9ca3af !important}
+  .kn-slobodan .kn-vozac{text-decoration:line-through;color:#9ca3af !important}
+  .kn-slobodan{box-shadow:inset 3px 0 0 #fb923c !important}
+  .dn-badge{border-width:1px}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<div class="sb">
+  <div class="sb-logo">
+    <div class="sb-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+    <div><div class="sb-nm">Liburnija</div><div class="sb-sub">Prometni ured</div></div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-lbl">Knjiga vožnje</div>
+    <div class="nav on" id="NAV-KAL" onclick="puSwitch('kalendar')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Kalendar
+    </div>
+    <div class="nav" id="NAV-TPL" onclick="puSwitch('templati')">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Predlošci
+    </div>
+    <div class="nav" id="NAV-GRP" onclick="puSwitch('grupe')">
+      <svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="6" x2="9" y2="6"/><line x1="20" y1="18" x2="9" y2="18"/><line x1="20" y1="12" x2="13" y2="12"/></svg>
+      Grupe linija
+    </div>
+    <div class="nav" id="NAV-SET" onclick="puSwitch('postavke')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Postavke
+    </div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-lbl">Ostali moduli</div>
+    <div class="nav" onclick="window.location='Servis_Dashboard.html'">
+      <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      Servis vozila
+    </div>
+    <div class="nav" onclick="window.location='Izvrsenja-prometnik.html'">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+      Dispečer
+    </div>
+  </div>
+
+  <div class="sb-foot">
+    <div class="sb-settings">
+      <button onclick="puToggleTheme()" id="THEME-BTN"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span id="THEME-LBL">Auto</span></button>
+      <button><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Postavke</button>
+    </div>
+    <div class="ucard">
+      <div class="uavt">BL</div>
+      <div><div class="unm">Božidar Laća</div><div class="url">Prometni ured</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="hdr">
+    <div>
+      <div class="hdr-tit" id="HDR-TIT">Prometni ured — Knjiga vožnje</div>
+      <div class="hdr-sub" id="HDR-SUB">—</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- VIEW: KALENDAR -->
+    <div id="VIEW-KALENDAR">
+      <div class="kal-top">
+        <div class="kal-nav">
+          <button class="kal-mo-btn" onclick="puMjesec(-1)" title="Prethodni mjesec">‹</button>
+          <div class="kal-mo-tit" id="KAL-MO-TIT">—</div>
+          <button class="kal-mo-btn" onclick="puMjesec(1)" title="Sljedeći mjesec">›</button>
+        </div>
+        <div class="kal-actions">
+          <button class="tbtn tbtn-magic" onclick="puAutofillConfirm()">
+            <svg viewBox="0 0 24 24"><path d="M15 4l-1.5 1.5M11 8l-7 7v4h4l7-7M20 9l-2-2M14 3l2 2M18 13l2-2"/></svg>
+            Autofill mjesec
+          </button>
+          <button class="tbtn" onclick="puOdsMjesecOpen()" title="Pregled i unos odsustava za mjesec">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            Odsustva
+          </button>
+          <button class="tbtn" onclick="puPregledRada()" title="Pregled satnice svih vozača">
+            <svg viewBox="0 0 24 24"><path d="M9 11H3v10h6V11zM21 3h-6v18h6V3zM15 7H9v14h6V7z"/></svg>
+            Pregled rada
+          </button>
+          <button class="tbtn" onclick="puClearMonthConfirm()">
+            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            Obriši mjesec
+          </button>
+        </div>
+      </div>
+      <div class="kal-grid" id="KAL-GRID"></div>
+      <div id="KAL-KPI"></div>
+    </div>
+
+    <!-- VIEW: DNEVNI LIST -->
+    <div id="VIEW-DAN" style="display:none">
+      <div class="dn-top">
+        <div class="dn-top-l">
+          <button class="dn-back" onclick="puSwitch('kalendar')">
+            <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Kalendar
+          </button>
+          <button class="kal-mo-btn" onclick="puDanNav(-1)" title="Prethodni dan">‹</button>
+          <div class="dn-tit" id="DN-TIT">—</div>
+          <button class="kal-mo-btn" onclick="puDanNav(1)" title="Sljedeći dan">›</button>
+        </div>
+        <div class="kal-actions">
+          <button class="tbtn tbtn-magic" onclick="puAutofillDan()">
+            <svg viewBox="0 0 24 24"><path d="M15 4l-1.5 1.5M11 8l-7 7v4h4l7-7M20 9l-2-2M14 3l2 2M18 13l2-2"/></svg>
+            Autofill dan
+          </button>
+          <button class="tbtn tbtn-magic" onclick="puAutofillMjesecIzDana()">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Autofill mjesec
+          </button>
+          <button class="tbtn" onclick="window.print()">
+            <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Ispis
+          </button>
+        </div>
+      </div>
+      <div class="papir" id="PAPIR"></div>
+    </div>
+
+    <!-- VIEW: TEMPLATI -->
+    <div id="VIEW-TEMPLATI" style="display:none">
+      <div class="tpl-tabs">
+        <button class="tpl-tab on" data-tip="radni" onclick="puTplTab('radni')">Radni dan</button>
+        <button class="tpl-tab" data-tip="subota" onclick="puTplTab('subota')">Subota</button>
+        <button class="tpl-tab" data-tip="nedjelja" onclick="puTplTab('nedjelja')">Nedjelja / blagdan</button>
+      </div>
+      <div class="tpl-grid" id="TPL-GRID"></div>
+    </div>
+
+    <!-- VIEW: GRUPE LINIJA -->
+    <div id="VIEW-GRUPE" style="display:none">
+      <div id="GRP-WRAP"></div>
+    </div>
+
+    <!-- VIEW: POSTAVKE -->
+    <div id="VIEW-POSTAVKE" style="display:none">
+      <div id="SET-WRAP"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Confirm modal -->
+<div class="conf-bg" id="CONF-BG" onclick="if(event.target===this)puConfClose()">
+  <div class="conf">
+    <div class="conf-ic" id="CONF-IC"><svg viewBox="0 0 24 24"><path d="M15 4l-1.5 1.5M11 8l-7 7v4h4l7-7M20 9l-2-2M14 3l2 2M18 13l2-2"/></svg></div>
+    <div class="conf-tit" id="CONF-TIT">—</div>
+    <div class="conf-msg" id="CONF-MSG">—</div>
+    <div class="conf-foot">
+      <button class="cbtn" onclick="puConfClose()">Odustani</button>
+      <button class="cbtn cbtn-primary" id="CONF-OK" onclick="puConfApply()">Nastavi</button>
+    </div>
+  </div>
+</div>
+
+<!-- Drill-down modal (lista vozača iza KPI) -->
+<div class="drill-bg" id="DRILL-BG" onclick="if(event.target===this)puDrillClose()">
+  <div class="drill">
+    <div class="drill-hdr">
+      <div class="drill-tit" id="DRILL-TIT">—</div>
+      <button class="drill-close" onclick="puDrillClose()" title="Zatvori (Esc)">✕</button>
+    </div>
+    <div class="drill-body" id="DRILL-BODY"></div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="TOAST-WRAP"></div>
+
+<!-- Popup: unos odsustva (ime + tip + radni dani) -->
+<div class="ods-bg" id="ODS-BG" onclick="if(event.target===this)puOdsPopupClose()">
+  <div class="ods-pop ods-pop-cal">
+    <div class="ods-pop-hdr"><div class="ods-pop-tit" id="ODS-TIT">Unos odsustva</div><button class="drill-close" onclick="puOdsPopupClose()">✕</button></div>
+    <div class="ods-pop-body">
+      <div class="ods-fld"><span class="ods-fld-lbl">Vozač</span>
+        <button type="button" class="ods-sel" id="ODS-IME-BTN" onclick="puOdsPopupIme(event)"><span id="ODS-IME-VAL">— odaberi vozača —</span><span class="ods-sel-arr">▾</span></button>
+        <div class="ods-stari-go" id="ODS-STARI-GO"></div>
+      </div>
+      <div class="ods-fld"><span class="ods-fld-lbl">Vrsta odsustva</span>
+        <div class="ods-tipovi" id="ODS-TIPOVI"></div>
+      </div>
+      <div class="ods-fld"><span class="ods-fld-lbl">Razdoblje odsustva <span class="ods-fld-hint">(klik na početak pa na kraj)</span></span>
+        <div class="ods-cal" id="ODS-CAL"></div>
+        <div class="ods-raspon" id="ODS-RASPON"></div>
+      </div>
+    </div>
+    <div class="ods-pop-foot">
+      <button class="cbtn" onclick="puOdsPopupClose()">Odustani</button>
+      <button class="cbtn cbtn-primary" onclick="puOdsPopupSpremi()">Spremi</button>
+    </div>
+  </div>
+</div>
+
+<!-- Popup: Odsustva mjeseca (prenesena + dodavanje) -->
+<div class="ods-bg" id="ODSM-BG" onclick="if(event.target===this)puOdsMjesecClose()">
+  <div class="ods-pop ods-pop-wide">
+    <div class="ods-pop-hdr"><div class="ods-pop-tit" id="ODSM-TIT">Odsustva mjeseca</div><button class="drill-close" onclick="puOdsMjesecClose()">✕</button></div>
+    <div class="ods-pop-body" id="ODSM-BODY"></div>
+    <div class="ods-pop-foot">
+      <button class="cbtn" onclick="puOdsMjesecClose()">Zatvori</button>
+      <button class="cbtn cbtn-primary" onclick="puOdsMjesecDodaj()">＋ Novo odsustvo</button>
+    </div>
+  </div>
+</div>
+
+<!-- Popup: Pregled rada (satnica svih vozača) -->
+<div class="ods-bg" id="PR-BG" onclick="if(event.target===this)puPregledRadaClose()">
+  <div class="ods-pop ods-pop-xwide">
+    <div class="ods-pop-hdr">
+      <div class="ods-pop-tit" id="PR-TIT">Pregled rada</div>
+      <input type="text" class="pr-search" id="PR-SEARCH" placeholder="Traži vozača…" oninput="puPregledRadaRender()">
+      <button class="drill-close" onclick="puPregledRadaClose()">✕</button>
+    </div>
+    <div class="pr-sub" id="PR-SUB"></div>
+    <div class="ods-pop-body" id="PR-BODY"></div>
+    <div class="ods-pop-foot">
+      <button class="cbtn" onclick="puPregledRadaClose()">Zatvori</button>
+    </div>
+  </div>
+</div>
+
+<!-- Popup: Pričuva — odabir vozača s podacima (telefon, pozivi, odaziv, sati) -->
+<div class="ods-bg" id="PRC-BG" onclick="if(event.target===this)puPricuvaClose()">
+  <div class="ods-pop ods-pop-xwide">
+    <div class="ods-pop-hdr">
+      <div class="ods-pop-tit" id="PRC-TIT">Odabir pričuve</div>
+      <input type="text" class="pr-search" id="PRC-SEARCH" placeholder="Traži vozača…" oninput="puPricuvaRender()">
+      <button class="drill-close" onclick="puPricuvaClose()">✕</button>
+    </div>
+    <div class="prc-sub" id="PRC-SUB"></div>
+    <div class="ods-pop-body" id="PRC-BODY"></div>
+    <div class="ods-pop-foot">
+      <button class="cbtn" onclick="puPricuvaIsprazni()">✕ Isprazni ćeliju</button>
+      <button class="cbtn" onclick="puPricuvaClose()">Zatvori</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// PROMETNI URED — Knjiga vožnje
+// ═══════════════════════════════════════════════════════════════════
+var TODAY = new Date(2026, 5, 12);   // 12.6.2026 (petak) — referentni datum
+
+// ─── Linije (iz knjige vožnje) ───
+// Prigradske: smjene 1 ili 2 (školske = 1)
+var PU_PRIGRAD = [
+  { id:"vir",        naziv:"VIR",              gbr:"568", smjene:2 },
+  { id:"privlaka",   naziv:"PRIVLAKA",         gbr:"411", smjene:2 },
+  { id:"vrsi",       naziv:"VRSI",             gbr:"409", smjene:2 },
+  { id:"nin",        naziv:"NIN - ŽERAVA",     gbr:"429", smjene:2 },
+  { id:"petrcane",   naziv:"PETRČANE",         gbr:"405", smjene:1 },
+  { id:"miletici",   naziv:"MILETIĆI",         gbr:"420", smjene:2 },
+  { id:"visocane",   naziv:"VISOČANE",         gbr:"410", smjene:2 },
+  { id:"knezevici",  naziv:"KNEŽEVIĆI",        gbr:"432", smjene:2 },
+  { id:"radovin",    naziv:"RADOVIN",          gbr:"404", smjene:2 },
+  { id:"rupalj",     naziv:"RUPALJ",           gbr:"412", smjene:1 },
+  { id:"kruscica",   naziv:"KRUŠČICA",         gbr:"562", smjene:2 },
+  { id:"mandalina",  naziv:"MANDALINA",        gbr:"401", smjene:1 },
+  { id:"jasenice",   naziv:"JASENICE",         gbr:"408", smjene:2 },
+  { id:"novigrad",   naziv:"NOVIGRAD",         gbr:"424", smjene:2 },
+  { id:"pridraga",   naziv:"PRIDRAGA",         gbr:"428", smjene:2 },
+  { id:"obrovac",    naziv:"OBROVAC",          gbr:"423", smjene:2 },
+  { id:"skabrnja",   naziv:"ŠKABRNJA",         gbr:"422", smjene:2 },
+  { id:"nadin",      naziv:"NADIN",            gbr:"414", smjene:2 },
+  { id:"polaca",     naziv:"POLAČA",           gbr:"425", smjene:2 },
+  { id:"gorica",     naziv:"GORICA",           gbr:"417", smjene:2 },
+  { id:"sikovo",     naziv:"SIKOVO",           gbr:"433", smjene:2 },
+  { id:"tinj",       naziv:"TINJ",             gbr:"421", smjene:1 },
+  { id:"biograd_r",  naziv:"BIOGRAD-RAŠTANE",  gbr:"415", smjene:1 },
+  { id:"biograd1",   naziv:"BIOGRAD I",        gbr:"426", smjene:2 },
+  { id:"biograd2",   naziv:"BIOGRAD II",       gbr:"427", smjene:2 },
+  { id:"pakostane1", naziv:"PAKOŠTANE I",      gbr:"434", smjene:2 },
+  { id:"pakostane2", naziv:"PAKOŠTANE II",     gbr:"567", smjene:1 },
+  { id:"vrana",      naziv:"VRANA",            gbr:"418", smjene:1 },
+  { id:"sk_maslenica", naziv:"ŠKOLA MASLENICA", gbr:"29",  smjene:1, skolska:true },
+  { id:"sk_posedarje", naziv:"ŠKOLA POSEDARJE", gbr:"416", smjene:1, skolska:true },
+  { id:"sk_razanac",   naziv:"ŠKOLA RAŽANAC",   gbr:"400", smjene:1, skolska:true },
+  { id:"sk_radovin",   naziv:"ŠKOLA RADOVIN",   gbr:"559", smjene:1, skolska:true },
+  { id:"sk_policnik",  naziv:"ŠKOLA POLIČNIK",  gbr:"508", smjene:1, skolska:true },
+  { id:"sk_pridraga",  naziv:"ŠKOLA PRIDRAGA",  gbr:"507", smjene:1, skolska:true },
+  { id:"sk_skabrnja",  naziv:"ŠKOLA ŠKABRNJA",  gbr:"407", smjene:1, skolska:true },
+  { id:"brbinj",     naziv:"BRBINJ",           gbr:"241", smjene:1, otok:true },
+  { id:"sali",       naziv:"SALI",             gbr:"403", smjene:1, otok:true },
+  { id:"iz",         naziv:"IŽ",               gbr:"251", smjene:1, otok:true }
+];
+
+// Gradske: 3 smjene (neke 2)
+var PU_GRAD = [
+  { id:"dracevac1",  naziv:"DRAČEVAC P. PETRIĆA I",  broj:"1",  gbr:"259",     smjene:3 },
+  { id:"dracevac2",  naziv:"DRAČEVAC P. PETRIĆA II", broj:"1",  gbr:"256",     smjene:2 },
+  { id:"arbanasi",   naziv:"ARBANASI",               broj:"2",  gbr:"260",     smjene:3 },
+  { id:"bilibrig1",  naziv:"BILI BRIG I",            broj:"3",  gbr:"263",     smjene:2 },
+  { id:"bilibrig2",  naziv:"BILI BRIG II",           broj:"3",  gbr:"302", smjene:2 },
+  { id:"crno",       naziv:"CRNO",                   broj:"4",  gbr:"304",     smjene:2 },
+  { id:"puntamika",  naziv:"PUNTAMIKA",              broj:"5",  gbr:"254", smjene:2 },
+  { id:"bokanjac1",  naziv:"BOKANJAC I",             broj:"7",  gbr:"261",     smjene:3 },
+  { id:"bokanjac2",  naziv:"BOKANJAC II",            broj:"7",  gbr:"257",     smjene:2 },
+  { id:"diklo1",     naziv:"DIKLO I",                broj:"8",  gbr:"252",     smjene:3 },
+  { id:"diklo2",     naziv:"DIKLO II",               broj:"8",  gbr:"258",     smjene:2 },
+  { id:"gazenica",   naziv:"GAŽENICA",               broj:"9",  gbr:"253", smjene:2 },
+  { id:"crvene",     naziv:"CRVENE KUĆE",            broj:"11", gbr:"303",     smjene:2 },
+  { id:"dezurni1",   naziv:"DEŽURNI I",              broj:"",   gbr:"301",     smjene:3 },
+  { id:"dezurni2",   naziv:"DEŽURNI II",             broj:"",   gbr:"305",     smjene:2 },
+  { id:"dezurni3",   naziv:"DEŽURNI III",            broj:"",   gbr:"300",     smjene:1 }
+];
+
+// ─── Templati vozača (imena iz knjige, normalizirana) ───
+// Prigrad: array [vozačI, vozačII] (1-smjenske: [vozač])
+// Grad: array [I, II, III] (2-smjenske: [I, II])
+var PU_TEMPLATE = {
+  radni: {
+    prigrad: {
+      vir:["TORLIJA","NEGOVAN"], privlaka:["MLAĐENOVIĆ","KOŽUL"], vrsi:["MARINKOVIĆ","D. VUKIĆ"],
+      nin:["BODIJA","SKAPOVIĆ"], petrcane:["TRKALOVIĆ"], miletici:["ŠUŠIĆ","Z. STANIĆ"],
+      visocane:["ĐUKIĆ","VOKSA"], knezevici:["N. STANIĆ","JOŠEVIĆ"], radovin:["ŽEKANOVIĆ","BOLONJA"],
+      rupalj:["ČAKARUN"], kruscica:["KRAHIĆ","I. MATIJAK"], mandalina:["ALIĆ"],
+      jasenice:["POLJAK","GUSTIĆ"], novigrad:["VIŠIAK","OŠTRIĆ"], pridraga:["DOBROTA","M. VISOKA"],
+      obrovac:["MRAZINA","MARČIĆ"], skabrnja:["KLJARIĆ","MRAŽOV"], nadin:["SKLADOM","MARAŽOV"],
+      polaca:["M. JOKJEVIĆ","M. MARINKOVIĆ"], gorica:["DMITROVIĆ","BIANIĆ"], sikovo:["GAMBIRAŽA","BIRKIĆ"],
+      tinj:["VOJEVIĆ"], biograd_r:["MIKULIĆ"], biograd1:["K. COLIĆ","M. GULIAN"],
+      biograd2:["M. MITKOVIĆ","J. ZRILIĆ"], pakostane1:["ERSTIĆ","ŽILIĆ"], pakostane2:["KRPETA"],
+      vrana:["S. MLAKOVIĆ"], sk_maslenica:["JEŽMAY"], sk_posedarje:["LERGIA"], sk_razanac:["MILOVAC"],
+      sk_radovin:["I. J. MATIJAK"], sk_policnik:["J. ZUBČIĆ"], sk_pridraga:["ČULINA"], sk_skabrnja:["ŠIMURINA"],
+      brbinj:["ZORIĆ"], sali:["RALJEVIĆ"], iz:["SUTLOVIĆ"]
+    },
+    grad: {
+      dracevac1:["D. MARKOVIĆ","DAKIĆ","MAHONIĆ"], dracevac2:["ŠTREPNJA","BRUSAR"],
+      arbanasi:["Š. ŽELIĆ","ARAŽOV","MATIJAK-PEŠA"], bilibrig1:["KVAKIĆ","ARTUKO"],
+      bilibrig2:["KLADOS","MALTEŽ"], crno:["PEDIĆ","DONATO"], puntamika:["D. BORISLAV","F. BORISLAV"],
+      bokanjac1:["ŠLJUKA","TJOKJEVIĆ","ŠILJEG"], bokanjac2:["HIVANIĆ","J. VUKIĆ"],
+      diklo1:["MILKOVIĆ","ŠESTAN","MILJAKOVIĆ"], diklo2:["Ž. VISOKA","K. VUKIĆ"],
+      gazenica:["ŠKARA","ČORKOVIĆ"], crvene:["ELEZ","KOTROMANOVIĆ"],
+      dezurni1:["G. MAKIĆ","M. MAKIĆ","MONTOJA"], dezurni2:["GUŽVAN","J. GULIAN"], dezurni3:["S. MIKULIĆ"]
+    }
+  },
+  subota: { prigrad: {}, grad: {} },
+  nedjelja: { prigrad: {}, grad: {} }
+};
+
+// Subota: kao radni dan ali bez školskih linija
+PU_PRIGRAD.forEach(function(l){
+  if(l.skolska) return;
+  PU_TEMPLATE.subota.prigrad[l.id] = (PU_TEMPLATE.radni.prigrad[l.id] || []).slice();
+});
+PU_GRAD.forEach(function(l){
+  var t = (PU_TEMPLATE.radni.grad[l.id] || []).slice();
+  PU_TEMPLATE.subota.grad[l.id] = t.slice(0, Math.min(t.length, 2));   // subota: max 2 smjene
+});
+// Nedjelja/blagdan: reducirano — samo glavne prigradske + dežurni i osnovne gradske, 1 smjena
+["vir","privlaka","nin","biograd1","pakostane1","obrovac","novigrad","brbinj","sali","iz"].forEach(function(id){
+  var t = PU_TEMPLATE.radni.prigrad[id];
+  if(t) PU_TEMPLATE.nedjelja.prigrad[id] = [t[0]];
+});
+["dracevac1","arbanasi","bokanjac1","diklo1","gazenica","dezurni1","dezurni2"].forEach(function(id){
+  var t = PU_TEMPLATE.radni.grad[id];
+  if(t) PU_TEMPLATE.nedjelja.grad[id] = t.slice(0, Math.min(t.length, 2));
+});
+
+// ─── Sati po liniji (trajanje smjene) ───
+// Većina prigradskih 7h; kratke (Vrana, Tinj, otoci, neke 1-smjenske) 5h; gradske i dežurni 8h.
+var PU_KRATKE_5H = { vrana:1, tinj:1, brbinj:1, sali:1, iz:1, pakostane2:1, biograd_r:1, mandalina:1, rupalj:1, petrcane:1 };
+PU_PRIGRAD.forEach(function(l){
+  if(l.skolska) l.sati = 4;             // školske linije — kraće (jutarnji + popodnevni prijevoz)
+  else if(PU_KRATKE_5H[l.id]) l.sati = 5;
+  else l.sati = 7;
+});
+PU_GRAD.forEach(function(l){
+  l.sati = 8;                            // gradske i dežurni — pune smjene
+});
+
+// ─── Grupe linija (po geografskom smjeru) ───
+// Linije u istom/sličnom smjeru. Kad fali vozač, pričuva iz iste grupe poznaje rutu.
+// Editabilno u tabu "Grupe linija". { id, naziv, linije:[linId...] }
+var PU_GRUPE = [
+  { id:"g_ninvir",   naziv:"Nin – Privlaka – Vir",        linije:["vir","privlaka","vrsi","nin","petrcane"] },
+  { id:"g_obrnov",   naziv:"Obrovac – Novigrad – Jasenice", linije:["jasenice","novigrad","pridraga","obrovac","radovin","kruscica"] },
+  { id:"g_benk",     naziv:"Benkovac – Polača – Škabrnja",  linije:["skabrnja","nadin","polaca","gorica","sikovo","miletici","visocane","knezevici"] },
+  { id:"g_biograd",  naziv:"Biograd – Pakoštane – Vrana",   linije:["biograd1","biograd2","biograd_r","pakostane1","pakostane2","vrana","tinj","rupalj","mandalina"] },
+  { id:"g_otoci",    naziv:"Otoci (Brbinj – Sali – Iž)",    linije:["brbinj","sali","iz"] },
+  { id:"g_skolske",  naziv:"Školske linije",                linije:["sk_maslenica","sk_posedarje","sk_razanac","sk_radovin","sk_policnik","sk_pridraga","sk_skabrnja"] },
+  { id:"g_grad", naziv:"Grad (sve gradske linije)", linije:["diklo1","diklo2","bilibrig1","bilibrig2","puntamika","bokanjac1","bokanjac2","gazenica","crvene","crno","dracevac1","dracevac2","arbanasi","dezurni1","dezurni2","dezurni3"] }
+];
+// Linija → grupa lookup
+function puGrupaZaLiniju(linId){
+  return PU_GRUPE.find(function(g){ return g.linije.indexOf(linId) !== -1; }) || null;
+}
+
+// ─── Povijest vožnje (mock): je li vozač vozio liniju u zadnjih godinu dana ───
+// Deterministički po hashu (vozač+linija). U produkciji iz baze izvršenja.
+// ─── Postavke rasporeda (pravila — algoritam će ih koristiti pri backend integraciji) ───
+var PU_POSTAVKE = {
+  odmorIzmeduSmjena: 12,        // h
+  maxPrekovremeniTjedan: 8,     // h
+  maxPrekovremeniMjesec: 20,    // h
+  zelePrekovremene: ["TORLIJA","ŠUŠIĆ","ELEZ","KVAKIĆ","D. MARKOVIĆ","ŠKARA"],   // popis vozača koji žele prekovremene
+  // Periodi prometovanja — datumski rasponi s režimom. planer može dodati vlastite.
+  // rezim: "skola" (sve linije voze) | "bezskole" (školske ne voze).
+  periodi: [
+    { id:"p_ljeto", naziv:"Ljetni red (bez škole)", od:"17.06", do:"06.09", rezim:"bezskole" },
+    { id:"p_zima",  naziv:"Zimski praznici",         od:"24.12", do:"07.01", rezim:"bezskole" }
+  ]
+};
+
+function puVozioLiniju(vozac, linId){
+  var h = puHash(vozac + "|" + linId);
+  return (h % 100) < 22;   // ~22% vozača "ima povijest" na danoj liniji
+}
+// Svi vozači koji su vozili bilo koju liniju iz grupe (zadnjih godinu)
+function puVozaciGrupe(grupa){
+  if(!grupa) return {};
+  var set = {};
+  PU_SVI_VOZACI.forEach(function(v){
+    for(var i = 0; i < grupa.linije.length; i++){
+      if(puVozioLiniju(v, grupa.linije[i])){ set[v] = 1; break; }
+    }
+  });
+  return set;
+}
+
+// ─── Mock podaci o vozaču za pričuva-popup (telefon, pozivi na zamjenu, odaziv) ───
+// U produkciji: iz baze ljudskih resursa + evidencije poziva. Ovdje deterministički hash.
+// PU_POZIVI = runtime override (✓/✗ klikovi planera) — pamti se kroz sesiju.
+var PU_POZIVI = {};   // ime → { pozvan, odazvan }
+function puVozacInfo(ime){
+  var h = puHash(ime + "|info");
+  var pref = ["091","098","099","095"][h % 4];
+  var br = String(100000 + (h % 900000));
+  var tel = pref + " " + br.slice(0,3) + " " + br.slice(3);
+  var basePozvan = 2 + (h % 18);
+  var baseOdazvan = Math.round(basePozvan * (0.45 + (h % 50) / 100));
+  var ov = PU_POZIVI[ime] || { pozvan: 0, odazvan: 0 };
+  var pozvan = basePozvan + ov.pozvan;
+  var odazvan = baseOdazvan + ov.odazvan;
+  var pct = pozvan > 0 ? Math.round(odazvan / pozvan * 100) : 0;
+  return { tel: tel, pozvan: pozvan, odazvan: odazvan, pct: pct };
+}
+function puVozacSatiMjesec(ime){
+  var m = puMjesecMetrika();
+  return (m.satiPoVozacu && m.satiPoVozacu[ime]) || 0;
+}
+function puPozivRegistriraj(ime, doso){
+  if(!PU_POZIVI[ime]) PU_POZIVI[ime] = { pozvan: 0, odazvan: 0 };
+  PU_POZIVI[ime].pozvan += 1;
+  if(doso) PU_POZIVI[ime].odazvan += 1;
+}
+
+// Rezervni vozači (zamjene za slobodne dane) — round-robin dodjela po danu
+var PU_REZERVA = ["BARIČEVIĆ","KNEZ","PERICA","LONGIN","ŠARLIJA","MAŠINA","BAJLO","VRSALJKO","ŽUNIĆ","KALMETA","PEDIŠIĆ","GRBIĆ","ZRILIĆ","BAKMAZ"];
+
+// Dežurni prometnici i vozači kombija (rotiraju po danima)
+var PU_PROMETNICI = ["ZAĆA","SMOLIĆ R.","ŽAJA","B. LAĆA","A. BRKLJAČA"];
+var PU_KOMBIJI = ["ŠTEVANJA","REŽAN","BURČUL","SLAMA"];
+
+// ─── Pohrana dnevnih unosa ───
+// PU_DATA["2026-06-12"] = { prigrad:{vir:["A","B"]}, grad:{...}, odsutni:[...], invalidi:[{sat,naruc,povr}], 
+//                           prometnici:["",""], kombiji:["",""], izvanredne:[{sat,naruc,rel,gbr,voz,povr}], 
+//                           ugovoreni:[...], obavijesti:"" }
+var PU_DATA = {};
+
+// ─── Blagdani HR 2026 ───
+function puBlagdani(god){
+  if(god === 2026) return ["1-1","1-6","4-5","4-6","5-1","6-4","6-22","8-5","8-15","11-1","11-18","12-25","12-26"];
+  if(god === 2027) return ["1-1","1-6","3-28","3-29","5-1","5-27","6-22","8-5","8-15","11-1","11-18","12-25","12-26"];
+  return ["1-1","1-6","5-1","6-22","8-5","8-15","11-1","11-18","12-25","12-26"];
+}
+function puIsBlagdan(d){
+  return puBlagdani(d.getFullYear()).indexOf((d.getMonth()+1) + "-" + d.getDate()) !== -1;
+}
+function puTipDana(d){
+  if(d.getDay() === 0 || puIsBlagdan(d)) return "nedjelja";
+  if(d.getDay() === 6) return "subota";
+  return "radni";
+}
+var PU_DANI = ["NEDJELJA","PONEDJELJAK","UTORAK","SRIJEDA","ČETVRTAK","PETAK","SUBOTA"];
+var PU_MJESECI = ["Siječanj","Veljača","Ožujak","Travanj","Svibanj","Lipanj","Srpanj","Kolovoz","Rujan","Listopad","Studeni","Prosinac"];
+
+function puKey(d){ return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
+function puFmtD(d){ return String(d.getDate()).padStart(2,"0") + "." + String(d.getMonth()+1).padStart(2,"0") + "." + d.getFullYear() + "."; }
+function puEsc(s){ return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+// ─── ISO tjedan (za rotacije) ───
+function puTjedanBroj(d){
+  var t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  var dayNum = (t.getUTCDay() + 6) % 7;
+  t.setUTCDate(t.getUTCDate() - dayNum + 3);
+  var firstThursday = t.getTime();
+  t.setUTCMonth(0, 1);
+  if(t.getUTCDay() !== 4) t.setUTCMonth(0, 1 + ((4 - t.getUTCDay()) + 7) % 7);
+  return 1 + Math.ceil((firstThursday - t.getTime()) / 604800000) + d.getFullYear() * 53;
+}
+
+// Hash imena (za slobodan dan rotaciju)
+function puHash(s){
+  var h = 0;
+  for(var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+// Slobodan dan vozača za dati tjedan: rotira kroz Pon-Sub (0=Pon..5=Sub); nedjelja je ionako reducirana
+function puSlobodanDan(vozac, tjedan){
+  return (puHash(vozac) + tjedan) % 6;   // 0..5 → Pon..Sub
+}
+// ─── Nedjeljni vozači — samo ONI dobivaju slobodan dan tijekom tjedna ───
+// Vozači koji NE voze nedjeljom već imaju svoj odmor (nedjelju) → rade Pon–Sub = 6 dana, bez praznina.
+// Vozači iz nedjeljnog templata rade i 7. dan → moraju dobiti 1 slobodan dan (Pon–Sub, rotira tjedno).
+var PU_NED_SET = {};
+function puRebuildNedSet(){
+  PU_NED_SET = {};
+  var tpl = PU_TEMPLATE.nedjelja;
+  Object.keys(tpl.prigrad).forEach(function(id){ (tpl.prigrad[id]||[]).forEach(function(v){ if(v) PU_NED_SET[v] = 1; }); });
+  Object.keys(tpl.grad).forEach(function(id){ (tpl.grad[id]||[]).forEach(function(v){ if(v) PU_NED_SET[v] = 1; }); });
+}
+puRebuildNedSet();
+
+// Je li vozač slobodan na taj dan?
+function puJeSlobodan(vozac, d){
+  if(!PU_NED_SET[vozac]) return false;   // ne vozi nedjeljom → nedjelja mu je odmor, bez praznina
+  var dow = (d.getDay() + 6) % 7;        // 0=Pon .. 6=Ned
+  if(dow === 6) return false;            // nedjelje rješava reducirani templat
+  return puSlobodanDan(vozac, puTjedanBroj(d)) === dow;
+}
+// Zamjenski vozač — VIŠE SE NE DODJELJUJE AUTOMATSKI.
+// Slobodan dan ⇒ prazna ćelija s pulsirajućim alarmom; prometnik bira pričuvu iz dropdowna.
+var PU_ZAMJENA_CTR = 0;
+
+// ─── Plan vožnje: Škola / Bez škole ───
+// Auto-detekcija: ljetni praznici i zimski praznici → "bezskole", inače "skola".
+// Prometnik može ručno promijeniti klikom na badge (sprema se u dan.planVoznje).
+function puPlanVoznjeAuto(dt){
+  // Provjeri definirane periode prometovanja (iz Postavki). Format datuma: "DD.MM".
+  var mmdd = String(dt.getDate()).padStart(2,"0") + "." + String(dt.getMonth()+1).padStart(2,"0");
+  var periodi = (PU_POSTAVKE.periodi || []);
+  for(var i = 0; i < periodi.length; i++){
+    var p = periodi[i];
+    if(puDatumURasponu(mmdd, p.od, p.do)) return p.rezim;
+  }
+  return "skola";   // izvan svih perioda — redovni red s nastavom
+}
+// Je li datum (DD.MM) unutar raspona (uključuje prijelaz preko nove godine, npr. 24.12–07.01)
+function puDatumURasponu(mmdd, od, doo){
+  function toNum(s){ var p = String(s).split("."); return parseInt(p[1],10)*100 + parseInt(p[0],10); }
+  var v = toNum(mmdd), a = toNum(od), b = toNum(doo);
+  if(a <= b) return v >= a && v <= b;
+  return v >= a || v <= b;   // raspon preko nove godine
+}
+
+// ─── Svi vozači (za dropdown izbor) ───
+// ─── Lista svih GBR-ova (za dropdown u tablicama) ───
+var PU_GBR_LIST = (function(){
+  var set = {};
+  PU_PRIGRAD.forEach(function(l){ String(l.gbr).split("/").forEach(function(g){ if(g) set[g.trim()] = 1; }); });
+  PU_GRAD.forEach(function(l){ if(l.gbr) String(l.gbr).split("/").forEach(function(g){ if(g) set[g.trim()] = 1; }); });
+  ["402","406","430","431","560","561"].forEach(function(g){ set[g] = 1; });   // rezervna vozila
+  return Object.keys(set).sort(function(a,b){ return parseInt(a,10) - parseInt(b,10); });
+})();
+// Posebne oznake za polaske Zr. luka (dežurna vozila)
+var PU_ZRL_OZNAKE = ["301 DEŽ", "305 DEŽ II", "DEŽ III"];
+
+// Dežurstva za Zr. luku — odvojena stavka od GBR-a (normalizirano za bazu)
+var PU_DEZ_LIST = ["DEŽURNI I", "DEŽURNI II", "DEŽ III"];
+// Auto-veza GBR ↔ Dežurni (iz gradskog rasporeda: DEŽURNI I = 301, DEŽURNI II = 305).
+// Samo PRIJEDLOG — popunjava se ako je drugo polje prazno, ručna promjena uvijek moguća.
+var PU_GBR_DEZ = { "301":"DEŽURNI I", "305":"DEŽURNI II" };
+var PU_DEZ_GBR = { "DEŽURNI I":"301", "DEŽURNI II":"305" };
+// Povratak iz Zr. luke: polazak iz Zadra + 25 min (provjereno na papiru: 6:35→7:00, 21:35→22:00)
+var PU_ZRL_OFFSET_MIN = 25;
+
+// Normalizacija sata u h:mm ("4" → "4:00", "0400"/"400" → "4:00", "16:5" → "16:05")
+function puNormSat(txt){
+  txt = String(txt || "").trim().replace(/[.,]/g, ":");
+  if(!txt) return "";
+  var m;
+  var bezSep = txt.match(/^(\d{3,4})$/);
+  if(bezSep){
+    // "400" → 4:00, "1635" → 16:35
+    var raw = bezSep[1];
+    m = [null, raw.slice(0, raw.length-2), raw.slice(-2)];
+  } else {
+    m = txt.match(/^(\d{1,2}):?(\d{0,2})$/);
+    if(!m) return txt;   // nepoznat format — ostavi kako je
+  }
+  var h = parseInt(m[1], 10), min = m[2] ? parseInt(m[2], 10) : 0;
+  if(isNaN(h) || h > 23 || isNaN(min) || min > 59) return txt;
+  return h + ":" + String(min).padStart(2, "0");
+}
+// Sort ključ — sati iza ponoći (< 3:00) tretiraju se kao nastavak dana (24+)
+function puSatKey(sat){
+  var m = String(sat || "").match(/^(\d{1,2}):(\d{2})$/);
+  if(!m) return 99999;   // prazni/neispravni na kraj
+  var k = parseInt(m[1],10) * 60 + parseInt(m[2],10);
+  if(parseInt(m[1],10) < 3) k += 1440;
+  return k;
+}
+// Sat + N minuta
+function puSatPlus(sat, min){
+  var m = String(sat || "").match(/^(\d{1,2}):(\d{2})$/);
+  if(!m) return "";
+  var t = parseInt(m[1],10) * 60 + parseInt(m[2],10) + min;
+  t = ((t % 1440) + 1440) % 1440;
+  return Math.floor(t/60) + ":" + String(t%60).padStart(2,"0");
+}
+// Sortiranje zrl tablice po satu (prazni redovi ostaju na dnu)
+function puZrlSort(arr){
+  arr.sort(function(a, b){ return puSatKey(a && a.sat) - puSatKey(b && b.sat); });
+}
+// Migracija starog formata {voz:"301 DEŽ"} → {gbr:"301", dez:"DEŽURNI I"}
+function puZrlMigriraj(arr){
+  (arr || []).forEach(function(z){
+    if(!z || !z.voz || z.gbr || z.dez) return;
+    var v = z.voz.trim();
+    if(v === "DEŽ III"){ z.dez = "DEŽ III"; }
+    else {
+      var m = v.match(/^(\d+)\s*(.*)$/);
+      if(m){ z.gbr = m[1]; z.dez = PU_GBR_DEZ[m[1]] || (m[2] ? m[2] : ""); }
+      else z.dez = v;
+    }
+    delete z.voz;
+  });
+}
+
+// ─── Stari godišnji (rok 30.06.) — deterministički mock, kao u Servis dashboardu ───
+// Vraća broj preostalih dana starog GO za vozača (0 ako ga je iskoristio).
+// Distribucija: 50% nema starih, 28% 1-4, 15% 5-7, 7% 10-12.
+var PU_GO_ROK = new Date(2026, 5, 30);      // 30.06.2026
+var PU_GO_OPASNA_FAKTOR = 3;                // opasna zona: daniDoRoka < 3 × stariGO
+function puStariGO(vozac){
+  var h = puHash(vozac), b = h % 100;
+  if(b < 50) return 0;
+  if(b < 78) return 1 + (h % 4);
+  if(b < 93) return 5 + (h % 3);
+  return 10 + (h % 3);
+}
+function puGoDaniDoRoka(){
+  return Math.ceil((PU_GO_ROK - TODAY) / 86400000);
+}
+function puGoOpasna(stariGO){
+  if(stariGO <= 0) return false;
+  var d = puGoDaniDoRoka();
+  return d >= 0 && d < PU_GO_OPASNA_FAKTOR * stariGO;
+}
+
+var PU_SVI_VOZACI = (function(){
+  var set = {};
+  ["radni","subota","nedjelja"].forEach(function(tip){
+    var tpl = PU_TEMPLATE[tip];
+    Object.keys(tpl.prigrad).forEach(function(id){ (tpl.prigrad[id]||[]).forEach(function(v){ if(v) set[v] = 1; }); });
+    Object.keys(tpl.grad).forEach(function(id){ (tpl.grad[id]||[]).forEach(function(v){ if(v) set[v] = 1; }); });
+  });
+  PU_REZERVA.forEach(function(v){ set[v] = 1; });
+  return Object.keys(set).sort();
+})();
+
+// Epoch dan (za dnevnu rotaciju gradskih)
+function puEpochDan(dt){
+  return Math.floor(new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()).getTime() / 86400000);
+}
+
+
+// ═══════════════════════════════════════════════════════════════════
+// STATE + NAVIGACIJA
+// ═══════════════════════════════════════════════════════════════════
+var PU_MJESEC = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1);
+var PU_DAN = null;        // trenutno otvoreni dan (Date)
+var PU_TPL_TIP = "radni";
+var PU_VIEW = "kalendar";
+var PU_RP = "P";          // prikaz dana: "P" = plan (plain) | "R" = realni plan (stvarni vozači)
+var PU_CONF_CB = null;
+
+function puSwitch(view){
+  PU_VIEW = view;
+  document.getElementById("VIEW-KALENDAR").style.display = view === "kalendar" ? "" : "none";
+  document.getElementById("VIEW-DAN").style.display = view === "dan" ? "" : "none";
+  document.getElementById("VIEW-TEMPLATI").style.display = view === "templati" ? "" : "none";
+  document.getElementById("VIEW-GRUPE").style.display = view === "grupe" ? "" : "none";
+  document.getElementById("VIEW-POSTAVKE").style.display = view === "postavke" ? "" : "none";
+  document.getElementById("NAV-KAL").classList.toggle("on", view === "kalendar" || view === "dan");
+  document.getElementById("NAV-TPL").classList.toggle("on", view === "templati");
+  document.getElementById("NAV-GRP").classList.toggle("on", view === "grupe");
+  document.getElementById("NAV-SET").classList.toggle("on", view === "postavke");
+  var tit = { kalendar:"Prometni ured — Knjiga vožnje", dan:"Prometni ured — Knjiga vožnje — dnevni list", templati:"Prometni ured — Predlošci rasporeda", grupe:"Prometni ured — Grupe linija", postavke:"Prometni ured — Postavke rasporeda" }[view];
+  document.getElementById("HDR-TIT").textContent = tit;
+  if(view === "kalendar") renderKalendar();
+  if(view === "templati") renderTemplati();
+  if(view === "grupe") renderGrupe();
+  if(view === "postavke") renderPostavke();
+}
+
+function puToggleTheme(){
+  var html = document.documentElement;
+  var cur = html.getAttribute("data-theme");
+  html.setAttribute("data-theme", cur === "light" ? "dark" : "light");
+  document.getElementById("THEME-LBL").textContent = cur === "light" ? "Dark" : "Light";
+}
+
+function showToast(msg, tip){
+  var w = document.getElementById("TOAST-WRAP");
+  var t = document.createElement("div");
+  t.className = "toast " + (tip || "");
+  t.textContent = msg;
+  w.appendChild(t);
+  setTimeout(function(){ t.style.opacity = "0"; t.style.transition = "opacity .3s"; setTimeout(function(){ t.remove(); }, 320); }, 2600);
+}
+
+function puConfOpen(tit, msg, okLbl, cb){
+  document.getElementById("CONF-TIT").textContent = tit;
+  document.getElementById("CONF-MSG").innerHTML = msg;
+  document.getElementById("CONF-OK").textContent = okLbl || "Nastavi";
+  PU_CONF_CB = cb;
+  document.getElementById("CONF-BG").classList.add("on");
+}
+function puConfClose(){ document.getElementById("CONF-BG").classList.remove("on"); PU_CONF_CB = null; }
+function puConfApply(){ var cb = PU_CONF_CB; puConfClose(); if(cb) cb(); }
+
+// ═══════════════════════════════════════════════════════════════════
+// KALENDAR
+// ═══════════════════════════════════════════════════════════════════
+function puMjesec(delta){
+  PU_MJESEC = new Date(PU_MJESEC.getFullYear(), PU_MJESEC.getMonth() + delta, 1);
+  renderKalendar();
+}
+
+function renderKalendar(){
+  var god = PU_MJESEC.getFullYear(), mj = PU_MJESEC.getMonth();
+  document.getElementById("KAL-MO-TIT").textContent = PU_MJESECI[mj] + " " + god + ".";
+  document.getElementById("HDR-SUB").textContent = PU_DANI[TODAY.getDay()].charAt(0) + PU_DANI[TODAY.getDay()].slice(1).toLowerCase() + ", " + puFmtD(TODAY);
+
+  var grid = document.getElementById("KAL-GRID");
+  var h = "";
+  ["PON","UTO","SRI","ČET","PET","SUB","NED"].forEach(function(d){ h += '<div class="kal-dow">' + d + '</div>'; });
+
+  var first = new Date(god, mj, 1);
+  var startDow = (first.getDay() + 6) % 7;   // 0=Pon
+  var lastDay = new Date(god, mj+1, 0).getDate();
+  var prevLast = new Date(god, mj, 0).getDate();
+
+  // Prethodni mjesec (sivo)
+  for(var i = startDow - 1; i >= 0; i--){
+    h += '<div class="kal-day kal-day-out"><div class="kal-day-num">' + (prevLast - i) + '</div></div>';
+  }
+  // Dani mjeseca
+  for(var d = 1; d <= lastDay; d++){
+    var dt = new Date(god, mj, d);
+    var key = puKey(dt);
+    var tip = puTipDana(dt);
+    var filled = !!PU_DATA[key];
+    var isToday = dt.getTime() === new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate()).getTime();
+    var tipLbl = tip === "nedjelja" ? (puIsBlagdan(dt) ? "Blagdan" : "Nedjelja") : (tip === "subota" ? "Subota" : "Radni dan");
+    var cls = "kal-day" + (tip === "nedjelja" ? " kal-day-nd" : "") + (filled ? " kal-day-filled" : " kal-day-empty") + (isToday ? " kal-day-today" : "");
+    h += '<div class="' + cls + '" onclick="puOpenDan(' + god + ',' + mj + ',' + d + ')">'
+       + '<div class="kal-day-num">' + d + '.</div>'
+       + '<div class="kal-day-sub">' + tipLbl + '</div>'
+       + '<div class="kal-day-status"><span class="kal-status-dot"></span>' + (filled ? "Popunjeno" : "Prazno") + '</div>'
+       + '</div>';
+  }
+  // Sljedeći mjesec (sivo, do kraja retka)
+  var total = startDow + lastDay;
+  var rem = (7 - (total % 7)) % 7;
+  for(var n = 1; n <= rem; n++){
+    h += '<div class="kal-day kal-day-out"><div class="kal-day-num">' + n + '</div></div>';
+  }
+  grid.innerHTML = h;
+
+  renderKpi();   // pregled metrika ispod kalendara (ako je mjesec popunjen)
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// METRIKA MJESECA — izračun KPI-ja iz popunjenih dana
+// ═══════════════════════════════════════════════════════════════════
+// Sati po liniji × broj dana; fond = 40h/tjedan × broj tjedana u mjesecu.
+// Prekovremeni = sati preko fonda, po vozaču.
+function puMjesecMetrika(){
+  var god = PU_MJESEC.getFullYear(), mj = PU_MJESEC.getMonth();
+  var lastDay = new Date(god, mj+1, 0).getDate();
+
+  var m = {
+    danaPopunjeno: 0, danaUkupno: lastDay,
+    nepopunjeno: 0, popunjeneSmjene: 0, danaSManjkom: 0, pricuveAngazirane: 0,
+    ukupnoSati: 0,
+    satiPoVozacu: {},      // ime → sati
+    odsustva: { GO:{}, B:{}, PD:{}, ND:{}, RD:{}, SD:{} },  // tip → set imena
+    odsustvaDani: { GO:0, B:0, PD:0, ND:0, RD:0, SD:0 }
+  };
+  var rezervaSet = {}; PU_REZERVA.forEach(function(v){ rezervaSet[v] = 1; });
+
+  // Linija → sati lookup
+  var linSati = {};
+  PU_PRIGRAD.forEach(function(l){ linSati["prigrad:"+l.id] = l.sati; });
+  PU_GRAD.forEach(function(l){ linSati["grad:"+l.id] = l.sati; });
+
+  for(var d = 1; d <= lastDay; d++){
+    var key = puKey(new Date(god, mj, d));
+    var dan = PU_DATA[key];
+    if(!dan) continue;
+    m.danaPopunjeno++;
+    var danImaManjak = false;
+
+    ["prigrad","grad"].forEach(function(sek){
+      Object.keys(dan[sek] || {}).forEach(function(linId){
+        var sati = linSati[sek+":"+linId] || 7;
+        (dan[sek][linId] || []).forEach(function(v){
+          if(!v) return;
+          if(v.prazno || !v.ime){ m.nepopunjeno++; danImaManjak = true; return; }
+          m.popunjeneSmjene++;
+          m.ukupnoSati += sati;
+          m.satiPoVozacu[v.ime] = (m.satiPoVozacu[v.ime] || 0) + sati;
+          if(v.pricuva) m.pricuveAngazirane++;   // popunjena praznina = uskakanje
+        });
+      });
+    });
+    if(danImaManjak) m.danaSManjkom++;
+
+    // Odsustva iz dana
+    (dan.odsutni || []).forEach(function(o){
+      if(!o || !o.tip) return;
+      if(!m.odsustva[o.tip]) { m.odsustva[o.tip] = {}; m.odsustvaDani[o.tip] = 0; }
+      m.odsustva[o.tip][o.ime] = 1;
+      m.odsustvaDani[o.tip]++;
+    });
+  }
+
+  // Fond sati: 40h/tjedan × (radni dani u mjesecu / 5)... preciznije: 8h × radni dani (Pon-Pet)
+  var radniDana = 0;
+  for(var dd = 1; dd <= lastDay; dd++){
+    var w = new Date(god, mj, dd).getDay();
+    if(w !== 0 && w !== 6) radniDana++;
+  }
+  m.fondSati = radniDana * 8;   // 40h/tjedan ≈ 8h × radni dan
+
+  // Prekovremeni + ispod/iznad fonda po vozaču
+  m.brojVozaca = Object.keys(m.satiPoVozacu).length;
+  m.prekovremeniUkupno = 0;
+  m.iznadFonda = []; m.ispodFonda = [];
+  Object.keys(m.satiPoVozacu).forEach(function(ime){
+    var sati = m.satiPoVozacu[ime];
+    var razlika = sati - m.fondSati;
+    if(razlika > 0){ m.prekovremeniUkupno += razlika; m.iznadFonda.push({ ime:ime, sati:sati, razlika:razlika }); }
+    else if(razlika < 0){ m.ispodFonda.push({ ime:ime, sati:sati, razlika:razlika }); }
+  });
+  m.iznadFonda.sort(function(a,b){ return b.razlika - a.razlika; });
+  m.ispodFonda.sort(function(a,b){ return a.razlika - b.razlika; });   // najveći manjak prvi
+  m.prosjekSati = m.brojVozaca ? Math.round(m.ukupnoSati / m.brojVozaca) : 0;
+
+  // Stari godišnji — vozači s preostalim starim GO + opasna zona
+  m.stariGO = [];          // [{ ime, dani, opasna }]
+  m.stariGOopasna = 0;
+  PU_SVI_VOZACI.forEach(function(ime){
+    var sg = puStariGO(ime);
+    if(sg > 0){
+      var opasna = puGoOpasna(sg);
+      m.stariGO.push({ ime:ime, dani:sg, opasna:opasna });
+      if(opasna) m.stariGOopasna++;
+    }
+  });
+  m.stariGO.sort(function(a,b){
+    if(a.opasna !== b.opasna) return a.opasna ? -1 : 1;   // opasni prvi
+    return b.dani - a.dani;                                // pa po danima
+  });
+  m.goDaniDoRoka = puGoDaniDoRoka();
+
+  // Iskoristivost kapaciteta = potreba (sati linija) / kapacitet (svi vozači × fond)
+  m.brojSvihVozaca = PU_SVI_VOZACI.length;
+  m.kapacitetSati = m.brojSvihVozaca * m.fondSati;
+  m.iskoristivost = m.kapacitetSati > 0 ? (m.ukupnoSati / m.kapacitetSati * 100) : 0;
+
+  // ─── Postoci za KPI kartice (kontekst uz apsolutne brojke) ───
+  m.ukupneSmjene = m.popunjeneSmjene + m.nepopunjeno;
+  m.pctNepopunjeno   = m.ukupneSmjene > 0  ? (m.nepopunjeno / m.ukupneSmjene * 100) : 0;
+  m.pctStariGO       = m.brojSvihVozaca > 0 ? (m.stariGO.length / m.brojSvihVozaca * 100) : 0;
+  m.pctPricuve       = m.popunjeneSmjene > 0 ? (m.pricuveAngazirane / m.popunjeneSmjene * 100) : 0;
+  m.pctPrekovremeni  = m.ukupnoSati > 0    ? (m.prekovremeniUkupno / m.ukupnoSati * 100) : 0;
+  m.pctIspodFonda    = m.brojSvihVozaca > 0 ? (m.ispodFonda.length / m.brojSvihVozaca * 100) : 0;
+
+  return m;
+}
+// GRADSKE (3 smjene): DNEVNA rotacija II→I→III (zbog 12h odmora između smjena).
+//   Formula: vozac(smjena s, dan d) = tpl[(s + epochDan) % n]
+//   → vozač u smjeni II danas, sutra je u I, prekosutra u III.
+// PRIGRADSKE (2 smjene): TJEDNA rotacija — tjedan A: [v1=I, v2=II], tjedan B: obrnuto.
+//   Formula: vozac(smjena s, tjedan w) = tpl[(s + w) % n]
+// 6+1: svaki vozač ima 1 slobodan dan tjedno (rotira Pon–Sub). Taj dan ćelija ostaje
+//   PRAZNA s pulsirajućim alarmom — prometnik ručno bira pričuvu iz dropdowna.
+// PLAN VOŽNJE: "skola" / "bezskole" — školske linije voze samo kad je "skola".
+// ─── Mock baza odsutnosti ───
+// U produkciji dolazi iz Kadrovske/Plan rada. Ovdje deterministički mock po hashu imena.
+// Tipovi: GO (godišnji), B (bolovanje), PD (plaćeni dopust), ND (neplaćeni), RD (rodiljni).
+// Vraća { tip, dani } ili null.
+function puOdsutnost(vozac, dt){
+  var h = puHash(vozac);
+  var god = dt.getFullYear();
+  var doy = Math.floor((dt - new Date(god,0,1)) / 86400000);
+
+  // Rodiljni — dugotrajan, vrlo rijedak (~0.5% vozača)
+  if((h % 200) < 1){
+    var rdStart = (h % 200);
+    var rdLen = 150 + (h % 215);
+    if(doy >= rdStart && doy < rdStart + rdLen) return { tip:"RD", dani: rdStart + rdLen - doy };
+  }
+  // Godišnji — 11-24 dana, raspoređen kroz godinu
+  var goStart = (h % 360);
+  var goLen = 11 + (h % 14);
+  if(doy >= goStart && doy < goStart + goLen) return { tip:"GO", dani: goStart + goLen - doy };
+  // Bolovanje — kraći, ~22% vozača ima termin u godini, 3-10 dana
+  var boStart = ((h >> 8) % 360);
+  var boLen = 3 + ((h >> 4) % 8);
+  if((h % 100) < 22 && doy >= boStart && doy < boStart + boLen) return { tip:"B", dani: boStart + boLen - doy };
+  // Plaćeni dopust — kratak (1-2 dana), ~10% vozača
+  var pdStart = ((h >> 5) % 364);
+  var pdLen = 1 + ((h >> 2) % 2);
+  if((h % 100) < 10 && doy >= pdStart && doy < pdStart + pdLen) return { tip:"PD", dani: pdStart + pdLen - doy };
+  // Neplaćeni dopust — rijedak (~3%), 2-5 dana
+  var ndStart = ((h >> 11) % 362);
+  var ndLen = 2 + ((h >> 6) % 4);
+  if((h % 100) < 3 && doy >= ndStart && doy < ndStart + ndLen) return { tip:"ND", dani: ndStart + ndLen - doy };
+  return null;
+}
+
+function puGenerirajDan(dt){
+  var tip = puTipDana(dt);
+  var tpl = PU_TEMPLATE[tip];
+  var w = puTjedanBroj(dt);
+  var ed = puEpochDan(dt);
+  var plan = puPlanVoznjeAuto(dt);
+  var dan = { prigrad:{}, grad:{}, odsutni:[], invalidi:[], prometnici:["",""], kombiji:["",""], izvanredne:[], ugovoreni:[], obavijesti:"", planVoznje: plan, zrlOdlasci:[], zrlDolasci:[], stvarni:{} };
+
+  // Tko je danas odsutan (GO/B/PD/ND/RD iz baze) — njihove smjene postaju praznina
+  var odsutanTip = {};   // ime → tip
+  var sviVozTpl = {};
+  Object.keys(tpl.prigrad).forEach(function(id){ (tpl.prigrad[id]||[]).forEach(function(v){ if(v) sviVozTpl[v] = 1; }); });
+  Object.keys(tpl.grad).forEach(function(id){ (tpl.grad[id]||[]).forEach(function(v){ if(v) sviVozTpl[v] = 1; }); });
+  Object.keys(sviVozTpl).forEach(function(v){
+    var o = puOdsutnost(v, dt);
+    if(o) odsutanTip[v] = o;
+  });
+
+  // Vozač NEDOSTUPAN za raspored (stvara prazninu) samo kod PRIVREMENIH izostanaka (GO/B/PD/ND).
+  // SD (slobodni dan) i RD (rodiljni — dugotrajan) NE stvaraju dnevnu prazninu:
+  //   SD pokrije kolega s linije; RD je trajno zamijenjen drugim vozačem.
+  function nedostupan(ime){
+    var o = odsutanTip[ime];
+    return o && o.tip !== "RD";
+  }
+
+  // Prigrad — TJEDNA rotacija
+  PU_PRIGRAD.forEach(function(l){
+    var t = tpl.prigrad[l.id];
+    if(!t || t.length === 0){ dan.prigrad[l.id] = []; return; }
+    if(l.skolska && plan === "bezskole"){ dan.prigrad[l.id] = []; return; }
+    var voz = [];
+    for(var s = 0; s < t.length; s++){
+      var ime = t.length >= 2 ? t[(s + w) % t.length] : t[s];
+      if(nedostupan(ime)) voz.push({ ime:"", prazno:true });
+      else voz.push({ ime: ime });
+    }
+    dan.prigrad[l.id] = voz;
+    if(voz.length >= 2){
+      var p0 = voz[0].prazno, p1 = voz[1].prazno;
+      if(!p0 && !p1){
+        // Obje popunjene → auto-stvarni po hashu (neformalna zamjena, jedan vozi cijeli dan)
+        dan.stvarni[l.id] = puHash(l.id + "|" + puKey(dt)) % 2;
+      } else if(p0 !== p1){
+        // Jedan fali → praznina "⚠ pričuva" + prekriženi (slobodni) partner koji "vadi krumpire".
+        // Partner je slobodan i prvi se nudi da se vrati na posao i pokrije prazninu.
+        var prisIdx = p0 ? 1 : 0;
+        var prazIdx = p0 ? 0 : 1;
+        voz[prisIdx].slobodan = true;       // prekrižen — slobodan, kandidat za povratak
+        voz[prisIdx].parLin = l.id;
+        voz[prazIdx].parPraznina = true;    // praznina je dio pričuva-para (partner slobodan)
+        // bez dan.stvarni — nema ★, ovo je OTVORENA situacija koju planer rješava
+      }
+    }
+  });
+
+  // Grad — DNEVNA rotacija II→I→III
+  PU_GRAD.forEach(function(l){
+    var t = tpl.grad[l.id];
+    if(!t || t.length === 0){ dan.grad[l.id] = []; return; }
+    var voz = [];
+    for(var s = 0; s < t.length; s++){
+      var ime = t.length >= 2 ? t[(s + ed) % t.length] : t[s];
+      if(nedostupan(ime)) voz.push({ ime:"", prazno:true });
+      else voz.push({ ime: ime });
+    }
+    dan.grad[l.id] = voz;
+  });
+
+  // Dežurni prometnici (rotacija po danu u godini)
+  var doy = Math.floor((dt - new Date(dt.getFullYear(),0,1)) / 86400000);
+  dan.prometnici = [ PU_PROMETNICI[doy % PU_PROMETNICI.length], PU_PROMETNICI[(doy+1) % PU_PROMETNICI.length] ];
+  dan.kombiji    = [ PU_KOMBIJI[doy % PU_KOMBIJI.length],       PU_KOMBIJI[(doy+1) % PU_KOMBIJI.length] ];
+
+  // Odsutno osoblje — GO/B/PD/ND/RD (iz baze) + SD (slobodni dani iz rotacije)
+  var odsutni = [];
+  Object.keys(odsutanTip).forEach(function(v){
+    odsutni.push({ ime:v, tip:odsutanTip[v].tip, dani:odsutanTip[v].dani });
+  });
+  Object.keys(sviVozTpl).forEach(function(v){
+    if(odsutanTip[v]) return;
+    if(puJeSlobodan(v, dt)) odsutni.push({ ime:v, tip:"SD" });
+  });
+  dan.odsutni = odsutni;
+
+  return dan;
+}
+
+// ─── Render KPI kartica ispod kalendara ───
+function renderKpi(){
+  var host = document.getElementById("KAL-KPI");
+  if(!host) return;
+  var m = puMjesecMetrika();
+  if(m.danaPopunjeno === 0){ host.innerHTML = ""; return; }
+
+  function tile(ikona, label, glavna, kontekst, kljuc, naglasak, desno){
+    return '<div class="kpi-tile' + (naglasak ? ' kpi-tile-' + naglasak : '') + (kljuc ? ' kpi-clickable' : '') + (desno ? ' kpi-tile-wide' : '') + '"'
+      + (kljuc ? ' onclick="puKpiDrill(\'' + kljuc + '\')"' : '') + '>'
+      + '<div class="kpi-ic">' + ikona + '</div>'
+      + '<div class="kpi-body"><div class="kpi-num">' + glavna + '</div>'
+      + '<div class="kpi-lbl">' + label + '</div>'
+      + (kontekst ? '<div class="kpi-ctx">' + kontekst + '</div>' : '')
+      + '</div>'
+      + (desno || '')
+      + '</div>';
+  }
+
+  var H = '<div class="kpi-wrap">';
+  H += '<div class="kpi-grupa"><div class="kpi-grupa-tit">Pokrivenost rasporeda</div><div class="kpi-row">';
+  H += tile(icoWarn(), "Nepopunjene smjene", m.nepopunjeno, m.danaSManjkom + " dana s manjkom", "nepopunjeno", m.nepopunjeno > 0 ? "danger" : "ok", pctBlok(m.pctNepopunjeno, "od smjena", m.nepopunjeno > 0 ? "red" : "grn"));
+  H += tile(icoCal2(), "Stari godišnji", m.stariGO.length, (m.stariGOopasna > 0 ? '<span class="kpi-ctx-alarm">⚠ ' + m.stariGOopasna + ' u opasnoj zoni</span>' : "do 30.06. · rok " + m.goDaniDoRoka + " d"), "stariGO", m.stariGOopasna > 0 ? "danger" : null, pctBlok(m.pctStariGO, "od radnika", "yel"));
+  H += tile(icoUsers(), "Pričuve angažirane", m.pricuveAngazirane, "puta u mjesecu", "pricuve", null, pctBlok(m.pctPricuve, "od smjena", "blu"));
+  H += '</div></div>';
+
+  H += '<div class="kpi-grupa"><div class="kpi-grupa-tit">Sati i opterećenje</div><div class="kpi-row">';
+  H += tile(icoClock(), "Ukupno sati", puNum(m.ukupnoSati) + " h", "potreba · kapacitet " + puNum(m.kapacitetSati) + " h", null, null, '<div class="kpi-util"><div class="kpi-util-pct">' + m.iskoristivost.toFixed(1).replace(".", ",") + '%</div><div class="kpi-util-lbl">iskoristivost</div></div>');
+  H += tile(icoTrend(), "Prekovremeni", "+" + puNum(m.prekovremeniUkupno) + " h", m.iznadFonda.length + " vozača iznad fonda", "iznad", m.prekovremeniUkupno > 0 ? "warn" : "ok", pctBlok(m.pctPrekovremeni, "od sati", "yel"));
+  H += tile(icoDown(), "Ispod fonda", m.ispodFonda.length, "kandidati za dodatne linije", "ispod", m.ispodFonda.length > 0 ? "info" : "ok", pctBlok(m.pctIspodFonda, "od radnika", "blu"));
+  H += '</div></div>';
+
+  H += '<div class="kpi-grupa"><div class="kpi-grupa-tit">Odsustva</div><div class="kpi-row kpi-row-ods">';
+  [["GO","Godišnji"],["B","Bolovanje"],["PD","Plaćeni"],["ND","Neplaćeni"],["RD","Rodiljni"],["SD","Slobodni dani"]].forEach(function(o){
+    var broj = Object.keys(m.odsustva[o[0]] || {}).length;
+    H += '<div class="kpi-ods kpi-clickable" onclick="puKpiDrill(\'ods:' + o[0] + '\')">'
+      + '<span class="kn-ods-badge kn-ods-' + o[0] + '">' + o[0] + '</span>'
+      + '<span class="kpi-ods-num">' + broj + '</span>'
+      + '<span class="kpi-ods-lbl">' + o[1] + '</span></div>';
+  });
+  H += '</div></div></div>';
+  host.innerHTML = H;
+}
+
+function icoWarn(){ return '<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'; }
+function icoCal(){ return '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'; }
+function icoCal2(){ return '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg>'; }
+function icoUsers(){ return '<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>'; }
+function icoClock(){ return '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'; }
+function icoTrend(){ return '<svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>'; }
+function icoDown(){ return '<svg viewBox="0 0 24 24"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>'; }
+function puNum(n){ return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+// Postotni blok desno u kartici (isti stil kao iskoristivost)
+function pctBlok(pct, lbl, boja){
+  return '<div class="kpi-util kpi-util-' + (boja||"grn") + '"><div class="kpi-util-pct">' + pct.toFixed(1).replace(".", ",") + '%</div><div class="kpi-util-lbl">' + lbl + '</div></div>';
+}
+
+function puKpiDrill(kljuc){
+  var m = puMjesecMetrika();
+  var naslov = "", redovi = [];
+  var god = PU_MJESEC.getFullYear(), mj = PU_MJESEC.getMonth(), lastDay = new Date(god, mj+1, 0).getDate();
+  if(kljuc === "nepopunjeno"){
+    naslov = "Nepopunjene smjene po danima";
+    for(var d = 1; d <= lastDay; d++){
+      var dan = PU_DATA[puKey(new Date(god, mj, d))];
+      if(!dan) continue;
+      var br = 0, linije = [];
+      ["prigrad","grad"].forEach(function(sek){
+        Object.keys(dan[sek]||{}).forEach(function(linId){
+          (dan[sek][linId]||[]).forEach(function(v){ if(v && (v.prazno || !v.ime)){ br++; var L=(sek==="prigrad"?PU_PRIGRAD:PU_GRAD).find(function(x){return x.id===linId;}); if(L) linije.push(L.naziv); } });
+        });
+      });
+      if(br > 0) redovi.push({ a:d+". "+PU_MJESECI[mj].slice(0,3), b:br+" smjena", c:linije.slice(0,4).join(", ")+(linije.length>4?" …":"") });
+    }
+  } else if(kljuc === "iznad"){
+    naslov = "Vozači iznad fonda (" + m.fondSati + " h)";
+    redovi = m.iznadFonda.map(function(v){ return { a:v.ime, b:puNum(v.sati)+" h", c:"+"+puNum(v.razlika)+" h" }; });
+  } else if(kljuc === "ispod"){
+    naslov = "Vozači ispod fonda — kandidati za dodatne linije";
+    redovi = m.ispodFonda.map(function(v){ return { a:v.ime, b:puNum(v.sati)+" h", c:puNum(v.razlika)+" h" }; });
+  } else if(kljuc === "pricuve"){
+    naslov = "Pričuve — popunjene praznine (uskakanja)";
+    var brojPo = {};
+    for(var dd=1; dd<=lastDay; dd++){ var dn=PU_DATA[puKey(new Date(god,mj,dd))]; if(!dn) continue;
+      ["prigrad","grad"].forEach(function(sek){ Object.keys(dn[sek]||{}).forEach(function(li){ (dn[sek][li]||[]).forEach(function(v){ if(v&&v.ime&&v.pricuva) brojPo[v.ime]=(brojPo[v.ime]||0)+1; }); }); });
+    }
+    redovi = Object.keys(brojPo).sort(function(a,b){return brojPo[b]-brojPo[a];}).map(function(ime){ return { a:ime, b:brojPo[ime]+"×", c:"uskočio" }; });
+  } else if(kljuc === "stariGO"){
+    naslov = "Stari godišnji — rok 30.06.2026. (" + m.goDaniDoRoka + " dana)";
+    redovi = m.stariGO.map(function(v){
+      return { a: (v.opasna ? "⚠ " : "") + v.ime, b: v.dani + " d", c: v.opasna ? "opasna zona" : "" };
+    });
+  } else if(kljuc.indexOf("ods:") === 0){
+    var tip = kljuc.split(":")[1];
+    var lbl = { GO:"Godišnji odmor", B:"Bolovanje", PD:"Plaćeni dopust", ND:"Neplaćeni dopust", RD:"Rodiljni", SD:"Slobodni dani" }[tip];
+    naslov = lbl + " — vozači u mjesecu";
+    redovi = Object.keys(m.odsustva[tip] || {}).sort().map(function(ime){ return { a:ime, b:"", c:tip }; });
+  }
+  puDrillOpen(naslov, redovi);
+}
+
+function puDrillOpen(naslov, redovi){
+  document.getElementById("DRILL-TIT").textContent = naslov;
+  var b = document.getElementById("DRILL-BODY");
+  if(!redovi || redovi.length === 0){
+    b.innerHTML = '<div class="drill-empty">Nema podataka za prikaz.</div>';
+  } else {
+    var h = '<table class="drill-tbl"><tbody>';
+    redovi.forEach(function(r){ h += '<tr' + (r.c === "opasna zona" ? ' class="drill-row-alarm"' : '') + '><td class="drill-a">' + puEsc(r.a) + '</td><td class="drill-b">' + puEsc(r.b||"") + '</td><td class="drill-c">' + puEsc(r.c||"") + '</td></tr>'; });
+    h += '</tbody></table>';
+    b.innerHTML = h;
+  }
+  document.getElementById("DRILL-BG").classList.add("on");
+}
+function puDrillClose(){ document.getElementById("DRILL-BG").classList.remove("on"); }
+
+function puAutofillConfirm(){
+  var mjLbl = PU_MJESECI[PU_MJESEC.getMonth()] + " " + PU_MJESEC.getFullYear() + ".";
+  var lastDay = new Date(PU_MJESEC.getFullYear(), PU_MJESEC.getMonth()+1, 0).getDate();
+  var imaPodataka = false;
+  for(var d = 1; d <= lastDay; d++){
+    if(PU_DATA[puKey(new Date(PU_MJESEC.getFullYear(), PU_MJESEC.getMonth(), d))]) { imaPodataka = true; break; }
+  }
+  puConfOpen(
+    "Autofill — " + mjLbl,
+    (imaPodataka ? "Mjesec već ima unose koji će biti <strong>zamijenjeni</strong>. " : "")
+    + "Popunjavaju se svi dani (" + lastDay + ") prema predlošcima: grad — dnevna rotacija II→I→III, prigrad — tjedna rotacija smjena, 6+1 dana (prazne ćelije s alarmom čekaju pričuvu).",
+    "Popuni " + lastDay + " dana",
+    function(){
+      var god = PU_MJESEC.getFullYear(), mj = PU_MJESEC.getMonth();
+      for(var d = 1; d <= lastDay; d++){
+        var dt = new Date(god, mj, d);
+        PU_DATA[puKey(dt)] = puGenerirajDan(dt);
+      }
+      showToast("Popunjeno " + lastDay + " dana — " + mjLbl, "success");
+      renderKalendar();
+    }
+  );
+}
+
+function puClearMonthConfirm(){
+  var mjLbl = PU_MJESECI[PU_MJESEC.getMonth()] + " " + PU_MJESEC.getFullYear() + ".";
+  puConfOpen("Obrisati mjesec?", "Brišu se svi dnevni listovi za <strong>" + mjLbl + "</strong>. Akcija je nepovratna.", "Obriši",
+    function(){
+      var god = PU_MJESEC.getFullYear(), mj = PU_MJESEC.getMonth();
+      var lastDay = new Date(god, mj+1, 0).getDate();
+      for(var d = 1; d <= lastDay; d++) delete PU_DATA[puKey(new Date(god, mj, d))];
+      showToast("Obrisano — " + mjLbl, "success");
+      renderKalendar();
+    });
+}
+
+function puAutofillDan(){
+  if(!PU_DAN) return;
+  PU_DATA[puKey(PU_DAN)] = puGenerirajDan(PU_DAN);
+  showToast("Dan popunjen prema templatu (" + puTipDana(PU_DAN) + ")", "success");
+  renderDan();
+}
+
+// Autofill cijelog mjeseca iz dnevnog lista (mjesec trenutno otvorenog dana)
+function puAutofillMjesecIzDana(){
+  if(!PU_DAN) return;
+  var god = PU_DAN.getFullYear(), mj = PU_DAN.getMonth();
+  var mjLbl = PU_MJESECI[mj] + " " + god + ".";
+  var lastDay = new Date(god, mj+1, 0).getDate();
+  puConfOpen(
+    "Autofill — " + mjLbl,
+    "Popunjavaju se svi dani (" + lastDay + ") prema predlošcima: grad — dnevna rotacija II→I→III, prigrad — tjedna rotacija, 6+1 dana (prazne ćelije s alarmom čekaju pričuvu).",
+    "Popuni " + lastDay + " dana",
+    function(){
+      for(var d = 1; d <= lastDay; d++){
+        var dt = new Date(god, mj, d);
+        PU_DATA[puKey(dt)] = puGenerirajDan(dt);
+      }
+      showToast("Popunjeno " + lastDay + " dana — " + mjLbl, "success");
+      renderDan();
+    }
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DNEVNI LIST — knjiga vožnje (identičan papiru)
+// ═══════════════════════════════════════════════════════════════════
+function puOpenDan(god, mj, d){
+  PU_DAN = new Date(god, mj, d);
+  puSwitch("dan");
+  renderDan();
+}
+function puDanNav(delta){
+  if(!PU_DAN) return;
+  PU_DAN = new Date(PU_DAN.getFullYear(), PU_DAN.getMonth(), PU_DAN.getDate() + delta);
+  renderDan();
+}
+
+function puEnsureDan(key){
+  if(!PU_DATA[key]){
+    PU_DATA[key] = { prigrad:{}, grad:{}, odsutni:[], invalidi:[], prometnici:["",""], kombiji:["",""], izvanredne:[], ugovoreni:[], obavijesti:"", zrlOdlasci:[], zrlDolasci:[], stvarni:{} };
+  }
+  // Backward compat — stariji unosi nemaju zrl polja
+  if(!PU_DATA[key].zrlOdlasci) PU_DATA[key].zrlOdlasci = [];
+  if(!PU_DATA[key].zrlDolasci) PU_DATA[key].zrlDolasci = [];
+  if(!PU_DATA[key].stvarni) PU_DATA[key].stvarni = {};
+  if(!PU_DATA[key].pricuvaOdbio) PU_DATA[key].pricuvaOdbio = {};
+  // Migracija odsutnih: stari format string "IME (slobodan dan)" → { ime, tip }
+  if(PU_DATA[key].odsutni){
+    PU_DATA[key].odsutni = PU_DATA[key].odsutni.map(function(o){
+      if(o == null) return null;
+      if(typeof o === "string"){
+        var ime = o.replace(/\s*\(slobodan dan\)\s*/i, "").trim();
+        var tip = /slobodan dan/i.test(o) ? "SD" : "";
+        return ime || tip ? { ime: ime, tip: tip } : null;
+      }
+      return o;
+    });
+  }
+  return PU_DATA[key];
+}
+
+// Dodavanje retka u tablicu (izvanredne / ugovoreni / zrl)
+var PU_MIN_ROWS = { izvanredne:6, ugovoreni:3, zrlOdlasci:10, zrlDolasci:10, odsutni:12 };
+function puAddRow(sek){
+  if(!PU_DAN) return;
+  var dan = puEnsureDan(puKey(PU_DAN));
+  if(!dan[sek]) dan[sek] = [];
+  var korak = (sek === "odsutni") ? 3 : 1;   // odsutni je 3-stupčani → dodaj cijeli red
+  var vidljivo = Math.max(PU_MIN_ROWS[sek] || 0, dan[sek].length);
+  var cilj = vidljivo + korak;
+  while(dan[sek].length < cilj) dan[sek].push(sek === "odsutni" ? null : {});
+  renderDan();
+}
+
+// Brisanje retka (koš za smeće na hover)
+function puDelRow(sek, idx, ev){
+  if(ev) ev.stopPropagation();
+  if(!PU_DAN) return;
+  var dan = puEnsureDan(puKey(PU_DAN));
+  if(!dan[sek] || idx >= dan[sek].length) return;
+  if(sek === "odsutni"){
+    dan[sek][idx] = null;   // zadrži grid poziciju
+  } else {
+    dan[sek].splice(idx, 1);
+  }
+  showToast("Redak obrisan", "info");
+  renderDan();
+}
+
+// ─── Zr. luka: unos sata — normalizacija + auto-sort + auto-povratak ───
+function puZrlSatSave(td){
+  if(!PU_DAN) return;
+  var dan = puEnsureDan(puKey(PU_DAN));
+  var sek = td.dataset.sek, idx = parseInt(td.dataset.idx, 10);
+  var sat = puNormSat(td.textContent);
+  if(!dan[sek]) dan[sek] = [];
+  if(!dan[sek][idx]) dan[sek][idx] = {};
+  var redak = dan[sek][idx];
+  var prijasnji = redak.sat || "";
+  if(sat === prijasnji){ td.textContent = sat; return; }
+  redak.sat = sat;
+
+  // Auto-povratak: NOVI polazak Zadar→Zr.Luka (redak prije nije imao sat) kreira
+  // povratni redak Zr.Luka→Zadar (+25 min, isti GBR/dežurni)
+  if(sek === "zrlOdlasci" && sat && !prijasnji){
+    var povrSat = puSatPlus(sat, PU_ZRL_OFFSET_MIN);
+    var postoji = (dan.zrlDolasci || []).some(function(z){ return z && z.sat === povrSat; });
+    if(!postoji){
+      if(!dan.zrlDolasci) dan.zrlDolasci = [];
+      dan.zrlDolasci.push({ sat: povrSat, gbr: redak.gbr || "", dez: redak.dez || "", auto:true });
+      showToast("Povratak Zr. luka → Zadar dodan u " + povrSat + " (+25 min)", "info");
+    }
+  }
+
+  // Tab-tok: ako je sat unesen i GBR još prazan → nakon rendera fokusiraj GBR ćeliju (otvori picker)
+  if(sat && !redak.gbr) PU_ZRL_FOKUS = { sek: sek, sat: sat, fld: "gbr" };
+
+  renderDan();   // render sortira po satu
+}
+
+// Nakon renderDan — ako je postavljen fokus-cilj, otvori picker na traženoj ćeliji
+var PU_ZRL_FOKUS = null;
+function puZrlPrimijeniFokus(){
+  if(!PU_ZRL_FOKUS) return;
+  var f = PU_ZRL_FOKUS; PU_ZRL_FOKUS = null;
+  var dan = PU_DATA[puKey(PU_DAN)];
+  if(!dan || !dan[f.sek]) return;
+  var idx = dan[f.sek].findIndex(function(z){ return z && z.sat === f.sat; });
+  if(idx < 0) return;
+  var td = document.querySelector('td[data-sek="' + f.sek + '"][data-idx="' + idx + '"][data-fld="' + f.fld + '"]');
+  if(td){ td.scrollIntoView({ block:"nearest" }); puGbrPick(td, { stopPropagation:function(){} }); }
+}
+
+function renderDan(){
+  var dt = PU_DAN;
+  var key = puKey(dt);
+  var dan = PU_DATA[key] || null;
+  var danLbl = PU_DANI[dt.getDay()];
+  var tip = puTipDana(dt);
+  var plan = dan && dan.planVoznje ? dan.planVoznje : puPlanVoznjeAuto(dt);
+
+  document.getElementById("DN-TIT").innerHTML = '<span class="dn-tit-day">' + danLbl + '</span> · ' + puFmtD(dt);
+
+  // helper za vozač ćeliju (dropdown izbor)
+  // voz: {ime} | {ime:"", prazno:true} | undefined
+  function vozCell(sekcija, linId, smjIdx, voz, postoji, stvarniIdx, dvijeSmjene){
+    if(!postoji){
+      return '<td class="kn-nema">—</td>';
+    }
+    var ime = voz ? (voz.ime || "") : "";
+    var alarm = voz && voz.prazno && !ime;
+    var slobodan = voz && voz.slobodan;   // prekriženi partner koji "vadi krumpire" (otvorena pričuva-par)
+    // Stvarni vozač (zvjezdice + prekriživanje) prikazuje se SAMO u R (realni plan) modu.
+    var realni = (PU_RP === "R");
+    var jeStvarni = realni && (sekcija === "prigrad" && dvijeSmjene && stvarniIdx === smjIdx);
+    var jeZamijenjen = realni && (sekcija === "prigrad" && dvijeSmjene && stvarniIdx != null && stvarniIdx !== smjIdx);
+    // Praznina koja je dio pričuva-para (partner je slobodan na istoj liniji)
+    var parPraznina = alarm && voz && voz.parPraznina;
+    var cls = "kn-edit kn-pick" + (alarm ? " kn-alarm" : "") + (parPraznina ? " kn-alarm-par" : "")
+      + (jeStvarni ? " kn-stvarni" : "") + (jeZamijenjen ? " kn-zamijenjen" : "")
+      + (slobodan ? " kn-slobodan" : "");
+    var zvj = "";
+    if(realni && sekcija === "prigrad" && dvijeSmjene && ime){
+      zvj = '<span class="kn-stvarni-tgl" onclick="puToggleStvarni(\'' + linId + '\',' + smjIdx + ',event)" title="Označi tko stvarno vozi danas">'
+          + (jeStvarni ? '★' : '☆') + '</span>';
+    }
+    return '<td class="' + cls + '"'
+      + ' data-sek="' + sekcija + '" data-lin="' + linId + '" data-smj="' + smjIdx + '"'
+      + ' onclick="puVozPick(this, event)" title="' + (alarm ? 'Nedostaje vozač — odaberi pričuvu' : (slobodan ? 'Slobodan partner — može se vratiti na posao' : 'Klik za izbor vozača')) + '">'
+      + (ime ? '<span class="kn-vozac">' + puEsc(ime) + '</span>' : (alarm ? '<span class="kn-alarm-txt">⚠ pričuva</span>' : ''))
+      + zvj
+      + '</td>';
+  }
+
+  // Templat za određivanje koliko smjena postoji (i kad dan nije generiran)
+  var tplDana = PU_TEMPLATE[tip];
+
+  // ── LIJEVA STRANA — rasporedi ──
+  var L = '<div class="papir-col-l">';
+
+  L += '<div class="kn-sect"><div class="kn-sect-tit">Raspored prigradskog osoblja</div>';
+  L += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 14px">';
+  [PU_PRIGRAD.slice(0,19), PU_PRIGRAD.slice(19)].forEach(function(half, hi){
+    L += '<table class="kn-tbl"><thead><tr><th>Rb</th><th>Linija</th><th>Gar. br.</th><th colspan="2">Vozači</th></tr></thead><tbody>';
+    half.forEach(function(l, i){
+      var rb = hi * 19 + i + 1;
+      var voz = dan ? (dan.prigrad[l.id] || []) : [];
+      var tplT = tplDana.prigrad[l.id] || [];
+      var aktivna = tplT.length > 0 && !(l.skolska && plan === "bezskole");
+      // Par za stvarnog vozača: obje smjene postoje i bar jedna ima vozača (druga može biti praznina)
+      var dvije = aktivna && tplT.length >= 2 && voz[0] && voz[1] && (voz[0].ime || voz[1].ime);
+      var stvarniIdx = (dan && dan.stvarni && dan.stvarni[l.id] != null) ? dan.stvarni[l.id] : null;
+      L += '<tr' + (!aktivna ? ' class="kn-row-nevoz"' : '') + '><td class="kn-rb">' + rb + '</td><td class="kn-lin">' + l.naziv + '</td><td class="kn-gbr">' + l.gbr + '</td>';
+      L += vozCell("prigrad", l.id, 0, voz[0], aktivna && tplT.length >= 1, stvarniIdx, dvije);
+      L += vozCell("prigrad", l.id, 1, voz[1], aktivna && tplT.length >= 2, stvarniIdx, dvije);
+      L += '</tr>';
+    });
+    L += '</tbody></table>';
+  });
+  L += '</div></div>';
+
+  L += '<div class="kn-sect"><div class="kn-sect-tit">Raspored gradskog osoblja</div>';
+  L += '<table class="kn-tbl"><thead><tr><th>Rb</th><th>Linija</th><th>Br.</th><th>Gar. br.</th><th>I smjena</th><th>II smjena</th><th>III smjena</th></tr></thead><tbody>';
+  PU_GRAD.forEach(function(l, i){
+    var voz = dan ? (dan.grad[l.id] || []) : [];
+    var tplT = tplDana.grad[l.id] || [];
+    var aktivna = tplT.length > 0;
+    L += '<tr' + (!aktivna ? ' class="kn-row-nevoz"' : '') + '><td class="kn-rb">' + (i+1) + '</td><td class="kn-lin">' + l.naziv + '</td><td class="kn-brl">' + (l.broj||"") + '</td><td class="kn-gbr">' + (l.gbr||"") + '</td>';
+    L += vozCell("grad", l.id, 0, voz[0], aktivna && tplT.length >= 1);
+    L += vozCell("grad", l.id, 1, voz[1], aktivna && tplT.length >= 2);
+    L += vozCell("grad", l.id, 2, voz[2], aktivna && tplT.length >= 3);
+    L += '</tr>';
+  });
+  L += '</tbody></table></div>';
+
+  // Odsutno osoblje — 3 stupca, ime + badge kratice (SD/GO/B/ND)
+  var odsutniArr = dan ? (dan.odsutni || []) : [];
+  var minOds = 12;   // min ćelija (4 reda × 3 stupca)
+  var nOds = Math.max(minOds, Math.ceil(odsutniArr.length / 3) * 3);
+  L += '<div class="kn-sect"><div class="kn-sect-tit">Odsutno osoblje</div>';
+  L += '<table class="kn-tbl kn-ods-tbl"><tbody>';
+  var redova = nOds / 3;
+  for(var rr = 0; rr < redova; rr++){
+    L += '<tr>';
+    for(var cc = 0; cc < 3; cc++){
+      var oi = rr * 3 + cc;
+      var o = odsutniArr[oi];
+      var ime = o ? (o.ime || "") : "";
+      var tip = o ? (o.tip || "") : "";
+      var dani = o && o.dani ? o.dani : null;
+      var badge = tip ? '<span class="kn-ods-badge kn-ods-' + tip + '">' + tip + (dani ? ' ' + dani + 'd' : '') + '</span>' : '';
+      var prazna = !ime && !tip;
+      if(prazna){
+        // Prazna ćelija — klik otvara objedinjeni popup (ime + tip + dani)
+        L += '<td class="kn-ods-cell kn-ods-prazna" onclick="puOdsPopup(' + oi + ')" title="Klik za unos odsustva">'
+          + '<span class="kn-ods-prazna-txt">＋ dodaj odsustvo</span>'
+          + '</td>';
+      } else {
+        L += '<td class="kn-ods-cell kn-delrow" style="position:relative">'
+          + '<span class="kn-ods-ime kn-ods-pick" data-sek="odsutni" data-idx="' + oi + '" data-fld="ime" onclick="puOdsImePick(this, event)" title="Klik za izbor vozača">' + (ime ? puEsc(ime) : '<span class="kn-ods-ime-empty">— odaberi —</span>') + '</span>'
+          + '<span class="kn-ods-tipwrap" data-sek="odsutni" data-idx="' + oi + '" data-fld="tip" onclick="puOdsTipPick(this, event)" title="Klik za razlog">' + (badge || '<span class="kn-ods-tipadd">+</span>') + '</span>'
+          + '<span class="kn-trash" onclick="puDelRow(\'odsutni\',' + oi + ',event)" title="Obriši"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></span>'
+          + '</td>';
+      }
+    }
+    L += '</tr>';
+  }
+  L += '</tbody></table>';
+  L += '<button class="kn-addrow" onclick="puAddRow(\'odsutni\')" title="Dodaj 3 mjesta">＋ redak</button>';
+  L += '</div>';
+  L += '</div>';
+
+  // ── DESNA STRANA — invalidi, dežurni, izvanredne, ugovoreni, obavijesti ──
+  var R = '<div class="papir-col-r">';
+
+  // Prijevoz osoba s invaliditetom
+  R += '<div class="kn-sect"><div class="kn-sect-tit">Prijevoz osoba s invaliditetom</div>';
+  R += '<table class="kn-tbl"><thead><tr><th>Sat polaska</th><th>Naručilac</th><th>Sat povratka</th></tr></thead><tbody>';
+  for(var ii = 0; ii < 6; ii++){
+    var inv = dan && dan.invalidi[ii] ? dan.invalidi[ii] : {sat:"",naruc:"",povr:""};
+    R += '<tr>'
+      + '<td class="kn-sat kn-edit" contenteditable="true" data-sek="invalidi" data-idx="' + ii + '" data-fld="sat" onblur="puCellSave(this)">' + puEsc(inv.sat) + '</td>'
+      + '<td class="kn-naruc kn-edit" contenteditable="true" data-sek="invalidi" data-idx="' + ii + '" data-fld="naruc" onblur="puCellSave(this)">' + puEsc(inv.naruc) + '</td>'
+      + '<td class="kn-sat kn-edit" contenteditable="true" data-sek="invalidi" data-idx="' + ii + '" data-fld="povr" onblur="puCellSave(this)">' + puEsc(inv.povr) + '</td>'
+      + '</tr>';
+  }
+  R += '</tbody></table></div>';
+
+  // Dežurni prometnik + Kombiji (2 mini tablice)
+  R += '<div class="kn-mini">';
+  R += '<div class="kn-sect"><div class="kn-sect-tit">Dežurni prometnik</div><table class="kn-tbl"><tbody>';
+  for(var pi = 0; pi < 2; pi++){
+    var pv = dan ? (dan.prometnici[pi] || "") : "";
+    R += '<tr><td class="kn-rb">' + ["I","II"][pi] + '</td><td class="kn-edit" contenteditable="true" data-sek="prometnici" data-idx="' + pi + '" onblur="puCellSave(this)">' + puEsc(pv) + '</td></tr>';
+  }
+  R += '</tbody></table></div>';
+  R += '<div class="kn-sect"><div class="kn-sect-tit">Vozači kombija za invalide</div><table class="kn-tbl"><tbody>';
+  for(var ki = 0; ki < 2; ki++){
+    var kv = dan ? (dan.kombiji[ki] || "") : "";
+    R += '<tr><td class="kn-rb">' + ["I","II"][ki] + '</td><td class="kn-edit" contenteditable="true" data-sek="kombiji" data-idx="' + ki + '" onblur="puCellSave(this)">' + puEsc(kv) + '</td></tr>';
+  }
+  R += '</tbody></table></div>';
+  R += '</div>';
+
+  // Izvanredne vožnje (dinamičan broj redova + "+ redak")
+  R += '<div class="kn-sect"><div class="kn-sect-tit">Izvanredne vožnje</div>';
+  R += '<table class="kn-tbl"><thead><tr><th>Sat pol.</th><th>Naručilac</th><th>Relacija</th><th>Gar. br.</th><th>Vozači</th><th>Sat povr.</th></tr></thead><tbody>';
+  var nIzv = Math.max(6, dan ? dan.izvanredne.length : 0);
+  for(var xi = 0; xi < nIzv; xi++){
+    var izv = dan && dan.izvanredne[xi] ? dan.izvanredne[xi] : {sat:"",naruc:"",rel:"",gbr:"",voz:"",povr:""};
+    R += '<tr class="kn-delrow">'
+      + '<td class="kn-sat kn-edit" contenteditable="true" data-sek="izvanredne" data-idx="' + xi + '" data-fld="sat" onblur="puCellSave(this)">' + puEsc(izv.sat) + '</td>'
+      + '<td class="kn-naruc kn-edit" contenteditable="true" data-sek="izvanredne" data-idx="' + xi + '" data-fld="naruc" onblur="puCellSave(this)">' + puEsc(izv.naruc) + '</td>'
+      + '<td class="kn-rel kn-edit" contenteditable="true" data-sek="izvanredne" data-idx="' + xi + '" data-fld="rel" onblur="puCellSave(this)">' + puEsc(izv.rel) + '</td>'
+      + '<td class="kn-gbr kn-edit kn-pick" data-sek="izvanredne" data-idx="' + xi + '" data-fld="gbr" onclick="puGbrPick(this, event)" title="Klik za izbor GBR-a">' + puEsc(izv.gbr || "") + '</td>'
+      + '<td class="kn-edit" contenteditable="true" data-sek="izvanredne" data-idx="' + xi + '" data-fld="voz" onblur="puCellSave(this)">' + puEsc(izv.voz) + '</td>'
+      + '<td class="kn-sat kn-edit" style="position:relative" contenteditable="true" data-sek="izvanredne" data-idx="' + xi + '" data-fld="povr" onblur="puCellSave(this)">' + puEsc(izv.povr)
+      + '<span class="kn-trash" contenteditable="false" onclick="puDelRow(\'izvanredne\',' + xi + ',event)" title="Obriši redak"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span>'
+      + '</td>'
+      + '</tr>';
+  }
+  R += '</tbody></table>';
+  R += '<button class="kn-addrow" onclick="puAddRow(\'izvanredne\')" title="Dodaj redak">＋ redak</button>';
+  R += '</div>';
+
+  // Ugovoreni prijevoz (dinamičan broj redova + "+ redak")
+  R += '<div class="kn-sect"><div class="kn-sect-tit">Ugovoreni prijevoz</div>';
+  R += '<table class="kn-tbl"><thead><tr><th>Sat pol.</th><th>Naručilac</th><th>Relacija</th><th>Gar. br.</th><th>Vozači</th><th>Sat povr.</th></tr></thead><tbody>';
+  var nUg = Math.max(3, dan ? dan.ugovoreni.length : 0);
+  for(var ui = 0; ui < nUg; ui++){
+    var ug = dan && dan.ugovoreni[ui] ? dan.ugovoreni[ui] : {sat:"",naruc:"",rel:"",gbr:"",voz:"",povr:""};
+    R += '<tr class="kn-delrow">'
+      + '<td class="kn-sat kn-edit" contenteditable="true" data-sek="ugovoreni" data-idx="' + ui + '" data-fld="sat" onblur="puCellSave(this)">' + puEsc(ug.sat) + '</td>'
+      + '<td class="kn-naruc kn-edit" contenteditable="true" data-sek="ugovoreni" data-idx="' + ui + '" data-fld="naruc" onblur="puCellSave(this)">' + puEsc(ug.naruc) + '</td>'
+      + '<td class="kn-rel kn-edit" contenteditable="true" data-sek="ugovoreni" data-idx="' + ui + '" data-fld="rel" onblur="puCellSave(this)">' + puEsc(ug.rel) + '</td>'
+      + '<td class="kn-gbr kn-edit kn-pick" data-sek="ugovoreni" data-idx="' + ui + '" data-fld="gbr" onclick="puGbrPick(this, event)" title="Klik za izbor GBR-a">' + puEsc(ug.gbr || "") + '</td>'
+      + '<td class="kn-edit" contenteditable="true" data-sek="ugovoreni" data-idx="' + ui + '" data-fld="voz" onblur="puCellSave(this)">' + puEsc(ug.voz) + '</td>'
+      + '<td class="kn-sat kn-edit" style="position:relative" contenteditable="true" data-sek="ugovoreni" data-idx="' + ui + '" data-fld="povr" onblur="puCellSave(this)">' + puEsc(ug.povr)
+      + '<span class="kn-trash" contenteditable="false" onclick="puDelRow(\'ugovoreni\',' + ui + ',event)" title="Obriši redak"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span>'
+      + '</td>'
+      + '</tr>';
+  }
+  R += '</tbody></table>';
+  R += '<button class="kn-addrow" onclick="puAddRow(\'ugovoreni\')" title="Dodaj redak">＋ redak</button>';
+  R += '</div>';
+
+  // Polasci — Zračna luka (dnevni unos, ovisi o dolascima aviona)
+  // Sat u h:mm; GBR i Dežurni odvojene stavke; auto-sort po satu;
+  // unos polaska Zadar→Zr.Luka auto-kreira povratak (+25 min, isti GBR/dežurni).
+  if(dan){ puZrlMigriraj(dan.zrlOdlasci); puZrlMigriraj(dan.zrlDolasci); puZrlSort(dan.zrlOdlasci || []); puZrlSort(dan.zrlDolasci || []); }
+  R += '<div class="kn-sect"><div class="kn-sect-tit">Polasci — Zračna luka</div>';
+  R += '<div class="kn-zrl">';
+  [["zrlOdlasci","ZADAR → ZR. LUKA"], ["zrlDolasci","ZR. LUKA → ZADAR"]].forEach(function(par){
+    var sek = par[0], lbl = par[1];
+    var arr = dan ? (dan[sek] || []) : [];
+    var n = Math.max(10, arr.length);
+    R += '<div class="kn-zrl-col">';
+    R += '<table class="kn-tbl"><thead><tr><th colspan="3">' + lbl + '</th></tr><tr><th style="width:48px">Sat</th><th style="width:52px">GBR</th><th>Dežurni</th></tr></thead><tbody>';
+    for(var zi = 0; zi < n; zi++){
+      var z = arr[zi] || {};
+      R += '<tr class="kn-delrow">'
+        + '<td class="kn-sat kn-edit" contenteditable="true" data-sek="' + sek + '" data-idx="' + zi + '" data-fld="sat" onblur="puZrlSatSave(this)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">' + puEsc(z.sat || "") + '</td>'
+        + '<td class="kn-gbr kn-edit kn-pick" data-sek="' + sek + '" data-idx="' + zi + '" data-fld="gbr" onclick="puGbrPick(this, event)" title="Klik za izbor GBR-a">' + puEsc(z.gbr || "") + '</td>'
+        + '<td class="kn-edit kn-pick" style="position:relative" data-sek="' + sek + '" data-idx="' + zi + '" data-fld="dez" onclick="puGbrPick(this, event)" title="Klik za izbor dežurstva">' + puEsc(z.dez || "")
+        + '<span class="kn-trash" onclick="puDelRow(\'' + sek + '\',' + zi + ',event)" title="Obriši redak"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span>'
+        + '</td>'
+        + '</tr>';
+    }
+    R += '</tbody></table>';
+    R += '<button class="kn-addrow" onclick="puAddRow(\'' + sek + '\')" title="Dodaj redak">＋ redak</button>';
+    R += '</div>';
+  });
+  R += '</div></div>';
+
+  // Obavijesti i promjene
+  R += '<div class="kn-sect"><div class="kn-sect-tit">Obavijesti i promjene</div>';
+  R += '<textarea class="kn-obav" id="KN-OBAV" onblur="puObavSave(this)" placeholder="Polasci, dežurstva, izmjene…">' + puEsc(dan ? dan.obavijesti : "") + '</textarea>';
+  R += '</div>';
+  R += '</div>';   // kraj desne
+
+  // Slaganje papira
+  var tipBadge = tip === "nedjelja"
+    ? '<span class="dn-badge dn-badge-ned">' + (puIsBlagdan(dt) ? "BLAGDAN" : "NEDJELJA") + '</span>'
+    : (tip === "subota" ? '<span class="dn-badge dn-badge-sub">SUBOTA</span>' : '<span class="dn-badge dn-badge-rad">RADNI DAN</span>');
+  var planBadge = '<span class="dn-badge ' + (plan === "skola" ? 'dn-badge-skola' : 'dn-badge-bezskole') + '" onclick="puTogglePlan()" title="Klik za promjenu plana vožnje">'
+    + (plan === "skola" ? '🎒 ŠKOLA' : '🏖 BEZ ŠKOLE') + '</span>';
+
+  // Toggle R-P: P = plan (plain, bez zvjezdica), R = realni plan (stvarni vozači, prekriženi)
+  var rpToggle = '<span class="dn-rp" title="P = plan · R = realni plan (tko stvarno vozi)">'
+    + '<span class="dn-rp-opt' + (PU_RP === "P" ? ' on' : '') + '" onclick="puSetRP(\'P\')">P</span>'
+    + '<span class="dn-rp-opt' + (PU_RP === "R" ? ' on' : '') + '" onclick="puSetRP(\'R\')">R</span>'
+    + '</span>';
+
+  var p = '<div class="papir-hdr">'
+    + '<div class="papir-tit">Raspored gradsko - prigradskog osoblja za dan: <span class="dn-dan">' + danLbl + '</span></div>'
+    + '<div class="papir-hdr-r">' + rpToggle + tipBadge + planBadge + '<span class="papir-datum">ZADAR, ' + puFmtD(dt) + '</span></div>'
+    + '</div>'
+    + '<div class="papir-grid">' + L + R + '</div>';
+
+  document.getElementById("PAPIR").innerHTML = p;
+
+  // Tab-tok fokus (otvori GBR picker / skoči na novi redak) — nakon što je DOM spreman
+  if(PU_ZRL_FOKUS) setTimeout(puZrlPrimijeniFokus, 20);
+  if(PU_ZRL_FOKUS_NOVI) setTimeout(puZrlPrimijeniFokusNovi, 20);
+}
+
+// Toggle plan vožnje (Škola / Bez škole)
+function puTogglePlan(){
+  if(!PU_DAN) return;
+  var dan = puEnsureDan(puKey(PU_DAN));
+  var cur = dan.planVoznje || puPlanVoznjeAuto(PU_DAN);
+  dan.planVoznje = (cur === "skola") ? "bezskole" : "skola";
+  showToast("Plan vožnje: " + (dan.planVoznje === "skola" ? "Škola" : "Bez škole"), "info");
+  renderDan();
+}
+
+// Toggle prikaza: P = plan (plain) | R = realni plan (stvarni vozači, prekriženi, zvjezdice)
+function puSetRP(mode){
+  if(PU_RP === mode) return;
+  PU_RP = mode;
+  showToast(mode === "R" ? "Realni plan — prikazani stvarni vozači" : "Plan — osnovni raspored", "info");
+  renderDan();
+}
+
+// Spremanje editiranih ćelija (slobodni unos — odsutni, prometnici, kombiji, invalidi...)
+function puCellSave(td){
+  if(!PU_DAN) return;
+  var key = puKey(PU_DAN);
+  var dan = puEnsureDan(key);
+  var sek = td.dataset.sek;
+  var txt = td.textContent.trim();
+
+  if(sek === "prigrad" || sek === "grad"){
+    var lin = td.dataset.lin, smj = parseInt(td.dataset.smj, 10);
+    if(!dan[sek][lin]) dan[sek][lin] = [];
+    if(txt) dan[sek][lin][smj] = { ime: txt.toUpperCase(), zamjena:false };
+    else dan[sek][lin][smj] = null;
+  } else if(sek === "odsutni"){
+    var oidx = parseInt(td.dataset.idx, 10), ofld = td.dataset.fld || "ime";
+    if(typeof dan.odsutni[oidx] !== "object" || dan.odsutni[oidx] === null) dan.odsutni[oidx] = { ime:"", tip:"" };
+    dan.odsutni[oidx][ofld] = (ofld === "ime") ? txt.toUpperCase() : txt;
+    // Prazno ime + bez tipa → očisti
+    if(!dan.odsutni[oidx].ime && !dan.odsutni[oidx].tip) dan.odsutni[oidx] = null;
+  } else if(sek === "prometnici" || sek === "kombiji"){
+    var idx = parseInt(td.dataset.idx, 10);
+    dan[sek][idx] = txt;
+  } else if(sek === "invalidi" || sek === "izvanredne" || sek === "ugovoreni" || sek === "zrlOdlasci" || sek === "zrlDolasci"){
+    var idx2 = parseInt(td.dataset.idx, 10), fld = td.dataset.fld;
+    if(!dan[sek][idx2]) dan[sek][idx2] = {};
+    dan[sek][idx2][fld] = txt;
+  }
+}
+
+// Picker za razlog odsustva (SD / GO / B / ND)
+var PU_ODS_TIPOVI = [
+  { k:"SD", l:"Slobodni dan" },
+  { k:"GO", l:"Godišnji odmor" },
+  { k:"B",  l:"Bolovanje" },
+  { k:"ND", l:"Neplaćeni dopust" }
+];
+function puOdsTipPick(span, ev){
+  ev.stopPropagation();
+  puVozPickClose();
+  var idx = parseInt(span.dataset.idx, 10);
+  PU_PICK_CTX = { mode:"odstip", sek:"odsutni", idx: idx };
+  var pop = document.createElement("div");
+  pop.className = "voz-pop"; pop.id = "VOZ-POP";
+  var h = '<div class="voz-pop-list" id="VOZ-POP-LIST">';
+  PU_ODS_TIPOVI.forEach(function(t, i){
+    h += '<div class="voz-pop-it' + (i===0?' voz-pop-it-first':'') + '" onclick="puOdsTipSet(\'' + t.k + '\')">'
+       + '<span class="kn-ods-badge kn-ods-' + t.k + '" style="margin-right:7px">' + t.k + '</span>' + t.l + '</div>';
+  });
+  h += '</div><div class="voz-pop-foot"><button class="voz-pop-clear" onclick="puOdsTipSet(\'\')">✕ Bez oznake</button></div>';
+  pop.innerHTML = h;
+  document.body.appendChild(pop);
+  var r = span.getBoundingClientRect();
+  pop.style.left = Math.min(r.left, window.innerWidth - 200) + "px";
+  pop.style.top = (r.bottom + 180 < window.innerHeight ? r.bottom + 4 : r.top - 184) + "px";
+  setTimeout(function(){ document.addEventListener("click", puVozPickOutside); }, 50);
+}
+function puOdsTipSet(k){
+  if(!PU_PICK_CTX || !PU_DAN){ puVozPickClose(); return; }
+  var dan = puEnsureDan(puKey(PU_DAN));
+  var idx = PU_PICK_CTX.idx;
+  if(typeof dan.odsutni[idx] !== "object" || dan.odsutni[idx] === null) dan.odsutni[idx] = { ime:"", tip:"" };
+  dan.odsutni[idx].tip = k;
+  if(k !== "GO" && k !== "B") delete dan.odsutni[idx].dani;   // ručni SD/ND nemaju brojač
+  if(!dan.odsutni[idx].ime && !dan.odsutni[idx].tip) dan.odsutni[idx] = null;
+  // Odsustvo stvara prazninu u rasporedu te osobe (ako je danas bila u planu)
+  if(k && dan.odsutni[idx] && dan.odsutni[idx].ime) puOdsutniUKnjizi(dan.odsutni[idx].ime);
+  puVozPickClose();
+  renderDan();
+}
+
+// Picker imena za Odsutno osoblje — padajuća lista svih vozača
+function puOdsImePick(span, ev){
+  ev.stopPropagation();
+  puVozPickClose();
+  var idx = parseInt(span.dataset.idx, 10);
+  _puPickOpen(span, { mode:"odsime", lista: PU_SVI_VOZACI, placeholder:"Traži vozača…", sek:"odsutni", idx: idx });
+}
+
+// ─── Objedinjeni popup za unos odsustva (ime + tip + radni dani) ───
+var PU_ODS_POPUP = null;   // { idx, ime, tip, dani }
+function puOdsPopup(idx){
+  // Dnevni kontekst: početni datum = trenutni dan (fiksan), bira se samo kraj
+  PU_ODS_POPUP = { idx: idx, ime:"", tip:"GO", od: new Date(PU_DAN.getFullYear(), PU_DAN.getMonth(), PU_DAN.getDate()), do: null, calMjesec: new Date(PU_DAN.getFullYear(), PU_DAN.getMonth(), 1), fiksniOd: true, kontekst:"dan" };
+  document.getElementById("ODS-TIT").textContent = "Unos odsustva — od " + puFmtD(PU_ODS_POPUP.od);
+  puOdsPopupRender();
+  document.getElementById("ODS-BG").classList.add("on");
+}
+function puOdsPopupRender(){
+  var p = PU_ODS_POPUP; if(!p) return;
+  document.getElementById("ODS-IME-VAL").textContent = p.ime || "— odaberi vozača —";
+  document.getElementById("ODS-IME-VAL").className = p.ime ? "" : "ods-ph";
+  // Stari GO (informativno)
+  var goEl = document.getElementById("ODS-STARI-GO");
+  if(p.ime){
+    var sg = puStariGO(p.ime);
+    goEl.innerHTML = sg > 0
+      ? 'Stari godišnji: <strong>' + sg + ' dana</strong>' + (puGoOpasna(sg) ? ' <span class="ods-go-opasna">⚠ rok blizu</span>' : '')
+      : 'Stari godišnji: nema neiskorištenih';
+  } else goEl.innerHTML = "";
+  // Vrste odsustva
+  var th = "";
+  PU_ODS_TIPOVI.forEach(function(t){
+    th += '<button type="button" class="ods-tip-btn' + (p.tip === t.k ? " on" : "") + '" onclick="puOdsPopupTip(\'' + t.k + '\')">'
+        + '<span class="kn-ods-badge kn-ods-' + t.k + '">' + t.k + '</span> ' + t.l + '</button>';
+  });
+  document.getElementById("ODS-TIPOVI").innerHTML = th;
+  // Mini-kalendar
+  document.getElementById("ODS-CAL").innerHTML = puOdsCalHtml();
+  // Sažetak raspona + radni dani
+  var rEl = document.getElementById("ODS-RASPON");
+  if(p.od && p.do){
+    var rd = puRadniDaniIzmedu(p.od, p.do);
+    rEl.innerHTML = '<strong>' + puFmtD(p.od) + '</strong> → <strong>' + puFmtD(p.do) + '</strong> · '
+      + '<span class="ods-raspon-rd">' + rd + ' radnih dana</span> <span class="ods-fld-hint">(bez vikenda)</span>';
+  } else if(p.od){
+    rEl.innerHTML = 'Početak: <strong>' + puFmtD(p.od) + '</strong> — odaberi krajnji datum';
+  } else rEl.innerHTML = 'Odaberi početni datum';
+}
+// Mini-kalendar HTML (mjesec p.calMjesec); klik bira početak/kraj
+function puOdsCalHtml(){
+  var p = PU_ODS_POPUP;
+  var mj = p.calMjesec.getMonth(), god = p.calMjesec.getFullYear();
+  var prvi = new Date(god, mj, 1);
+  var offset = (prvi.getDay() + 6) % 7;   // pon=0
+  var brDana = new Date(god, mj + 1, 0).getDate();
+  var h = '<div class="ods-cal-hdr">'
+    + '<button type="button" class="ods-cal-nav" onclick="puOdsCalMjesec(-1)">‹</button>'
+    + '<span class="ods-cal-tit">' + PU_MJESECI[mj] + ' ' + god + '.</span>'
+    + '<button type="button" class="ods-cal-nav" onclick="puOdsCalMjesec(1)">›</button></div>';
+  h += '<div class="ods-cal-grid">';
+  ["Po","Ut","Sr","Če","Pe","Su","Ne"].forEach(function(d){ h += '<div class="ods-cal-dow">' + d + '</div>'; });
+  for(var i = 0; i < offset; i++) h += '<div class="ods-cal-cell ods-cal-empty"></div>';
+  for(var d = 1; d <= brDana; d++){
+    var dt = new Date(god, mj, d);
+    var key = puKey(dt);
+    var vikend = dt.getDay() === 0 || dt.getDay() === 6;
+    var jeOd = p.od && puKey(p.od) === key;
+    var jeDo = p.do && puKey(p.do) === key;
+    var uRasponu = p.od && p.do && dt >= p.od && dt <= p.do;
+    var disabled = p.fiksniOd && p.od && dt < p.od;   // u dnevnom kontekstu ne biraj prije početka
+    var cls = "ods-cal-cell"
+      + (vikend ? " ods-cal-vikend" : "")
+      + (jeOd ? " ods-cal-od" : "") + (jeDo ? " ods-cal-do" : "")
+      + (uRasponu && !jeOd && !jeDo ? " ods-cal-raspon" : "")
+      + (disabled ? " ods-cal-disabled" : "");
+    h += '<div class="' + cls + '"' + (disabled ? "" : ' onclick="puOdsCalKlik(\'' + key + '\')"') + '>' + d + '</div>';
+  }
+  h += '</div>';
+  return h;
+}
+function puOdsCalMjesec(delta){
+  var p = PU_ODS_POPUP; if(!p) return;
+  p.calMjesec = new Date(p.calMjesec.getFullYear(), p.calMjesec.getMonth() + delta, 1);
+  document.getElementById("ODS-CAL").innerHTML = puOdsCalHtml();
+}
+function puOdsCalKlik(key){
+  var p = PU_ODS_POPUP; if(!p) return;
+  var parts = key.split("-");
+  var dt = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+  if(p.fiksniOd){
+    // Dnevni kontekst: početak je fiksan, biramo samo kraj
+    if(dt < p.od) return;
+    p.do = dt;
+  } else {
+    // Mjesečni kontekst: prvi klik = početak, drugi = kraj; treći resetira
+    if(!p.od || (p.od && p.do)){ p.od = dt; p.do = null; }
+    else if(dt < p.od){ p.od = dt; }   // klik prije početka → novi početak
+    else { p.do = dt; }
+  }
+  puOdsPopupRender();
+}
+function puOdsPopupIme(ev){
+  ev.stopPropagation();
+  puVozPickClose();
+  PU_PICK_CTX = { mode:"odspopup" };
+  var pop = document.createElement("div");
+  pop.className = "voz-pop"; pop.id = "VOZ-POP";
+  pop.innerHTML = '<input type="text" class="voz-pop-search" id="VOZ-POP-SEARCH" placeholder="Traži vozača…" autocomplete="off" oninput="puOdsPopupImeFilter(this.value)"><div class="voz-pop-list" id="VOZ-POP-LIST"></div>';
+  document.body.appendChild(pop);
+  var r = ev.currentTarget.getBoundingClientRect();
+  pop.style.left = r.left + "px";
+  pop.style.top = (r.bottom + 4) + "px";
+  pop.style.zIndex = "10000";
+  puOdsPopupImeFilter("");
+  setTimeout(function(){ document.getElementById("VOZ-POP-SEARCH").focus(); }, 30);
+  setTimeout(function(){ document.addEventListener("click", puVozPickOutside); }, 50);
+}
+function puOdsPopupImeFilter(q){
+  var list = document.getElementById("VOZ-POP-LIST"); if(!list) return;
+  q = (q||"").trim().toUpperCase();
+  var m = PU_SVI_VOZACI.filter(function(v){ return !q || v.indexOf(q) !== -1; });
+  var h = "";
+  m.slice(0, 40).forEach(function(v){ h += '<div class="voz-pop-it" onclick="puOdsPopupImeSet(\'' + puEsc(v).replace(/'/g,"\\'") + '\')">' + puEsc(v) + '</div>'; });
+  if(!m.length) h = '<div class="voz-pop-it" style="color:var(--ts)">Nema</div>';
+  list.innerHTML = h;
+}
+function puOdsPopupImeSet(v){ if(PU_ODS_POPUP) PU_ODS_POPUP.ime = v; puVozPickClose(); puOdsPopupRender(); }
+function puOdsPopupTip(k){ if(PU_ODS_POPUP){ PU_ODS_POPUP.tip = k; puOdsPopupRender(); } }
+function puOdsPopupClose(){ document.getElementById("ODS-BG").classList.remove("on"); PU_ODS_POPUP = null; }
+function puOdsPopupSpremi(){
+  var p = PU_ODS_POPUP; if(!p) return;
+  if(!p.ime){ showToast("Odaberite vozača", "warn"); return; }
+  if(!p.od || !p.do){ showToast("Odaberite početak i kraj odsustva", "warn"); return; }
+  var rd = puRadniDaniIzmedu(p.od, p.do);
+  if(p.kontekst === "mjesec"){
+    // Spremi u mjesečnu listu
+    var key = puMjesecKey(PU_MJESEC.getFullYear(), PU_MJESEC.getMonth());
+    if(!PU_ODSUSTVA[key]) PU_ODSUSTVA[key] = [];
+    var rec = { ime: p.ime, tip: p.tip, dani: rd, od: puKey(p.od), do: puKey(p.do), preneseno: false };
+    if(p.idx != null && PU_ODSUSTVA[key][p.idx]) PU_ODSUSTVA[key][p.idx] = rec;
+    else PU_ODSUSTVA[key].push(rec);
+    puOdsPopupClose();
+    showToast(p.ime + " — " + p.tip + " (" + puFmtD(p.od) + "–" + puFmtD(p.do) + ")", "info");
+    puOdsMjesecRender();
+  } else {
+    // Dnevni kontekst
+    var dan = puEnsureDan(puKey(PU_DAN));
+    if(!dan.odsutni) dan.odsutni = [];
+    dan.odsutni[p.idx] = { ime: p.ime, tip: p.tip, dani: rd, od: puKey(p.od), do: puKey(p.do) };
+    puOdsutniUKnjizi(p.ime);
+    puOdsPopupClose();
+    showToast(p.ime + " — " + p.tip + " (" + rd + " radnih dana)", "info");
+    renderDan();
+  }
+}
+// Broj radnih dana između dva datuma (uključivo, bez subota/nedjelja)
+function puRadniDaniIzmedu(od, doo){
+  var d = new Date(od.getFullYear(), od.getMonth(), od.getDate());
+  var kraj = new Date(doo.getFullYear(), doo.getMonth(), doo.getDate());
+  var n = 0;
+  while(d <= kraj){
+    var dow = d.getDay();
+    if(dow !== 0 && dow !== 6) n++;
+    d.setDate(d.getDate() + 1);
+  }
+  return n;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ODSUSTVA MJESECA — pregled prenesenih + dodavanje novih (dugme na kalendaru)
+// ═══════════════════════════════════════════════════════════════════
+// Model: PU_ODSUSTVA[mjesecKey] = [ { ime, tip, odDan, dani } ]
+//   odDan = datum početka (ISO), dani = broj radnih dana.
+var PU_ODSUSTVA = {};
+function puMjesecKey(god, mj){ return god + "-" + String(mj+1).padStart(2,"0"); }
+
+// Raspon (od–do) za preneseno odsustvo: nastavlja se od prvog radnog dana tekućeg mjeseca,
+// trajanje = broj prenesenih radnih dana. Vraća ISO ključeve {od, do}.
+function puPreneseniRaspon(god, mj, dani){
+  var od = new Date(god, mj, 1);
+  while(od.getDay() === 0 || od.getDay() === 6) od.setDate(od.getDate() + 1);   // prvi radni dan
+  var n = Math.max(1, dani || 1);
+  var doo = puDodajRadneDane(od, n - 1);   // od se broji kao 1. radni dan
+  return { od: puKey(od), do: puKey(doo) };
+}
+
+// Zadnji popunjeni dan prethodnog mjeseca (za prijenos odsustava koja se nastavljaju)
+function puPreneseniOdsustva(god, mj){
+  // Prethodni mjesec
+  var pmGod = mj === 0 ? god - 1 : god;
+  var pmMj  = mj === 0 ? 11 : mj - 1;
+  var zadnji = new Date(pmGod, pmMj + 1, 0).getDate();
+  // 1) Nađi zadnji generirani dan prethodnog mjeseca s odsutnima
+  for(var d = zadnji; d >= 1; d--){
+    var dan = PU_DATA[puKey(new Date(pmGod, pmMj, d))];
+    if(dan && dan.odsutni && dan.odsutni.length){
+      return dan.odsutni.filter(function(o){ return o && o.ime && o.tip && o.tip !== "SD"; })
+        .map(function(o){ var r = puPreneseniRaspon(god, mj, o.dani || 1); return { ime:o.ime, tip:o.tip, dani:o.dani || 1, preneseno:true, od:r.od, do:r.do }; });
+    }
+  }
+  // 2) Prošli mjesec nije generiran → simuliraj zadnji poznati dan iz baze (mock)
+  //    Projiciramo odsutne sa zadnjeg radnog dana prethodnog mjeseca kao polazište za planiranje.
+  var simDan = new Date(pmGod, pmMj, zadnji);
+  while(simDan.getDay() === 0 || simDan.getDay() === 6) simDan.setDate(simDan.getDate() - 1);   // zadnji radni dan
+  var sim = puGenerirajDan(simDan);
+  return (sim.odsutni || []).filter(function(o){ return o && o.ime && o.tip && o.tip !== "SD"; })
+    .map(function(o){ var r = puPreneseniRaspon(god, mj, o.dani || 1); return { ime:o.ime, tip:o.tip, dani:o.dani || 1, preneseno:true, od:r.od, do:r.do }; });
+}
+
+function puOdsMjesecOpen(){
+  var god = PU_MJESEC.getFullYear(), mj = PU_MJESEC.getMonth();
+  var key = puMjesecKey(god, mj);
+  // Inicijaliziraj listu mjeseca: prvi put povuci prenesena odsustva iz prošlog mjeseca
+  if(!PU_ODSUSTVA[key]){
+    PU_ODSUSTVA[key] = puPreneseniOdsustva(god, mj).map(function(o){
+      return { ime:o.ime, tip:o.tip, dani:o.dani, preneseno:true, od:o.od, do:o.do };
+    });
+  }
+  puOdsMjesecRender();
+  document.getElementById("ODSM-BG").classList.add("on");
+}
+function puOdsMjesecRender(){
+  var god = PU_MJESEC.getFullYear(), mj = PU_MJESEC.getMonth();
+  var key = puMjesecKey(god, mj);
+  var lista = PU_ODSUSTVA[key] || [];
+  document.getElementById("ODSM-TIT").textContent = "Odsustva — " + PU_MJESECI[mj] + " " + god + ".";
+  var preneseno = lista.filter(function(o){ return o.preneseno; }).length;
+  var h = "";
+  if(preneseno > 0){
+    h += '<div class="odsm-info">Preneseno <strong>' + preneseno + '</strong> odsustava iz prošlog mjeseca (nastavljaju se). Uredite ili dodajte nova.</div>';
+  }
+  if(lista.length === 0){
+    h += '<div class="drill-empty">Nema unesenih odsustava. Klikni „＋ Novo odsustvo".</div>';
+  } else {
+    h += '<table class="odsm-tbl"><thead><tr><th>Vozač</th><th>Vrsta</th><th>Početak</th><th>Kraj</th><th>Radnih dana</th><th>Stari GO</th><th></th></tr></thead><tbody>';
+    lista.forEach(function(o, i){
+      var sg = puStariGO(o.ime);
+      var sgTxt = o.ime ? (sg > 0 ? sg + " d" + (puGoOpasna(sg) ? " ⚠" : "") : "—") : "—";
+      var odTxt = o.od ? puFmtD(puParseKey(o.od)) : "—";
+      var doTxt = o.do ? puFmtD(puParseKey(o.do)) : "—";
+      h += '<tr' + (o.preneseno ? ' class="odsm-preneseno"' : '') + ' onclick="puOdsMjesecUredi(' + i + ')" title="Klik za uređivanje">'
+        + '<td class="odsm-ime">' + puEsc(o.ime || "—") + (o.preneseno ? '<span class="odsm-tag">preneseno</span>' : '') + '</td>'
+        + '<td><span class="kn-ods-badge kn-ods-' + o.tip + '">' + o.tip + '</span></td>'
+        + '<td class="odsm-dt">' + odTxt + '</td>'
+        + '<td class="odsm-dt">' + doTxt + '</td>'
+        + '<td class="odsm-num">' + (o.dani || "—") + (o.dani ? " rd" : "") + '</td>'
+        + '<td class="odsm-go' + (puGoOpasna(sg) ? " odsm-go-opasna" : "") + '">' + sgTxt + '</td>'
+        + '<td class="odsm-del"><span class="kn-trash" style="position:static;opacity:.55" onclick="event.stopPropagation();puOdsMjesecDel(' + i + ')" title="Obriši"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></span></td>'
+        + '</tr>';
+    });
+    h += '</tbody></table>';
+  }
+  document.getElementById("ODSM-BODY").innerHTML = h;
+}
+function puOdsMjesecClose(){ document.getElementById("ODSM-BG").classList.remove("on"); }
+// Novo odsustvo → otvori popup s kalendarom (mjesečni kontekst, slobodan odabir oba datuma)
+function puOdsMjesecDodaj(){
+  var prviMj = new Date(PU_MJESEC.getFullYear(), PU_MJESEC.getMonth(), 1);
+  PU_ODS_POPUP = { idx: null, ime:"", tip:"GO", od: null, do: null, calMjesec: prviMj, fiksniOd: false, kontekst:"mjesec" };
+  document.getElementById("ODS-TIT").textContent = "Novo odsustvo — " + PU_MJESECI[PU_MJESEC.getMonth()] + " " + PU_MJESEC.getFullYear() + ".";
+  puOdsPopupRender();
+  document.getElementById("ODS-BG").classList.add("on");
+}
+// Uređivanje postojećeg → popup s učitanim podacima
+function puOdsMjesecUredi(i){
+  var key = puMjesecKey(PU_MJESEC.getFullYear(), PU_MJESEC.getMonth());
+  var o = PU_ODSUSTVA[key][i]; if(!o) return;
+  var od = o.od ? puParseKey(o.od) : new Date(PU_MJESEC.getFullYear(), PU_MJESEC.getMonth(), 1);
+  var doo = o.do ? puParseKey(o.do) : null;
+  PU_ODS_POPUP = { idx: i, ime: o.ime, tip: o.tip, od: od, do: doo, calMjesec: new Date(od.getFullYear(), od.getMonth(), 1), fiksniOd: false, kontekst:"mjesec" };
+  document.getElementById("ODS-TIT").textContent = "Uredi odsustvo";
+  puOdsPopupRender();
+  document.getElementById("ODS-BG").classList.add("on");
+}
+function puOdsMjesecDel(i){
+  var key = puMjesecKey(PU_MJESEC.getFullYear(), PU_MJESEC.getMonth());
+  PU_ODSUSTVA[key].splice(i, 1);
+  puOdsMjesecRender();
+}
+function puParseKey(key){
+  var p = key.split("-");
+  return new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]));
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PREGLED RADA — satnica svih vozača za mjesec (brza provjera preraspodjele)
+// ═══════════════════════════════════════════════════════════════════
+function puPregledRada(){
+  var m = puMjesecMetrika();
+  if(m.danaPopunjeno === 0){ showToast("Prvo popunite mjesec (Autofill)", "warn"); return; }
+  document.getElementById("PR-SEARCH").value = "";
+  puPregledRadaRender();
+  document.getElementById("PR-BG").classList.add("on");
+}
+function puPregledRadaRender(){
+  var god = PU_MJESEC.getFullYear(), mj = PU_MJESEC.getMonth();
+  var m = puMjesecMetrika();
+  document.getElementById("PR-TIT").textContent = "Pregled rada — " + PU_MJESECI[mj] + " " + god + ".";
+
+  // Skupi sve vozače: oni sa satima + svi iz predložaka (i oni s 0 sati)
+  var sviSet = {};
+  PU_SVI_VOZACI.forEach(function(v){ sviSet[v] = 1; });
+  Object.keys(m.satiPoVozacu).forEach(function(v){ sviSet[v] = 1; });
+  var lista = Object.keys(sviSet).map(function(ime){
+    var sati = m.satiPoVozacu[ime] || 0;
+    var razlika = sati - m.fondSati;
+    var status = razlika > 0 ? "iznad" : (razlika < 0 ? "ispod" : "ok");
+    var pricuva = m.zelePrekoSet && m.zelePrekoSet[ime];
+    return { ime:ime, sati:sati, razlika:razlika, status:status };
+  });
+
+  // Filter po pretrazi
+  var q = (document.getElementById("PR-SEARCH").value || "").trim().toUpperCase();
+  if(q) lista = lista.filter(function(r){ return r.ime.indexOf(q) !== -1; });
+
+  // Sortiranje: najveći manjak prvi (kandidati za preraspodjelu), pa po imenu
+  lista.sort(function(a, b){ return a.razlika - b.razlika; });
+
+  // Statistika
+  var iznad = lista.filter(function(r){ return r.razlika > 0; }).length;
+  var ispod = lista.filter(function(r){ return r.razlika < 0; }).length;
+  var uravnotezeno = lista.filter(function(r){ return r.razlika === 0; }).length;
+  document.getElementById("PR-SUB").innerHTML =
+    '<span class="pr-stat"><b>' + lista.length + '</b> vozača</span>'
+    + '<span class="pr-stat pr-stat-ispod"><b>' + ispod + '</b> ispod fonda</span>'
+    + '<span class="pr-stat pr-stat-iznad"><b>' + iznad + '</b> iznad fonda</span>'
+    + '<span class="pr-stat">fond <b>' + m.fondSati + ' h</b></span>';
+
+  var h = '<table class="pr-tbl"><thead><tr><th>Vozač</th><th>Sati</th><th>Fond</th><th>Razlika</th><th>Iskorištenost</th></tr></thead><tbody>';
+  lista.forEach(function(r){
+    var pct = m.fondSati > 0 ? Math.round(r.sati / m.fondSati * 100) : 0;
+    var barCls = r.status === "iznad" ? "pr-bar-iznad" : (r.status === "ispod" ? "pr-bar-ispod" : "pr-bar-ok");
+    var razText = r.razlika > 0 ? "+" + puNum(r.razlika) + " h" : (r.razlika < 0 ? puNum(r.razlika) + " h" : "0 h");
+    var razCls = r.razlika > 0 ? "pr-raz-iznad" : (r.razlika < 0 ? "pr-raz-ispod" : "pr-raz-ok");
+    h += '<tr class="pr-row pr-row-' + r.status + '">'
+      + '<td class="pr-ime">' + puEsc(r.ime) + '</td>'
+      + '<td class="pr-num">' + puNum(r.sati) + ' h</td>'
+      + '<td class="pr-num pr-fond">' + m.fondSati + ' h</td>'
+      + '<td class="pr-num ' + razCls + '">' + razText + '</td>'
+      + '<td class="pr-bar-cell"><div class="pr-bar-track"><div class="pr-bar ' + barCls + '" style="width:' + Math.min(100, pct) + '%"></div></div><span class="pr-pct">' + pct + '%</span></td>'
+      + '</tr>';
+  });
+  h += '</tbody></table>';
+  if(lista.length === 0) h = '<div class="drill-empty">Nema vozača za prikaz.</div>';
+  document.getElementById("PR-BODY").innerHTML = h;
+}
+function puPregledRadaClose(){ document.getElementById("PR-BG").classList.remove("on"); }
+
+// Dodaj N radnih dana na datum (preskače subote i nedjelje)
+function puDodajRadneDane(dt, n){
+  var d = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+  var dodano = 0;
+  while(dodano < n){
+    d.setDate(d.getDate() + 1);
+    var dow = d.getDay();
+    if(dow !== 0 && dow !== 6) dodano++;
+  }
+  return d;
+}
+
+// Kad je vozač označen kao odsutan — njegova smjena u rasporedu postaje praznina (⚠ pričuva)
+function puOdsutniUKnjizi(ime){
+  if(!PU_DAN || !ime) return;
+  var dan = PU_DATA[puKey(PU_DAN)];
+  if(!dan) return;
+  ["prigrad","grad"].forEach(function(sek){
+    Object.keys(dan[sek] || {}).forEach(function(linId){
+      (dan[sek][linId] || []).forEach(function(v, i){
+        if(v && v.ime === ime){ dan[sek][linId][i] = { ime:"", prazno:true }; }
+      });
+    });
+  });
+}
+
+function puObavSave(ta){
+  if(!PU_DAN) return;
+  puEnsureDan(puKey(PU_DAN)).obavijesti = ta.value;
+}
+
+// Prigrad — označi tko od dva prijavljena vozača STVARNO vozi (neformalna zamjena).
+// Klik na zvjezdicu: toggle. Ako je već stvarni → poništi (oba normalna).
+function puToggleStvarni(linId, smjIdx, ev){
+  if(ev) ev.stopPropagation();
+  if(!PU_DAN) return;
+  var dan = puEnsureDan(puKey(PU_DAN));
+  if(!dan.stvarni) dan.stvarni = {};
+  if(dan.stvarni[linId] === smjIdx) delete dan.stvarni[linId];   // ponovni klik = poništi
+  else dan.stvarni[linId] = smjIdx;
+  renderDan();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DROPDOWN PICKER (combobox sa pretragom) — vozači / GBR / oznake
+// ═══════════════════════════════════════════════════════════════════
+var PU_PICK_CTX = null;   // { td, mode:"voz"|"gbr", sek, lin/idx, smj/fld, lista }
+
+// Picker za VOZAČE (gradske/prigradske rasporede)
+function puVozPick(td, ev){
+  ev.stopPropagation();
+  var sek = td.dataset.sek, lin = td.dataset.lin, smj = parseInt(td.dataset.smj, 10);
+  // Praznina (pričuva) → otvori VELIKI popup s podacima o vozačima; inače dropdown za promjenu
+  var jePraznina = td.classList.contains("kn-alarm");
+  if(jePraznina){
+    puPricuvaPopup(sek, lin, smj);
+    return;
+  }
+  _puPickOpen(td, {
+    mode: "voz",
+    lista: PU_SVI_VOZACI,
+    placeholder: "Traži vozača…",
+    sek: sek, lin: lin, smj: smj,
+    linId: lin   // za grupne prijedloge pričuve
+  });
+}
+
+// Picker za GBR / dežurstvo (izvanredne, ugovoreni, zr. luka)
+function puGbrPick(td, ev){
+  ev.stopPropagation();
+  var lista = PU_GBR_LIST;
+  if(td.dataset.fld === "dez"){
+    lista = PU_DEZ_LIST;   // dežurstvo — odvojena stavka (DEŽURNI I / II / DEŽ III)
+  }
+  _puPickOpen(td, {
+    mode: "gbr",
+    lista: lista,
+    placeholder: td.dataset.fld === "dez" ? "Traži dežurstvo…" : "Traži GBR…",
+    sek: td.dataset.sek, idx: parseInt(td.dataset.idx, 10), fld: td.dataset.fld
+  });
+}
+
+function _puPickOpen(td, ctx){
+  puVozPickClose();
+  ctx.td = td;
+  PU_PICK_CTX = ctx;
+
+  var pop = document.createElement("div");
+  pop.className = "voz-pop";
+  pop.id = "VOZ-POP";
+  pop.innerHTML = ''
+    + '<input type="text" class="voz-pop-search" id="VOZ-POP-SEARCH" placeholder="' + ctx.placeholder + '" autocomplete="off"'
+    + ' oninput="puVozPickFilter(this.value)" onkeydown="puVozPickKey(event)">'
+    + '<div class="voz-pop-list" id="VOZ-POP-LIST"></div>'
+    + '<div class="voz-pop-foot"><button class="voz-pop-clear" onclick="puVozPickSet(\'\')">✕ Isprazni ćeliju</button></div>';
+  document.body.appendChild(pop);
+
+  var r = td.getBoundingClientRect();
+  var popW = 230, popH = 320;
+  var left = Math.min(r.left, window.innerWidth - popW - 12);
+  var top = (r.bottom + popH < window.innerHeight) ? r.bottom + 4 : Math.max(8, r.top - popH - 4);
+  pop.style.left = left + "px";
+  pop.style.top = top + "px";
+
+  puVozPickFilter("");
+  setTimeout(function(){ document.getElementById("VOZ-POP-SEARCH").focus(); }, 30);
+  setTimeout(function(){ document.addEventListener("click", puVozPickOutside); }, 50);
+}
+
+function puVozPickOutside(ev){
+  var pop = document.getElementById("VOZ-POP");
+  if(pop && !pop.contains(ev.target)) puVozPickClose();
+}
+
+function puVozPickClose(){
+  var pop = document.getElementById("VOZ-POP");
+  if(pop) pop.remove();
+  document.removeEventListener("click", puVozPickOutside);
+  PU_PICK_CTX = null;
+}
+
+// ─── Zajednička logika prioriteta za pričuvu (dijele dropdown i veliki popup) ───
+// Vraća { prioSet, prioInfo, prioRang } za dane vozače na liniji.
+function puPricuvaPrioriteti(linId, sek, smj){
+  var prioSet = {}, prioInfo = {}, prioRang = {};
+  if(!linId) return { prioSet:prioSet, prioInfo:prioInfo, prioRang:prioRang };
+  var grupa = puGrupaZaLiniju(linId);
+  var rezervaSet = {}; PU_REZERVA.forEach(function(v){ rezervaSet[v] = 1; });
+  // Planirani vozač za ovu smjenu (iz predloška + rotacija)
+  var planirani = null;
+  if(PU_DAN && sek && smj != null){
+    var tipD = puTipDana(PU_DAN);
+    var tplArr = (PU_TEMPLATE[tipD][sek] || {})[linId] || [];
+    if(tplArr.length >= 2){
+      var rot = sek === "prigrad" ? puTjedanBroj(PU_DAN) : puEpochDan(PU_DAN);
+      planirani = tplArr[(smj + rot) % tplArr.length];
+    } else if(tplArr.length === 1){ planirani = tplArr[0]; }
+  }
+  // Prekriženi / slobodni vozači danas
+  var prekrizeni = {}, odsutniSet = {};
+  var danP = PU_DATA[puKey(PU_DAN)];
+  if(danP){
+    (danP.odsutni || []).forEach(function(o){ if(o && o.ime) odsutniSet[o.ime] = 1; });
+    ["prigrad","grad"].forEach(function(s){
+      Object.keys(danP[s] || {}).forEach(function(li){
+        var stv = danP.stvarni && danP.stvarni[li];
+        (danP[s][li] || []).forEach(function(v, idx){
+          if(!v || !v.ime) return;
+          if(v.slobodan) prekrizeni[v.ime] = li;
+          else if(stv != null && idx !== stv) prekrizeni[v.ime] = li;
+        });
+      });
+    });
+  }
+  PU_SVI_VOZACI.forEach(function(v){
+    var razlozi = [], rang = 9;
+    if(prekrizeni[v] && prekrizeni[v] === linId){ razlozi.push("slobodan — partner"); rang = 0; }
+    else if(planirani && v === planirani && !odsutniSet[v]){ razlozi.push("planiran — vrati"); rang = 1; }
+    else if(prekrizeni[v]){ razlozi.push("slobodan danas"); rang = 2; }
+    else if(rezervaSet[v]){ razlozi.push("pričuva"); rang = 3; }
+    if(puVozioLiniju(v, linId)){ if(!razlozi.length) razlozi.push("vozio liniju"); if(rang>4) rang = 4; }
+    else if(grupa){ for(var i=0;i<grupa.linije.length;i++){ if(puVozioLiniju(v, grupa.linije[i])){ if(!razlozi.length) razlozi.push("ista grupa"); if(rang>5) rang = 5; break; } } }
+    if(razlozi.length){ prioSet[v] = 1; prioInfo[v] = razlozi; prioRang[v] = rang; }
+  });
+  return { prioSet:prioSet, prioInfo:prioInfo, prioRang:prioRang, grupa:grupa };
+}
+
+function puVozPickFilter(q){
+  var list = document.getElementById("VOZ-POP-LIST");
+  if(!list || !PU_PICK_CTX) return;
+  q = (q || "").trim().toUpperCase();
+  var lista = PU_PICK_CTX.lista || PU_SVI_VOZACI;
+  var matches = lista.filter(function(v){ return !q || v.toUpperCase().indexOf(q) !== -1; });
+  var rezervaSet = {};
+  if(PU_PICK_CTX.mode === "voz") PU_REZERVA.forEach(function(v){ rezervaSet[v] = 1; });
+  var oznakaSet = {};
+  if(PU_PICK_CTX.mode === "gbr") PU_DEZ_LIST.forEach(function(v){ oznakaSet[v] = 1; });
+
+  // Za vozače na liniji: prioritetni prijedlozi
+  var prioSet = {}, prioInfo = {}, prioRang = {};
+  if(PU_PICK_CTX.mode === "voz" && PU_PICK_CTX.linId){
+    var grupa = puGrupaZaLiniju(PU_PICK_CTX.linId);
+    // Tko je PLANIRAN za ovu smjenu (iz predloška) — ako fali, on je prvi prijedlog ("planirani — vrati")
+    var planirani = null;
+    if(PU_DAN && PU_PICK_CTX.sek && PU_PICK_CTX.smj != null){
+      var tipD = puTipDana(PU_DAN);
+      var tplArr = (PU_TEMPLATE[tipD][PU_PICK_CTX.sek] || {})[PU_PICK_CTX.linId] || [];
+      var w2 = puTjedanBroj(PU_DAN), ed2 = puEpochDan(PU_DAN);
+      if(tplArr.length >= 2){
+        var rot = PU_PICK_CTX.sek === "prigrad" ? w2 : ed2;
+        planirani = tplArr[(PU_PICK_CTX.smj + rot) % tplArr.length];
+      } else if(tplArr.length === 1){
+        planirani = tplArr[0];
+      }
+    }
+    // Prekriženi / slobodni vozači (danas prijavljeni ali ne voze — "beru krumpire").
+    // slobodanLin[ime] = linId gdje je vozač slobodan (kandidat za povratak).
+    var prekrizeni = {};
+    var odsutniSet = {};
+    var danP = PU_DATA[puKey(PU_DAN)];
+    if(danP){
+      (danP.odsutni || []).forEach(function(o){ if(o && o.ime) odsutniSet[o.ime] = 1; });
+      ["prigrad","grad"].forEach(function(sek){
+        Object.keys(danP[sek] || {}).forEach(function(linId){
+          var stv = danP.stvarni && danP.stvarni[linId];
+          (danP[sek][linId] || []).forEach(function(v, idx){
+            if(!v || !v.ime) return;
+            if(v.slobodan) prekrizeni[v.ime] = linId;                       // slobodan partner (pričuva-par)
+            else if(stv != null && idx !== stv) prekrizeni[v.ime] = linId;  // R-mod neformalna zamjena
+          });
+        });
+      });
+    }
+    matches.forEach(function(v){
+      var razlozi = [], rang = 9;
+      if(prekrizeni[v] && prekrizeni[v] === PU_PICK_CTX.linId){ razlozi.push("slobodan — partner"); rang = 0; }   // slobodan partner ISTE linije
+      else if(planirani && v === planirani && !odsutniSet[v]){ razlozi.push("planiran — vrati"); rang = 1; }    // planirani (ako nije odsutan)
+      else if(prekrizeni[v]){ razlozi.push("slobodan danas"); rang = 2; }                                        // slobodan na drugoj liniji
+      else if(rezervaSet[v]){ razlozi.push("pričuva"); rang = 3; }
+      if(puVozioLiniju(v, PU_PICK_CTX.linId)){ if(!razlozi.length) razlozi.push("vozio liniju"); if(rang>4) rang = 4; }
+      else if(grupa){ for(var i=0;i<grupa.linije.length;i++){ if(puVozioLiniju(v, grupa.linije[i])){ if(!razlozi.length) razlozi.push("ista grupa"); if(rang>5) rang = 5; break; } } }
+      if(razlozi.length){ prioSet[v] = 1; prioInfo[v] = razlozi; prioRang[v] = rang; }
+    });
+  }
+
+  function itHtml(v, klasa, oznaka){
+    return '<div class="voz-pop-it' + (klasa||"") + '" onclick="puVozPickSet(\'' + puEsc(v).replace(/'/g, "\\'") + '\')">'
+      + puEsc(v) + (oznaka || "") + '</div>';
+  }
+
+  var h = "";
+  if(matches.length === 0){
+    h = '<div class="voz-pop-it voz-pop-it-first" onclick="puVozPickSet(document.getElementById(\'VOZ-POP-SEARCH\').value.toUpperCase())">＋ Upiši: <strong>' + puEsc(q) + '</strong></div>';
+    list.innerHTML = h; return;
+  }
+
+  var prioLista = matches.filter(function(v){ return prioSet[v]; }).sort(function(a,b){ return prioRang[a] - prioRang[b]; });
+  var ostali = matches.filter(function(v){ return !prioSet[v]; });
+  var prviDan = true;
+
+  if(prioLista.length){
+    var grupa2 = puGrupaZaLiniju(PU_PICK_CTX.linId);
+    h += '<div class="voz-pop-grp">Preporučeno' + (grupa2 ? " · " + puEsc(grupa2.naziv) : "") + '</div>';
+    prioLista.slice(0, 15).forEach(function(v, i){
+      var prviRazlog = prioInfo[v][0];
+      var bojaKlasa = prioRang[v] <= 2 ? " voz-pop-slobodan" : " voz-pop-prio";
+      var oznaka = '<span class="voz-pop-rez' + bojaKlasa + '">' + prviRazlog + '</span>';
+      h += itHtml(v, (prviDan && i===0 ? " voz-pop-it-first" : "") + " voz-pop-it-prio", oznaka);
+    });
+    prviDan = false;
+    h += '<div class="voz-pop-grp">Ostali vozači</div>';
+  }
+  ostali.slice(0, 30).forEach(function(v, i){
+    var oznaka = rezervaSet[v] ? '<span class="voz-pop-rez">pričuva</span>' : (oznakaSet[v] ? '<span class="voz-pop-rez">dežurni</span>' : "");
+    h += itHtml(v, (prviDan && i===0 ? " voz-pop-it-first" : ""), oznaka);
+  });
+  list.innerHTML = h;
+}
+
+function puVozPickKey(ev){
+  if(ev.key === "Escape"){ puVozPickClose(); return; }
+  if(ev.key === "Enter"){
+    ev.preventDefault();
+    var first = document.querySelector(".voz-pop-it-first");
+    if(first) first.click();
+  }
+}
+
+function puVozPickSet(val){
+  if(!PU_PICK_CTX || !PU_DAN){ puVozPickClose(); return; }
+  var ctx = PU_PICK_CTX;
+  var dan = puEnsureDan(puKey(PU_DAN));
+  val = (val || "").trim().toUpperCase();
+
+  if(ctx.mode === "odsime"){
+    // Odsutno osoblje — postavi ime; ako je tip već postavljen, stvori prazninu u rasporedu
+    if(typeof dan.odsutni[ctx.idx] !== "object" || dan.odsutni[ctx.idx] === null) dan.odsutni[ctx.idx] = { ime:"", tip:"" };
+    dan.odsutni[ctx.idx].ime = val;
+    if(!dan.odsutni[ctx.idx].ime && !dan.odsutni[ctx.idx].tip) dan.odsutni[ctx.idx] = null;
+    else if(val && dan.odsutni[ctx.idx].tip) puOdsutniUKnjizi(val);   // već ima tip → odmah praznina
+    puVozPickClose();
+    renderDan();
+    return;
+  }
+
+  if(ctx.mode === "voz"){
+    if(!dan[ctx.sek][ctx.lin]) dan[ctx.sek][ctx.lin] = [];
+    var prije = dan[ctx.sek][ctx.lin][ctx.smj];
+    var biloPrazno = prije && prije.prazno;   // ćelija je bila praznina (netko fali)
+    if(val){
+      var novi = { ime: val };
+      if(biloPrazno) novi.pricuva = true;     // popunjena praznina = pričuva (uskakanje)
+      dan[ctx.sek][ctx.lin][ctx.smj] = novi;
+    } else {
+      dan[ctx.sek][ctx.lin][ctx.smj] = { ime:"", prazno:true };
+    }
+  } else {
+    // GBR mode — sprema u sekciju [idx][fld]
+    if(!dan[ctx.sek]) dan[ctx.sek] = [];
+    if(!dan[ctx.sek][ctx.idx]) dan[ctx.sek][ctx.idx] = {};
+    var redak = dan[ctx.sek][ctx.idx];
+    redak[ctx.fld] = val;
+    // Auto-veza GBR ↔ Dežurni u Zr. luka recima (samo prijedlog — popuni ako je drugo polje prazno)
+    if(ctx.sek === "zrlOdlasci" || ctx.sek === "zrlDolasci"){
+      if(ctx.fld === "gbr" && val && !redak.dez && PU_GBR_DEZ[val]) redak.dez = PU_GBR_DEZ[val];
+      if(ctx.fld === "dez" && val && !redak.gbr && PU_DEZ_GBR[val]) redak.gbr = PU_DEZ_GBR[val];
+
+      // Sinkroniziraj na auto-generirani povratni redak (isti bus se vraća)
+      if(ctx.sek === "zrlOdlasci" && redak.sat){
+        var povrSat = puSatPlus(redak.sat, PU_ZRL_OFFSET_MIN);
+        var pov = (dan.zrlDolasci || []).find(function(z){ return z && z.sat === povrSat && z.auto; });
+        if(pov){ pov.gbr = redak.gbr || pov.gbr; pov.dez = redak.dez || pov.dez; }
+      }
+
+      // Tab-tok: nakon što je GBR unesen i dežurni popunjen → skok na novi prazan redak (sat)
+      if(ctx.fld === "gbr" && val){
+        PU_ZRL_FOKUS_NOVI = ctx.sek;
+      }
+    }
+  }
+  puVozPickClose();
+  renderDan();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// VELIKI POPUP za odabir PRIČUVE — vozači s podacima (tel, pozivi, odaziv, sati)
+// ═══════════════════════════════════════════════════════════════════
+var PU_PRC_CTX = null;   // { sek, lin, smj }
+// Evidencija "već zvani — odbili" pamti se TRAJNO po konkretnoj praznini (u danu),
+// pa kad planer prekine i vrati se, zna gdje je stao. Ključ: "sek|lin|smj".
+function puPrcOdbioKljuc(c){ return c.sek + "|" + c.lin + "|" + c.smj; }
+function puPrcOdbioSet(){
+  if(!PU_PRC_CTX || !PU_DAN) return {};
+  var dan = puEnsureDan(puKey(PU_DAN));
+  if(!dan.pricuvaOdbio) dan.pricuvaOdbio = {};
+  var k = puPrcOdbioKljuc(PU_PRC_CTX);
+  if(!dan.pricuvaOdbio[k]) dan.pricuvaOdbio[k] = {};
+  return dan.pricuvaOdbio[k];
+}
+function puPricuvaPopup(sek, lin, smj){
+  PU_PRC_CTX = { sek: sek, lin: lin, smj: smj };
+  document.getElementById("PRC-SEARCH").value = "";
+  puPricuvaRender();
+  document.getElementById("PRC-BG").classList.add("on");
+  setTimeout(function(){ document.getElementById("PRC-SEARCH").focus(); }, 30);
+}
+function puPricuvaRender(){
+  var c = PU_PRC_CTX; if(!c) return;
+  var linObj = PU_PRIGRAD.concat(PU_GRAD).find(function(l){ return l.id === c.lin; });
+  var linNaziv = linObj ? linObj.naziv : c.lin;
+  var grupa = puGrupaZaLiniju(c.lin);
+  document.getElementById("PRC-TIT").textContent = "Pričuva — " + linNaziv + " (" + ["I","II","III"][c.smj] + " smjena)";
+  var odbioSet = puPrcOdbioSet();
+  var odbioBroj = Object.keys(odbioSet).length;
+  var podsjetnik = odbioBroj > 0
+    ? '<div class="prc-podsjetnik">↩ Nastavak: već si zvao <strong>' + odbioBroj + '</strong> ' + (odbioBroj === 1 ? "vozača" : "vozača") + ' koji su odbili (posivljeni). Nastavi s ostalima.</div>'
+    : '';
+  document.getElementById("PRC-SUB").innerHTML =
+    'Nedostaje vozač. Preporučeni su prvo slobodni kolege i vozači iz grupe <strong>' + (grupa ? puEsc(grupa.naziv) : "—") + '</strong>. '
+    + 'Klikni <span class="prc-act prc-act-ok-inline">✓</span> ako vozač dolazi, <span class="prc-act prc-act-no-inline">✕</span> ako je zvan ali odbio.'
+    + podsjetnik;
+
+  var prio = puPricuvaPrioriteti(c.lin, c.sek, c.smj);
+  var q = (document.getElementById("PRC-SEARCH").value || "").trim().toUpperCase();
+  var matches = PU_SVI_VOZACI.filter(function(v){ return !q || v.indexOf(q) !== -1; });
+
+  // Sekcija preporučenih (prio) + ostali
+  var prioLista = matches.filter(function(v){ return prio.prioSet[v]; }).sort(function(a,b){ return prio.prioRang[a] - prio.prioRang[b]; });
+  var ostali = matches.filter(function(v){ return !prio.prioSet[v]; });
+
+  function red(v){
+    var info = puVozacInfo(v);
+    var sati = puVozacSatiMjesec(v);
+    var razlog = prio.prioInfo[v] ? prio.prioInfo[v][0] : "";
+    var rang = prio.prioRang[v];
+    var razlogCls = rang != null && rang <= 2 ? "prc-tag-slobodan" : "prc-tag-prio";
+    var pctCls = info.pct >= 75 ? "prc-pct-hi" : (info.pct >= 50 ? "prc-pct-mid" : "prc-pct-lo");
+    var odbio = odbioSet[v];   // već zvan i odbio (pamti se po praznini) → posivi redak
+    return '<tr class="prc-row' + (odbio ? " prc-row-odbio" : "") + '">'
+      + '<td class="prc-ime">' + puEsc(v) + (razlog ? '<span class="prc-tag ' + razlogCls + '">' + razlog + '</span>' : '')
+        + (odbio ? '<span class="prc-tag prc-tag-odbio">odbio</span>' : '') + '</td>'
+      + '<td class="prc-tel">' + info.tel + '</td>'
+      + '<td class="prc-num">' + info.pozvan + '×</td>'
+      + '<td class="prc-num"><span class="prc-pct ' + pctCls + '">' + info.pct + '%</span></td>'
+      + '<td class="prc-num prc-sati">' + puNum(sati) + ' h</td>'
+      + '<td class="prc-akcije">'
+      + '<button class="prc-act prc-act-ok" onclick="puPricuvaOdabir(\'' + puEsc(v).replace(/'/g,"\\'") + '\',true,event)" title="' + (odbio ? 'Ipak dolazi — odaberi (drugi poziv)' : 'Dolazi — odaberi i evidentiraj odaziv') + '">✓</button>'
+      + '<button class="prc-act prc-act-no" onclick="puPricuvaOdabir(\'' + puEsc(v).replace(/'/g,"\\'") + '\',false,event)" title="Zvan ali odbio — evidentiraj neodaziv">✕</button>'
+      + '</td>'
+      + '</tr>';
+  }
+
+  var h = '<table class="prc-tbl"><thead><tr><th>Vozač</th><th>Telefon</th><th>Pozvan</th><th>Odaziv</th><th>Sati/mj</th><th>Poziv</th></tr></thead><tbody>';
+  if(prioLista.length){
+    h += '<tr class="prc-sekcija"><td colspan="6">Preporučeno' + (prio.grupa ? ' · ' + puEsc(prio.grupa.naziv) : '') + '</td></tr>';
+    prioLista.forEach(function(v){ h += red(v); });
+    h += '<tr class="prc-sekcija"><td colspan="6">Ostali vozači</td></tr>';
+  }
+  ostali.slice(0, 60).forEach(function(v){ h += red(v); });
+  h += '</tbody></table>';
+  if(matches.length === 0) h = '<div class="drill-empty">Nema vozača za „' + puEsc(q) + '".</div>';
+  document.getElementById("PRC-BODY").innerHTML = h;
+}
+// ✓ dolazi → odaberi vozača u ćeliju + evidentiraj odaziv. ✕ odbio → samo evidentiraj neodaziv.
+function puPricuvaOdabir(ime, dolazi, ev){
+  if(ev) ev.stopPropagation();
+  if(!PU_PRC_CTX || !PU_DAN) return;
+  puPozivRegistriraj(ime, dolazi);
+  var c = PU_PRC_CTX;
+  var dan = puEnsureDan(puKey(PU_DAN));
+  if(dolazi){
+    if(!dan[c.sek][c.lin]) dan[c.sek][c.lin] = [];
+    dan[c.sek][c.lin][c.smj] = { ime: ime, pricuva: true };   // popunjena praznina = pričuva
+    // Praznina riješena → očisti evidenciju odbijenih za nju
+    if(dan.pricuvaOdbio) delete dan.pricuvaOdbio[puPrcOdbioKljuc(c)];
+    puPricuvaClose();
+    showToast(ime + " — dolazi na zamjenu ✓", "info");
+    renderDan();
+  } else {
+    puPrcOdbioSet()[ime] = true;   // TRAJNO upiši u dan (po praznini) — preživljava prekid
+    showToast(ime + " — zvan, nije se odazvao ✕", "warn");
+    puPricuvaRender();   // osvježi brojač/odaziv + posivi
+  }
+}
+function puPricuvaIsprazni(){
+  if(!PU_PRC_CTX || !PU_DAN) return;
+  var c = PU_PRC_CTX;
+  var dan = puEnsureDan(puKey(PU_DAN));
+  if(dan[c.sek][c.lin]) dan[c.sek][c.lin][c.smj] = { ime:"", prazno:true };
+  if(dan.pricuvaOdbio) delete dan.pricuvaOdbio[puPrcOdbioKljuc(c)];   // ručno pražnjenje resetira evidenciju
+  puPricuvaClose();
+  renderDan();
+}
+function puPricuvaClose(){ document.getElementById("PRC-BG").classList.remove("on"); PU_PRC_CTX = null; }
+
+// Nakon odabira GBR-a u zrl → fokusiraj prvi prazan redak (sat ćeliju) za nastavak unosa
+var PU_ZRL_FOKUS_NOVI = null;
+function puZrlPrimijeniFokusNovi(){
+  if(!PU_ZRL_FOKUS_NOVI) return;
+  var sek = PU_ZRL_FOKUS_NOVI; PU_ZRL_FOKUS_NOVI = null;
+  var dan = PU_DATA[puKey(PU_DAN)];
+  if(!dan) return;
+  var arr = dan[sek] || [];
+  // Pronađi prvi redak bez sata; ako ga nema, dodaj novi
+  var idx = arr.findIndex(function(z){ return !z || !z.sat; });
+  if(idx < 0){ arr.push({}); idx = arr.length - 1; renderDan(); }
+  var td = document.querySelector('td[data-sek="' + sek + '"][data-idx="' + idx + '"][data-fld="sat"]');
+  if(td){ td.scrollIntoView({ block:"nearest" }); td.focus();
+    // Kursor na kraj
+    var r = document.createRange(); r.selectNodeContents(td); r.collapse(false);
+    var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TEMPLATI — editor
+// ═══════════════════════════════════════════════════════════════════
+function puTplTab(tip){
+  PU_TPL_TIP = tip;
+  document.querySelectorAll(".tpl-tab").forEach(function(b){ b.classList.toggle("on", b.dataset.tip === tip); });
+  renderTemplati();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// GRUPE LINIJA — pregled i uređivanje
+// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
+// POSTAVKE RASPOREDA — pravila + popis prekovremenih
+// ═══════════════════════════════════════════════════════════════════
+function renderPostavke(){
+  var host = document.getElementById("SET-WRAP");
+  document.getElementById("HDR-SUB").textContent = "Pravila rasporeda — koristi ih algoritam pri automatskom popunjavanju";
+  var p = PU_POSTAVKE;
+
+  var h = '<div class="set-grid">';
+
+  // Pravila (brojčana)
+  h += '<div class="set-card"><div class="set-card-tit">Pravila vožnje i odmora</div>';
+  h += setRow("Odmor između dvije smjene", "odmorIzmeduSmjena", p.odmorIzmeduSmjena, "h");
+  h += setRow("Maks. prekovremenih — tjedno", "maxPrekovremeniTjedan", p.maxPrekovremeniTjedan, "h");
+  h += setRow("Maks. prekovremenih — mjesečno", "maxPrekovremeniMjesec", p.maxPrekovremeniMjesec, "h");
+  h += '</div>';
+
+  // Popis vozača koji žele prekovremene
+  h += '<div class="set-card"><div class="set-card-tit">Vozači koji žele prekovremene <span class="set-count">' + p.zelePrekovremene.length + '</span></div>';
+  h += '<div class="set-chips">';
+  p.zelePrekovremene.forEach(function(v, i){
+    h += '<span class="grp-chip">' + puEsc(v) + '<span class="grp-chip-x" onclick="puSetPrekoUkloni(' + i + ')" title="Ukloni">×</span></span>';
+  });
+  h += '<span class="grp-chip-add" onclick="puSetPrekoDodaj(event)" title="Dodaj vozača">＋</span>';
+  h += '</div>';
+  h += '<div class="set-hint">Planer prvo nudi ove vozače kad treba dodijeliti prekovremene sate.</div>';
+  h += '</div>';
+
+  h += '</div>';   // kraj set-grid
+
+  // Periodi prometovanja (puna širina)
+  h += '<div class="set-card set-card-full"><div class="set-card-tit">Periodi prometovanja <span class="set-count">' + (p.periodi||[]).length + '</span></div>';
+  h += '<div class="set-period-hint">Datumski rasponi koji određuju režim vožnje. <strong>Škola</strong> — sve linije voze. <strong>Bez škole</strong> — školske linije ne voze. Planer može dodati vlastiti period (npr. „Poluškola", „Studentski dani").</div>';
+  h += '<table class="set-period-tbl"><thead><tr><th>Naziv perioda</th><th>Od (DD.MM)</th><th>Do (DD.MM)</th><th>Režim</th><th></th></tr></thead><tbody>';
+  (p.periodi||[]).forEach(function(per, i){
+    h += '<tr>'
+      + '<td><input class="set-period-inp" value="' + puEsc(per.naziv) + '" onchange="puPeriodSet(' + i + ',\'naziv\',this.value)"></td>'
+      + '<td><input class="set-period-dt" value="' + puEsc(per.od) + '" onchange="puPeriodSet(' + i + ',\'od\',this.value)"></td>'
+      + '<td><input class="set-period-dt" value="' + puEsc(per.do) + '" onchange="puPeriodSet(' + i + ',\'do\',this.value)"></td>'
+      + '<td><button class="set-rezim-btn set-rezim-' + per.rezim + '" onclick="puPeriodRezim(' + i + ')">' + (per.rezim === "skola" ? "🎒 Škola" : "🏖 Bez škole") + '</button></td>'
+      + '<td class="set-period-del"><span class="kn-trash" style="position:static;opacity:.55" onclick="puPeriodDel(' + i + ')" title="Obriši period"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></span></td>'
+      + '</tr>';
+  });
+  h += '</tbody></table>';
+  h += '<button class="kn-addrow" style="max-width:220px;margin:14px 0 4px;border-style:solid" onclick="puPeriodNovi()">＋ novi period</button>';
+  h += '</div>';
+
+  host.innerHTML = h;
+}
+
+// Periodi prometovanja
+function puPeriodSet(i, polje, val){
+  if(!PU_POSTAVKE.periodi[i]) return;
+  PU_POSTAVKE.periodi[i][polje] = val.trim();
+}
+function puPeriodRezim(i){
+  var p = PU_POSTAVKE.periodi[i]; if(!p) return;
+  p.rezim = p.rezim === "skola" ? "bezskole" : "skola";
+  renderPostavke();
+}
+function puPeriodDel(i){
+  PU_POSTAVKE.periodi.splice(i, 1);
+  renderPostavke();
+}
+function puPeriodNovi(){
+  PU_POSTAVKE.periodi.push({ id:"p_" + Date.now(), naziv:"NOVI PERIOD", od:"01.01", do:"31.01", rezim:"skola" });
+  renderPostavke();
+  showToast("Novi period — uredi naziv, datume i režim", "info");
+}
+
+// Helper za redak postavke (broj + stepper + slobodan unos)
+function setRow(label, kljuc, val, jed){
+  return '<div class="set-row"><div class="set-row-lbl">' + label + '</div>'
+    + '<div class="set-stepper">'
+    + '<button class="set-step" onclick="puSetNum(\'' + kljuc + '\',-1)">−</button>'
+    + '<span class="set-valwrap"><input class="set-val set-val-inp set-val-inp-sm" id="SET-' + kljuc + '" type="text" inputmode="numeric" value="' + val + '" onchange="puSetNumSet(\'' + kljuc + '\',this.value)" onfocus="this.select()"><span class="set-val-jed">' + jed + '</span></span>'
+    + '<button class="set-step" onclick="puSetNum(\'' + kljuc + '\',1)">+</button>'
+    + '</div></div>';
+}
+function puSetNum(kljuc, delta){
+  PU_POSTAVKE[kljuc] = Math.max(0, (PU_POSTAVKE[kljuc] || 0) + delta);
+  renderPostavke();
+}
+function puSetNumSet(kljuc, val){
+  var n = parseInt(val, 10);
+  PU_POSTAVKE[kljuc] = (isNaN(n) || n < 0) ? 0 : Math.min(n, 999);
+  renderPostavke();
+}
+function puSetPrekoUkloni(i){
+  PU_POSTAVKE.zelePrekovremene.splice(i, 1);
+  renderPostavke();
+}
+function puSetPrekoDodaj(ev){
+  if(ev) ev.stopPropagation();
+  puVozPickClose();
+  PU_PICK_CTX = { mode:"preko" };
+  var pop = document.createElement("div");
+  pop.className = "voz-pop"; pop.id = "VOZ-POP";
+  pop.innerHTML = '<input type="text" class="voz-pop-search" id="VOZ-POP-SEARCH" placeholder="Traži vozača…" autocomplete="off" oninput="puSetPrekoFilter(this.value)"><div class="voz-pop-list" id="VOZ-POP-LIST"></div>';
+  document.body.appendChild(pop);
+  var r = ev.target.getBoundingClientRect();
+  pop.style.left = Math.min(r.left, window.innerWidth - 240) + "px";
+  pop.style.top = (r.bottom + 300 < window.innerHeight ? r.bottom + 4 : r.top - 304) + "px";
+  puSetPrekoFilter("");
+  setTimeout(function(){ document.getElementById("VOZ-POP-SEARCH").focus(); }, 30);
+  setTimeout(function(){ document.addEventListener("click", puVozPickOutside); }, 50);
+}
+function puSetPrekoFilter(q){
+  var list = document.getElementById("VOZ-POP-LIST");
+  if(!list) return;
+  q = (q||"").trim().toUpperCase();
+  var imaSet = {}; PU_POSTAVKE.zelePrekovremene.forEach(function(v){ imaSet[v]=1; });
+  var dostupni = PU_SVI_VOZACI.filter(function(v){ return !imaSet[v] && (!q || v.indexOf(q) !== -1); });
+  var h = "";
+  dostupni.slice(0, 40).forEach(function(v){ h += '<div class="voz-pop-it" onclick="puSetPrekoSet(\'' + puEsc(v).replace(/'/g,"\\'") + '\')">' + puEsc(v) + '</div>'; });
+  if(!dostupni.length) h = '<div class="voz-pop-it" style="color:var(--ts)">Nema vozača</div>';
+  list.innerHTML = h;
+}
+function puSetPrekoSet(v){
+  if(PU_POSTAVKE.zelePrekovremene.indexOf(v) === -1) PU_POSTAVKE.zelePrekovremene.push(v);
+  puVozPickClose();
+  renderPostavke();
+}
+
+function renderGrupe(){
+  var host = document.getElementById("GRP-WRAP");
+  document.getElementById("HDR-SUB").textContent = "Linije grupirane po smjeru — pričuva se prvo nudi iz iste grupe";
+
+  // Mapa lin → naziv
+  var linNaziv = {};
+  PU_PRIGRAD.forEach(function(l){ linNaziv[l.id] = l.naziv; });
+  PU_GRAD.forEach(function(l){ linNaziv[l.id] = l.naziv; });
+
+  var h = '<div class="grp-list">';
+  PU_GRUPE.forEach(function(g){
+    h += '<div class="grp-card">';
+    h += '<div class="grp-card-hdr"><input class="grp-naziv-inp" value="' + puEsc(g.naziv) + '" onchange="puGrupaNaziv(\'' + g.id + '\',this.value)">'
+       + '<span class="grp-count">' + g.linije.length + ' linija</span>'
+       + '<span class="kn-trash grp-del" onclick="puGrupaDel(\'' + g.id + '\')" title="Obriši grupu"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></span>'
+       + '</div>';
+    h += '<div class="grp-chips">';
+    g.linije.forEach(function(linId){
+      h += '<span class="grp-chip">' + puEsc(linNaziv[linId] || linId)
+         + '<span class="grp-chip-x" onclick="puGrupaUkloniLiniju(\'' + g.id + '\',\'' + linId + '\')" title="Ukloni">×</span></span>';
+    });
+    h += '<span class="grp-chip-add" onclick="puGrupaDodajLiniju(\'' + g.id + '\',event)" title="Dodaj liniju">＋</span>';
+    h += '</div></div>';
+  });
+  h += '</div>';
+  h += '<button class="kn-addrow grp-addrow" onclick="puGrupaNova()">＋ nova grupa</button>';
+  // Nesvrstane linije (nisu ni u jednoj grupi)
+  var svrstane = {};
+  PU_GRUPE.forEach(function(g){ g.linije.forEach(function(l){ svrstane[l] = 1; }); });
+  var nesvrstane = PU_PRIGRAD.concat(PU_GRAD).filter(function(l){ return !svrstane[l.id]; });
+  if(nesvrstane.length){
+    h += '<div class="grp-nesvrstane"><div class="grp-nesvrstane-tit">Nesvrstane linije (' + nesvrstane.length + ')</div><div class="grp-chips">';
+    nesvrstane.forEach(function(l){ h += '<span class="grp-chip grp-chip-off">' + puEsc(l.naziv) + '</span>'; });
+    h += '</div></div>';
+  }
+  host.innerHTML = h;
+}
+
+function puGrupaNaziv(gid, val){
+  var g = PU_GRUPE.find(function(x){ return x.id === gid; });
+  if(g) g.naziv = val.trim();
+}
+function puGrupaDel(gid){
+  var g = PU_GRUPE.find(function(x){ return x.id === gid; });
+  if(!g) return;
+  puConfOpen("Obrisati grupu?", "Grupa <strong>" + puEsc(g.naziv) + "</strong> bit će uklonjena. Linije ostaju, samo gube grupiranje.", "Obriši",
+    function(){ var i = PU_GRUPE.indexOf(g); PU_GRUPE.splice(i,1); showToast("Grupa obrisana", "info"); renderGrupe(); });
+}
+function puGrupaUkloniLiniju(gid, linId){
+  var g = PU_GRUPE.find(function(x){ return x.id === gid; });
+  if(!g) return;
+  var i = g.linije.indexOf(linId);
+  if(i >= 0) g.linije.splice(i, 1);
+  renderGrupe();
+}
+function puGrupaNova(){
+  PU_GRUPE.push({ id:"g_nova_" + Date.now(), naziv:"NOVA GRUPA", linije:[] });
+  renderGrupe();
+  showToast("Nova grupa — uredi naziv i dodaj linije", "info");
+}
+// Dodavanje linije u grupu — picker svih linija koje nisu u toj grupi
+var PU_GRP_ADD_CTX = null;
+function puGrupaDodajLiniju(gid, ev){
+  if(ev) ev.stopPropagation();
+  puVozPickClose();
+  PU_GRP_ADD_CTX = gid;
+  var g = PU_GRUPE.find(function(x){ return x.id === gid; });
+  var sve = PU_PRIGRAD.concat(PU_GRAD);
+  var pop = document.createElement("div");
+  pop.className = "voz-pop"; pop.id = "VOZ-POP";
+  var h = '<input type="text" class="voz-pop-search" id="VOZ-POP-SEARCH" placeholder="Traži liniju…" autocomplete="off" oninput="puGrupaAddFilter(this.value)"><div class="voz-pop-list" id="VOZ-POP-LIST"></div>';
+  pop.innerHTML = h;
+  document.body.appendChild(pop);
+  var r = ev.target.getBoundingClientRect();
+  pop.style.left = Math.min(r.left, window.innerWidth - 240) + "px";
+  pop.style.top = (r.bottom + 300 < window.innerHeight ? r.bottom + 4 : r.top - 304) + "px";
+  puGrupaAddFilter("");
+  setTimeout(function(){ document.getElementById("VOZ-POP-SEARCH").focus(); }, 30);
+  setTimeout(function(){ document.addEventListener("click", puVozPickOutside); }, 50);
+}
+function puGrupaAddFilter(q){
+  var list = document.getElementById("VOZ-POP-LIST");
+  if(!list) return;
+  q = (q||"").trim().toUpperCase();
+  var g = PU_GRUPE.find(function(x){ return x.id === PU_GRP_ADD_CTX; });
+  var sve = PU_PRIGRAD.concat(PU_GRAD).filter(function(l){ return g.linije.indexOf(l.id) === -1 && (!q || l.naziv.toUpperCase().indexOf(q) !== -1); });
+  var h = "";
+  sve.slice(0, 40).forEach(function(l){
+    h += '<div class="voz-pop-it" onclick="puGrupaAddSet(\'' + l.id + '\')">' + puEsc(l.naziv) + '</div>';
+  });
+  if(!sve.length) h = '<div class="voz-pop-it" style="color:var(--ts)">Nema linija</div>';
+  list.innerHTML = h;
+}
+function puGrupaAddSet(linId){
+  var g = PU_GRUPE.find(function(x){ return x.id === PU_GRP_ADD_CTX; });
+  if(g && g.linije.indexOf(linId) === -1) g.linije.push(linId);
+  puVozPickClose();
+  renderGrupe();
+}
+
+function renderTemplati(){
+  var tpl = PU_TEMPLATE[PU_TPL_TIP];
+  var grid = document.getElementById("TPL-GRID");
+  document.getElementById("HDR-SUB").textContent = "Predložak: " + (PU_TPL_TIP === "radni" ? "Radni dan" : PU_TPL_TIP === "subota" ? "Subota" : "Nedjelja / blagdan");
+
+  function trashCell(sek, linId){
+    return '<td class="tpl-del" style="position:relative"><span class="kn-trash tpl-trash" onclick="puTplDelLinija(\'' + sek + '\',\'' + linId + '\')" title="Obriši liniju iz predloška"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></span></td>';
+  }
+
+  var h = '';
+
+  // Prigrad
+  function tplVozCell(sek, linId, smjIdx, val, disabled){
+    if(disabled) return '<td class="tpl-voz-off">—</td>';
+    return '<td class="tpl-voz-cell" onclick="puTplVozPick(this, event)" data-sek="' + sek + '" data-lin="' + linId + '" data-smj="' + smjIdx + '" title="Klik za izbor vozača">'
+      + (val ? puEsc(val) : '<span class="tpl-voz-ph">—</span>') + '</td>';
+  }
+
+  h += '<div class="tpl-card"><div class="tpl-card-tit">Prigradske linije — vozači (I / II smjena)</div>';
+  h += '<table class="tpl-tbl"><thead><tr><th>Linija</th><th>GBR</th><th>Vozač I</th><th>Vozač II</th><th></th></tr></thead><tbody>';
+  PU_PRIGRAD.forEach(function(l){
+    var t = tpl.prigrad[l.id] || [];
+    h += '<tr class="kn-delrow"><td class="tpl-lin"><input class="tpl-lin-inp" value="' + puEsc(l.naziv) + '" onchange="puTplLinMeta(\'prigrad\',\'' + l.id + '\',\'naziv\',this.value)"></td><td class="tpl-gbr"><input class="tpl-gbr-inp" value="' + puEsc(l.gbr||"") + '" onchange="puTplLinMeta(\'prigrad\',\'' + l.id + '\',\'gbr\',this.value)"></td>'
+      + tplVozCell("prigrad", l.id, 0, t[0]||"", false)
+      + tplVozCell("prigrad", l.id, 1, t[1]||"", l.smjene < 2)
+      + trashCell("prigrad", l.id)
+      + '</tr>';
+  });
+  h += '</tbody></table>';
+  h += '<button class="kn-addrow" onclick="puTplAddLinija(\'prigrad\')" title="Dodaj prigradsku liniju">＋ nova linija</button>';
+  h += '</div>';
+
+  // Grad
+  h += '<div class="tpl-card"><div class="tpl-card-tit">Gradske linije — vozači (I / II / III smjena)</div>';
+  h += '<table class="tpl-tbl"><thead><tr><th>Linija</th><th>GBR</th><th>I smjena</th><th>II smjena</th><th>III smjena</th><th></th></tr></thead><tbody>';
+  PU_GRAD.forEach(function(l){
+    var t = tpl.grad[l.id] || [];
+    h += '<tr class="kn-delrow"><td class="tpl-lin"><input class="tpl-lin-inp" value="' + puEsc(l.naziv) + '" onchange="puTplLinMeta(\'grad\',\'' + l.id + '\',\'naziv\',this.value)"></td><td class="tpl-gbr"><input class="tpl-gbr-inp" value="' + puEsc(l.gbr||"") + '" onchange="puTplLinMeta(\'grad\',\'' + l.id + '\',\'gbr\',this.value)"></td>'
+      + tplVozCell("grad", l.id, 0, t[0]||"", false)
+      + tplVozCell("grad", l.id, 1, t[1]||"", l.smjene < 2)
+      + tplVozCell("grad", l.id, 2, t[2]||"", l.smjene < 3)
+      + trashCell("grad", l.id)
+      + '</tr>';
+  });
+  h += '</tbody></table>';
+  h += '<button class="kn-addrow" onclick="puTplAddLinija(\'grad\')" title="Dodaj gradsku liniju">＋ nova linija</button>';
+  h += '</div>';
+
+  grid.innerHTML = h;
+}
+
+// Brisanje linije iz predloška (uklanja liniju iz definicije — vrijedi za sve tipove dana)
+function puTplDelLinija(sek, linId){
+  var arr = (sek === "prigrad") ? PU_PRIGRAD : PU_GRAD;
+  var i = arr.findIndex(function(l){ return l.id === linId; });
+  if(i < 0) return;
+  var naziv = arr[i].naziv;
+  puConfOpen("Obrisati liniju?", "Linija <strong>" + naziv + "</strong> bit će uklonjena iz svih predložaka (radni/subota/nedjelja). Postojeći popunjeni dani ostaju nepromijenjeni.", "Obriši liniju",
+    function(){
+      arr.splice(i, 1);
+      ["radni","subota","nedjelja"].forEach(function(tip){ delete PU_TEMPLATE[tip][sek][linId]; });
+      puRebuildNedSet();
+      showToast("Linija obrisana: " + naziv, "info");
+      renderTemplati();
+    });
+}
+
+// Dodavanje nove linije u predložak
+var PU_TPL_NEW_CTR = 0;
+// Uredi naziv ili GBR linije (meta podaci definicije)
+function puTplLinMeta(sek, linId, polje, val){
+  var arr = (sek === "prigrad") ? PU_PRIGRAD : PU_GRAD;
+  var l = arr.find(function(x){ return x.id === linId; });
+  if(!l) return;
+  val = val.trim();
+  if(polje === "gbr"){
+    val = val.split("/")[0].trim();   // jedan GBR — odbaci sve iza kose crte
+  } else {
+    val = val.toUpperCase();
+  }
+  l[polje] = val;
+  if(polje === "naziv") renderTemplati();   // refresh prikaz
+}
+
+function puTplAddLinija(sek){
+  var arr = (sek === "prigrad") ? PU_PRIGRAD : PU_GRAD;
+  var id = "nova_" + sek + "_" + (++PU_TPL_NEW_CTR);
+  var nova = { id:id, naziv:"NOVA LINIJA", gbr:"", smjene: (sek === "grad") ? 3 : 2 };
+  if(sek === "grad") nova.broj = "";
+  arr.push(nova);
+  ["radni","subota","nedjelja"].forEach(function(tip){ PU_TEMPLATE[tip][sek][id] = []; });
+  renderTemplati();
+  showToast("Nova linija dodana — uredi naziv i GBR", "info");
+}
+
+function puTplSave(sek, linId, smjIdx, val){
+  var tpl = PU_TEMPLATE[PU_TPL_TIP];
+  if(!tpl[sek][linId]) tpl[sek][linId] = [];
+  var arr = tpl[sek][linId];
+  val = (val||"").trim().toUpperCase();
+  if(val) arr[smjIdx] = val;
+  else { arr[smjIdx] = undefined; while(arr.length && arr[arr.length-1] === undefined) arr.pop(); }
+  if(PU_TPL_TIP === "nedjelja") puRebuildNedSet();   // nedjeljni templat utječe na slobodne dane
+}
+
+// Picker vozača u predlošcima (odabir umjesto slobodnog unosa)
+function puTplVozPick(td, ev){
+  ev.stopPropagation();
+  puVozPickClose();
+  PU_PICK_CTX = { mode:"tplvoz", sek: td.dataset.sek, lin: td.dataset.lin, smj: parseInt(td.dataset.smj,10) };
+  var pop = document.createElement("div");
+  pop.className = "voz-pop"; pop.id = "VOZ-POP";
+  pop.innerHTML = '<input type="text" class="voz-pop-search" id="VOZ-POP-SEARCH" placeholder="Traži vozača…" autocomplete="off" oninput="puTplVozFilter(this.value)"><div class="voz-pop-list" id="VOZ-POP-LIST"></div><div class="voz-pop-foot"><button class="voz-pop-clear" onclick="puTplVozSet(\'\')">✕ Isprazni</button></div>';
+  document.body.appendChild(pop);
+  var r = td.getBoundingClientRect();
+  pop.style.left = Math.min(r.left, window.innerWidth - 240) + "px";
+  pop.style.top = (r.bottom + 300 < window.innerHeight ? r.bottom + 4 : r.top - 304) + "px";
+  puTplVozFilter("");
+  setTimeout(function(){ document.getElementById("VOZ-POP-SEARCH").focus(); }, 30);
+  setTimeout(function(){ document.addEventListener("click", puVozPickOutside); }, 50);
+}
+function puTplVozFilter(q){
+  var list = document.getElementById("VOZ-POP-LIST"); if(!list) return;
+  q = (q||"").trim().toUpperCase();
+  var m = PU_SVI_VOZACI.filter(function(v){ return !q || v.indexOf(q) !== -1; });
+  var h = "";
+  m.slice(0, 40).forEach(function(v, i){ h += '<div class="voz-pop-it' + (i===0?' voz-pop-it-first':'') + '" onclick="puTplVozSet(\'' + puEsc(v).replace(/'/g,"\\'") + '\')">' + puEsc(v) + '</div>'; });
+  if(!m.length) h = '<div class="voz-pop-it voz-pop-it-first" onclick="puTplVozSet(document.getElementById(\'VOZ-POP-SEARCH\').value.toUpperCase())">＋ Upiši: <strong>' + puEsc(q) + '</strong></div>';
+  list.innerHTML = h;
+}
+function puTplVozSet(v){
+  if(!PU_PICK_CTX) return;
+  var c = PU_PICK_CTX;
+  puTplSave(c.sek, c.lin, c.smj, v);
+  puVozPickClose();
+  renderTemplati();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════
+document.addEventListener("keydown", function(ev){
+  if(ev.key !== "Escape") return;
+  var prc = document.getElementById("PRC-BG");
+  if(prc.classList.contains("on")){ puPricuvaClose(); return; }
+  var pr = document.getElementById("PR-BG");
+  if(pr.classList.contains("on")){ puPregledRadaClose(); return; }
+  var odsP = document.getElementById("ODS-BG");
+  if(odsP.classList.contains("on")){ puOdsPopupClose(); return; }
+  var odsM = document.getElementById("ODSM-BG");
+  if(odsM.classList.contains("on")){ puOdsMjesecClose(); return; }
+  var drill = document.getElementById("DRILL-BG");
+  if(drill.classList.contains("on")){ puDrillClose(); return; }
+  var conf = document.getElementById("CONF-BG");
+  if(conf.classList.contains("on")){ puConfClose(); return; }
+  if(PU_VIEW === "dan"){ puSwitch("kalendar"); }
+});
+
+renderKalendar();
+</script>
+</body>
+</html>
