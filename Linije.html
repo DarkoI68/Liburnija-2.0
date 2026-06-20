@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="hr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liburnija — Linije</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+html[data-theme="dark"]{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2330;--bgh:#212936;--bdr:#2d3748;--tp:#f0f4f8;--ts:#8b95a1;--tm:#4b5563;--acc:#f97316;--accs:rgba(249,115,22,.14);--blu:#3b82f6;--blus:rgba(59,130,246,.15);--grn:#22c55e;--grns:rgba(34,197,94,.15);--red:#ef4444;--reds:rgba(239,68,68,.14);--yel:#eab308;--yels:rgba(234,179,8,.16)}
+html[data-theme="light"]{--bg:#f0f4f8;--bg2:#fff;--bg3:#f8fafc;--bgh:#f1f5f9;--bdr:#e2e8f0;--tp:#0f172a;--ts:#64748b;--tm:#94a3b8;--acc:#f97316;--accs:rgba(249,115,22,.09);--blu:#3b82f6;--blus:rgba(59,130,246,.1);--grn:#16a34a;--grns:rgba(22,163,74,.1);--red:#dc2626;--reds:rgba(220,38,38,.09);--yel:#ca8a04;--yels:rgba(202,138,4,.13)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--tp);height:100vh;display:flex;flex-direction:column;font-size:13px;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:5px}::-webkit-scrollbar-track{background:transparent}
+
+.top{display:flex;align-items:center;gap:12px;padding:11px 18px;background:var(--bg2);border-bottom:1.5px solid var(--bdr);flex-shrink:0}
+.brand{display:flex;align-items:center;gap:9px}
+.brand-ic{width:30px;height:30px;border-radius:8px;background:var(--accs);display:flex;align-items:center;justify-content:center}
+.brand-ic svg{width:17px;height:17px;stroke:var(--acc);stroke-width:2.2;fill:none}
+.brand-tit{font-size:14px;font-weight:800;letter-spacing:.2px}
+.brand-sub{font-size:10px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px}
+.crumb{font-size:11px;color:var(--ts);font-weight:600;margin-left:6px}.crumb b{color:var(--acc)}
+.top-sp{flex:1}
+.tbtn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:8px;color:var(--ts)}
+.tbtn:hover{border-color:var(--acc);color:var(--acc)}.tbtn svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none}
+
+.wrap{flex:1;overflow-y:auto;min-height:0}
+.inner{max-width:1320px;margin:0 auto;padding:20px 24px 60px}
+.hd{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.hd h1{font-size:22px;font-weight:800;letter-spacing:.2px}
+.hd .eyebrow{font-size:10px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.hd-act{display:flex;gap:9px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:8px;font-size:12px;font-weight:700;padding:8px 13px;transition:all .12s}
+.btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.4;fill:none}
+.btn-acc{background:var(--acc);color:#fff}.btn-acc:hover{filter:brightness(1.06)}
+.btn-ghost{background:var(--bg2);border:1.5px solid var(--bdr);color:var(--ts)}.btn-ghost:hover{border-color:var(--acc);color:var(--acc)}
+.btn-danger{background:transparent;border:1.5px solid var(--bdr);color:var(--red)}.btn-danger:hover{background:var(--red);border-color:var(--red);color:#fff}
+
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:11px;padding:12px 14px}
+.kpi-n{font-size:21px;font-weight:800;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:7px;line-height:1}
+.kpi-n .u{font-size:12px;font-weight:700;color:var(--ts)}
+.kpi-n .d{width:8px;height:8px;border-radius:50%;background:var(--tm)}.kpi-n .d.g{background:var(--grn)}.kpi-n .d.b{background:var(--blu)}
+.kpi-l{font-size:10px;color:var(--ts);font-weight:600;margin-top:6px;text-transform:uppercase;letter-spacing:.3px}
+
+.toolbar{display:flex;align-items:center;gap:9px;margin-bottom:13px;flex-wrap:wrap}
+.search{position:relative;display:flex;align-items:center;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;padding:0 11px;height:38px;flex:1;min-width:200px}
+.search:focus-within{border-color:var(--acc)}
+.search svg{width:15px;height:15px;stroke:var(--ts);stroke-width:2;fill:none;flex-shrink:0;margin-right:8px}
+.search input{flex:1;background:transparent;border:0;outline:0;font-family:inherit;font-size:13px;font-weight:500;color:var(--tp)}
+.fchips{display:flex;gap:6px;flex-wrap:wrap}
+.fchip{padding:8px 13px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;font-size:11.5px;font-weight:700;color:var(--ts);transition:all .12s}
+.fchip:hover{border-color:var(--acc);color:var(--tp)}
+.fchip.on{background:var(--accs);border-color:var(--acc);color:var(--acc)}
+.fsel{height:38px;font-family:inherit;font-size:12px;font-weight:700;color:var(--tp);background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;padding:0 10px}
+.fsel:focus{outline:none;border-color:var(--acc)}
+
+.tblwrap{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:13px;overflow:hidden}
+table.ln{width:100%;border-collapse:collapse;font-size:12.5px}
+table.ln th{font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:11px 12px;border-bottom:1.5px solid var(--bdr);white-space:nowrap;background:var(--bg3)}
+table.ln td{padding:9px 12px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+table.ln tbody tr.line{cursor:pointer;transition:background .1s}
+table.ln tbody tr.line:hover{background:var(--bgh)}
+tr.grp td{background:var(--bg3);padding:8px 12px;border-bottom:1.5px solid var(--bdr);border-top:1.5px solid var(--bdr)}
+.grp-lbl{font-size:10px;font-weight:800;color:var(--acc);text-transform:uppercase;letter-spacing:.7px;display:flex;align-items:center;gap:9px}
+.grp-lbl .c{font-size:9.5px;font-weight:800;color:var(--ts);background:var(--bg2);border:1px solid var(--bdr);border-radius:20px;padding:1px 8px}
+.ozn{font-family:"DM Mono",monospace;font-weight:600;font-size:12px;background:var(--bg3);border:1px solid var(--bdr);border-radius:6px;padding:2px 8px;display:inline-block;min-width:34px;text-align:center}
+.ln-nm{font-weight:700}
+.trasa{color:var(--ts);font-weight:500}.trasa b{color:var(--tp);font-weight:600}
+.num{text-align:center;font-variant-numeric:tabular-nums}
+.mono{font-family:"DM Mono",monospace;font-variant-numeric:tabular-nums}
+.vr{font-size:10.5px;font-weight:700;color:var(--ts)}
+.pill{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:20px;display:inline-block;white-space:nowrap}
+.pill.aktivna{background:var(--grns);color:var(--grn)}
+.pill.sezonska{background:var(--blus);color:var(--blu)}
+.pill.obustavljena{background:var(--yels);color:var(--yel)}
+.pill.ukinuta{background:var(--bg3);color:var(--tm);border:1px solid var(--bdr)}
+.empty-tbl{padding:40px;text-align:center;color:var(--ts);font-weight:600}
+
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-start;justify-content:center;z-index:200;padding:30px 20px;overflow-y:auto}
+.mbg.on{display:flex}
+.card{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:15px;width:100%;max-width:740px;box-shadow:0 24px 70px rgba(0,0,0,.32);overflow:hidden}
+.card-hd{display:flex;align-items:flex-start;gap:14px;padding:18px 22px;border-bottom:1.5px solid var(--bdr);background:var(--bg3)}
+.card-hd .ozn{font-size:14px;padding:4px 11px}
+.card-hd-main{flex:1;min-width:0}
+.card-hd-tit{font-size:18px;font-weight:800;margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.card-hd-sub{font-size:11.5px;color:var(--ts);font-weight:600;margin-top:3px}
+.card-x{width:30px;height:30px;border:none;background:transparent;border-radius:7px;color:var(--ts);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-x:hover{background:var(--bgh);color:var(--tp)}.card-x svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none}
+.card-bd{padding:18px 22px;max-height:66vh;overflow-y:auto}
+.sect-t{font-size:10px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin:6px 0 11px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px 22px;margin-bottom:20px}
+.fgrid.three{grid-template-columns:1fr 1fr 1fr}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld.full{grid-column:1/-1}
+.fld label{font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.4px}
+.fld input,.fld select{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--tp);background:var(--bg3);border:1.5px solid var(--bdr);border-radius:7px;padding:7px 10px;width:100%}
+.fld input.mono{font-family:"DM Mono",monospace;font-weight:500}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--acc);background:var(--bg2)}
+.ruta{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.ruta .ix{font-family:"DM Mono",monospace;font-size:11px;color:var(--ts);width:18px;text-align:center}
+.ruta input{flex:1;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--tp);background:var(--bg3);border:1.5px solid var(--bdr);border-radius:7px;padding:7px 10px}
+.ruta input:focus{outline:none;border-color:var(--acc);background:var(--bg2)}
+.ruta .del{width:28px;height:28px;border:none;background:transparent;border-radius:6px;color:var(--tm);display:flex;align-items:center;justify-content:center}
+.ruta .del:hover{background:var(--reds);color:var(--red)}.ruta .del svg{width:14px;height:14px;stroke:currentColor;stroke-width:2;fill:none}
+.addruta{display:inline-flex;align-items:center;gap:7px;margin-top:5px;padding:7px 12px;background:transparent;border:1.5px dashed var(--bdr);border-radius:8px;color:var(--ts);font-size:11.5px;font-weight:700;transition:all .12s}
+.addruta:hover{border-color:var(--acc);color:var(--acc);border-style:solid}.addruta svg{width:13px;height:13px;stroke:currentColor;stroke-width:2.4;fill:none}
+.card-ft{display:flex;align-items:center;gap:9px;padding:14px 22px;border-top:1.5px solid var(--bdr);background:var(--bg3)}
+.card-ft .sp{flex:1}
+@media(max-width:720px){.kpis{grid-template-columns:repeat(3,1fr)}.fgrid,.fgrid.three{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">
+    <div class="brand-ic"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.5 6H15a3 3 0 0 1 0 6H9a3 3 0 0 0 0 6h6.5"/></svg></div>
+    <div><div class="brand-tit">Liburnija</div><div class="brand-sub">Linije</div></div>
+  </div>
+  <div class="crumb"><b>CORE</b> › Linije</div>
+  <div class="top-sp"></div>
+  <button class="tbtn" id="themeBtn" title="Tema" onclick="toggleTheme()"><svg id="themeIc" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+</div>
+
+<div class="wrap"><div class="inner">
+  <div class="hd">
+    <div><div class="eyebrow">Matični registar linija</div><h1>Linije</h1></div>
+    <div class="hd-act">
+      <button class="btn btn-ghost" onclick="window.print()"><svg viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Ispis</button>
+      <button class="btn btn-acc" onclick="openLine(null)"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Nova linija</button>
+    </div>
+  </div>
+  <div class="kpis" id="KPIS"></div>
+  <div class="toolbar">
+    <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg><input id="q" type="text" placeholder="Traži po broju, nazivu ili trasi…" oninput="render()"></div>
+    <select class="fsel" id="fstat" onchange="render()"><option value="">Svi statusi</option><option value="aktivna">Aktivne</option><option value="sezonska">Sezonske</option><option value="obustavljena">Obustavljene</option><option value="ukinuta">Ukinute</option></select>
+    <div class="fchips" id="FCH"></div>
+  </div>
+  <div class="tblwrap"><table class="ln">
+    <thead><tr><th>Oznaka</th><th>Naziv</th><th>Trasa</th><th class="num">Duljina</th><th class="num">Staj.</th><th class="num">Trajanje</th><th>Vrsta</th><th>Status</th></tr></thead>
+    <tbody id="TBODY"></tbody>
+  </table></div>
+</div></div>
+
+<div class="mbg" id="cardBg"><div class="card" id="cardEl"></div></div>
+
+<script>
+const PODRUCJA=[["grad","Grad"],["prigrad","Prigrad"],["ugljan","Otok Ugljan"],["dugi","Dugi otok"],["iz","Otok Iž"]];
+function podrNaziv(id){ const p=PODRUCJA.find(x=>x[0]===id); return p?p[1]:id; }
+const VRSTE=["redovna","školska","sezonska","noćna","po pozivu"];
+const SEZON=["cijelogodišnja","ljetna","zimska"];
+const TIPVOZ=["gradski","prigradski","minibus"];
+const STAT=["aktivna","sezonska","obustavljena","ukinuta"];
+const esc=s=>(s==null?'':(''+s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap=s=>s?s.charAt(0).toUpperCase()+s.slice(1):s;
+function seedFrom(str){ let h=2166136261>>>0; for(let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,16777619)>>>0; } return h>>>0; }
+function rngFrom(seed){ let s=seed>>>0; return function(){ s=Math.imul(s^(s>>>15),2246822519)>>>0; s=(s+0x9E3779B9)>>>0; let t=s; t^=t>>>13; t=Math.imul(t,0xC2B2AE35)>>>0; t^=t>>>16; return (t>>>0)/4294967296; }; }
+function geom(naziv,podr){ const rng=rngFrom(seedFrom(naziv+'|geo')); let lo,hi,sp,tf;
+  if(podr==='grad'){lo=4;hi=14;sp=0.55;tf=2.6;} else if(podr==='prigrad'){lo=12;hi=55;sp=1.8;tf=1.6;} else {lo=6;hi=32;sp=1.6;tf=1.7;}
+  const d=Math.round((lo+rng()*(hi-lo))*10)/10; return {duljina:d, brStajalista:Math.round(d/sp)+2, trajanje:Math.round(d*tf)+5}; }
+
+// ── SEED: stvarne linije po području ──
+const RAW=[];
+function add(podr,broj,naziv,polaz,odred,rute,o){ o=o||{}; RAW.push(Object.assign({podr,broj,naziv,polaz,odred,rute},o)); }
+function dvosmjer(polaz,odred){ return [polaz+' – '+odred, odred+' – '+polaz]; }
+
+// GRAD (polaz: Kolodvor)
+add('grad','11','Crvene kuće (Supernova)','Kolodvor','Supernova',['Supernova – Kolodvor','Kolodvor – Supernova','Kolodvor – Crvene kuće – Supernova']);
+add('grad','1A','Dračevac I','Kolodvor','Dračevac',dvosmjer('Kolodvor','Dračevac'));
+add('grad','1B','Dračevac II','Kolodvor','Dračevac',dvosmjer('Kolodvor','Dračevac'));
+add('grad','2','Poluotok – Arbanasi','Poluotok','Arbanasi',dvosmjer('Poluotok','Arbanasi'));
+add('grad','3','Bili Brig I','Kolodvor','Bili Brig',dvosmjer('Kolodvor','Bili Brig'));
+add('grad','4','Crno','Kolodvor','Crno',dvosmjer('Kolodvor','Crno'));
+add('grad','5','Puntamika','Kolodvor','Puntamika',dvosmjer('Kolodvor','Puntamika'));
+add('grad','6','Bili Brig II','Kolodvor','Bili Brig',dvosmjer('Kolodvor','Bili Brig'));
+add('grad','7A','Bokanjac I','Kolodvor','Bokanjac',dvosmjer('Kolodvor','Bokanjac'));
+add('grad','7B','Bokanjac II','Kolodvor','Bokanjac',dvosmjer('Kolodvor','Bokanjac'));
+add('grad','8','Diklo','Kolodvor','Diklo',dvosmjer('Kolodvor','Diklo'));
+add('grad','13','Diklo Bunari','Kolodvor','Diklo Bunari',dvosmjer('Kolodvor','Diklo Bunari'));
+add('grad','9','Gaženica','Kolodvor','Gaženica',dvosmjer('Kolodvor','Gaženica'));
+
+// PRIGRAD (polaz: Zadar)
+[['Vir'],['Privlaka'],['Vrsi'],['Nin – Žerava','Žerava'],['Petrčane'],['Novigrad'],['Pridraga'],['Obrovac'],['Škabrnja',null,'školska'],['Nadin'],['Polača'],['Biograd I','Biograd'],['Biograd II','Biograd'],['Pakoštane'],['Vrana',null,null,'obustavljena'],['Tinj']]
+.forEach(function(r){ const naziv=r[0]; const odred=r[1]||naziv.replace(/\s*\(.*\)/,''); add('prigrad','',naziv,'Zadar',odred,dvosmjer('Zadar',odred),{vrsta:r[2]||'redovna',status:r[3]||'aktivna'}); });
+
+// OTOK UGLJAN (polaz: Preko (trajekt))
+[['Preko'],['Kali'],['Kukljica'],['Ugljan'],['Lukoran'],['Sutomišćica']]
+.forEach(function(r){ const n=r[0]; add('ugljan','',n,'Preko (trajekt)',n,dvosmjer('Preko (trajekt)',n)); });
+
+// DUGI OTOK (polaz: Brbinj (trajekt))
+[['Sali'],['Zaglav'],['Žman'],['Božava','Božava','sezonska','sezonska'],['Veli Rat','Veli Rat','sezonska','sezonska'],['Soline']]
+.forEach(function(r){ const n=r[0]; add('dugi','',n,'Brbinj (trajekt)',r[1]||n,dvosmjer('Brbinj (trajekt)',r[1]||n),{vrsta:r[2]||'redovna',status:r[3]||'aktivna'}); });
+
+// OTOK IŽ (polaz: Iž (luka))
+[['Veli Iž'],['Mali Iž','Mali Iž','sezonska','sezonska'],['Bršanj','Bršanj','sezonska','sezonska']]
+.forEach(function(r){ const n=r[0]; add('iz','',n,'Iž (luka)',r[1]||n,dvosmjer('Iž (luka)',r[1]||n),{vrsta:r[2]||'redovna',status:r[3]||'aktivna'}); });
+
+let LINIJE = RAW.map(function(r,i){
+  const g=geom(r.naziv,r.podr);
+  const tip = r.podr==='grad'?'gradski':(r.podr==='prigrad'?'prigradski':'minibus');
+  const sez = (r.status==='sezonska')?'ljetna':'cijelogodišnja';
+  return { id:'l'+(i+1), broj:r.broj||'', naziv:r.naziv, podrucje:r.podr, status:r.status||'aktivna',
+    polaziste:r.polaz, odrediste:r.odred, duljina:g.duljina, brStajalista:g.brStajalista, trajanje:g.trajanje,
+    rute:(r.rute||[]).slice(), vrsta:r.vrsta||'redovna', sezonalnost:sez, tipVozila:tip };
+});
+
+let fPod='', editId=null, editRute=[];
+
+function render(){
+  const q=(document.getElementById('q').value||'').toLowerCase().trim();
+  const fs=document.getElementById('fstat').value;
+  let rows=LINIJE.filter(function(l){
+    if(fPod && l.podrucje!==fPod) return false;
+    if(fs && l.status!==fs) return false;
+    if(q){ const hay=(l.broj+' '+l.naziv+' '+l.polaziste+' '+l.odrediste).toLowerCase(); if(!hay.includes(q)) return false; }
+    return true;
+  });
+  renderKpis(); renderChips();
+  let html=''; let any=false;
+  PODRUCJA.forEach(function(P){
+    const ls=rows.filter(l=>l.podrucje===P[0]).sort((a,b)=>(a.broj||'').localeCompare(b.broj||'','hr',{numeric:true})||a.naziv.localeCompare(b.naziv,'hr'));
+    if(!ls.length) return; any=true;
+    html+='<tr class="grp"><td colspan="8"><div class="grp-lbl">'+P[1]+'<span class="c">'+ls.length+'</span></div></td></tr>';
+    ls.forEach(function(l){
+      html+='<tr class="line" onclick="openLine(\''+l.id+'\')">'
+        +'<td><span class="ozn">'+(l.broj||'—')+'</span></td>'
+        +'<td><span class="ln-nm">'+esc(l.naziv)+'</span></td>'
+        +'<td class="trasa"><b>'+esc(l.polaziste)+'</b> → <b>'+esc(l.odrediste)+'</b></td>'
+        +'<td class="num mono">'+l.duljina+' km</td>'
+        +'<td class="num mono">'+l.brStajalista+'</td>'
+        +'<td class="num mono">'+l.trajanje+' min</td>'
+        +'<td><span class="vr">'+cap(l.vrsta)+'</span></td>'
+        +'<td><span class="pill '+l.status+'">'+cap(l.status)+'</span></td>'
+        +'</tr>';
+    });
+  });
+  document.getElementById('TBODY').innerHTML = any?html:'<tr><td colspan="8" class="empty-tbl">Nema linija za zadane filtere.</td></tr>';
+}
+function renderKpis(){
+  const akt=LINIJE.filter(l=>l.status==='aktivna').length;
+  const sez=LINIJE.filter(l=>l.sezonalnost!=='cijelogodišnja'||l.status==='sezonska').length;
+  const km=LINIJE.filter(l=>l.status==='aktivna'||l.status==='sezonska').reduce((s,l)=>s+l.duljina,0);
+  const grad=LINIJE.filter(l=>l.podrucje==='grad').length;
+  const otok=LINIJE.filter(l=>['ugljan','dugi','iz'].includes(l.podrucje)).length;
+  const k=[[LINIJE.length,'','','Ukupno linija'],[akt,'g','','Aktivnih'],[sez,'b','','Sezonskih'],[Math.round(km),'',' km','Mreža (jednosmj.)'],[grad,'','','Gradskih'],[otok,'','','Otočnih']];
+  document.getElementById('KPIS').innerHTML=k.map(s=>'<div class="kpi"><div class="kpi-n">'+(s[1]?'<span class="d '+s[1]+'"></span>':'')+s[0]+(s[2]?'<span class="u">'+s[2]+'</span>':'')+'</div><div class="kpi-l">'+s[3]+'</div></div>').join('');
+}
+function renderChips(){
+  const c={'':LINIJE.length}; PODRUCJA.forEach(P=>c[P[0]]=LINIJE.filter(l=>l.podrucje===P[0]).length);
+  let h='<button class="fchip'+(fPod===''?' on':'')+'" onclick="setPod(\'\')">Sve · '+c['']+'</button>';
+  PODRUCJA.forEach(P=>{ h+='<button class="fchip'+(fPod===P[0]?' on':'')+'" onclick="setPod(\''+P[0]+'\')">'+P[1]+' · '+c[P[0]]+'</button>'; });
+  document.getElementById('FCH').innerHTML=h;
+}
+function setPod(p){ fPod=p; render(); }
+function toggleTheme(){ const h=document.documentElement,dk=h.getAttribute('data-theme')==='dark'; h.setAttribute('data-theme',dk?'light':'dark');
+  document.getElementById('themeIc').innerHTML=dk?'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>':'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/>'; }
+
+/* ─── Kartica linije ─── */
+function openLine(id){
+  editId=id;
+  const l = id ? LINIJE.find(x=>x.id===id) : { broj:'', naziv:'', podrucje:'grad', status:'aktivna', polaziste:'', odrediste:'', duljina:'', brStajalista:'', trajanje:'', rute:[], vrsta:'redovna', sezonalnost:'cijelogodišnja', tipVozila:'gradski' };
+  editRute = (l.rute||[]).slice();
+  const isNew=!id;
+  function opt(arr,v){ return arr.map(x=>'<option'+(x===v?' selected':'')+'>'+x+'</option>').join(''); }
+  function fi(label,key,mono,ph,full){ return '<div class="fld'+(full?' full':'')+'"><label>'+label+'</label><input class="'+(mono?'mono':'')+'" id="f_'+key+'" value="'+esc(l[key]==null?'':l[key])+'" placeholder="'+(ph||'')+'"></div>'; }
+  let h='<div class="card-hd"><span class="ozn">'+(isNew?'—':esc(l.broj||'—'))+'</span>'
+   +'<div class="card-hd-main"><div class="eyebrow" style="font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px">'+(isNew?'Nova linija':'Linija')+'</div>'
+   +'<div class="card-hd-tit">'+(isNew?'Nova linija':esc(l.naziv))+'<span class="pill '+l.status+'">'+cap(l.status)+'</span></div>'
+   +'<div class="card-hd-sub">'+podrNaziv(l.podrucje)+(l.polaziste?' · '+esc(l.polaziste)+' → '+esc(l.odrediste):'')+'</div></div>'
+   +'<button class="card-x" onclick="closeCard()"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>';
+  h+='<div class="card-bd">';
+  h+='<div class="sect-t">Identitet</div><div class="fgrid">'
+   + fi('Oznaka / broj','broj',true,'npr. 11')
+   + '<div class="fld"><label>Naziv linije</label><input id="f_naziv" value="'+esc(l.naziv)+'" placeholder="npr. Crvene kuće"></div>'
+   + '<div class="fld"><label>Područje prometovanja</label><select id="f_podrucje">'+PODRUCJA.map(P=>'<option value="'+P[0]+'"'+(l.podrucje===P[0]?' selected':'')+'>'+P[1]+'</option>').join('')+'</select></div>'
+   + '<div class="fld"><label>Status</label><select id="f_status">'+STAT.map(s=>'<option value="'+s+'"'+(l.status===s?' selected':'')+'>'+cap(s)+'</option>').join('')+'</select></div>'
+   + '</div>';
+  h+='<div class="sect-t">Trasa</div><div class="fgrid">'
+   + fi('Polazište','polaziste',false,'')
+   + fi('Odredište','odrediste',false,'')
+   + '</div><div class="fgrid three">'
+   + fi('Duljina (km)','duljina',true,'')
+   + fi('Broj stajališta','brStajalista',true,'')
+   + fi('Trajanje (min)','trajanje',true,'')
+   + '</div>';
+  h+='<div class="sect-t">Rute / varijante</div><div id="RUTE"></div>'
+   + '<button class="addruta" onclick="addRuta()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Dodaj rutu</button>';
+  h+='<div class="sect-t" style="margin-top:20px">Klasifikacija</div><div class="fgrid three">'
+   + '<div class="fld"><label>Vrsta</label><select id="f_vrsta">'+opt(VRSTE,l.vrsta)+'</select></div>'
+   + '<div class="fld"><label>Sezonalnost</label><select id="f_sezonalnost">'+opt(SEZON,l.sezonalnost)+'</select></div>'
+   + '<div class="fld"><label>Tip vozila</label><select id="f_tipVozila">'+opt(TIPVOZ,l.tipVozila)+'</select></div>'
+   + '</div>';
+  h+='</div>';
+  h+='<div class="card-ft">'+(isNew?'':'<button class="btn btn-danger" onclick="deleteLine(\''+l.id+'\')">Obriši</button>')
+   +'<div class="sp"></div><button class="btn btn-ghost" onclick="closeCard()">Odustani</button>'
+   +'<button class="btn btn-acc" onclick="saveLine()">'+(isNew?'Kreiraj liniju':'Spremi')+'</button></div>';
+  document.getElementById('cardEl').innerHTML=h;
+  renderRute();
+  document.getElementById('cardBg').classList.add('on');
+}
+function renderRute(){
+  let h=''; editRute.forEach(function(r,i){
+    h+='<div class="ruta"><span class="ix">'+(i+1)+'</span><input value="'+esc(r)+'" placeholder="npr. Kolodvor – Supernova" onchange="setRuta('+i+',this.value)">'
+     +'<button class="del" onclick="delRuta('+i+')"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></div>';
+  });
+  if(!editRute.length) h='<div style="font-size:12px;color:var(--ts);font-weight:600;padding:4px 0 8px">Nema definiranih ruta.</div>';
+  document.getElementById('RUTE').innerHTML=h;
+}
+function setRuta(i,v){ editRute[i]=v; }
+function addRuta(){ editRute.push(''); renderRute(); const ins=document.querySelectorAll('#RUTE .ruta input'); if(ins.length) ins[ins.length-1].focus(); }
+function delRuta(i){ editRute.splice(i,1); renderRute(); }
+function closeCard(){ document.getElementById('cardBg').classList.remove('on'); editId=null; }
+function val(k){ const e=document.getElementById('f_'+k); return e?e.value.trim():''; }
+function numOr(k){ const x=val(k); return x===''?null:(isNaN(+x)?x:+x); }
+function saveLine(){
+  const naziv=val('naziv'); if(!naziv){ document.getElementById('f_naziv').focus(); return; }
+  let l = editId ? LINIJE.find(x=>x.id===editId) : null;
+  if(!l){ l={id:'l'+Date.now()}; LINIJE.push(l); }
+  l.broj=val('broj'); l.naziv=naziv; l.podrucje=val('podrucje'); l.status=val('status');
+  l.polaziste=val('polaziste'); l.odrediste=val('odrediste');
+  l.duljina=numOr('duljina'); l.brStajalista=numOr('brStajalista'); l.trajanje=numOr('trajanje');
+  l.vrsta=val('vrsta'); l.sezonalnost=val('sezonalnost'); l.tipVozila=val('tipVozila');
+  l.rute=editRute.map(s=>s.trim()).filter(Boolean);
+  closeCard(); render();
+}
+function deleteLine(id){ const l=LINIJE.find(x=>x.id===id); if(!l) return;
+  if(!confirm('Obrisati liniju „'+l.naziv+'" iz registra? Ovo je matični zapis.')) return;
+  LINIJE=LINIJE.filter(x=>x.id!==id); closeCard(); render(); }
+
+document.getElementById('cardBg').addEventListener('click',function(e){ if(e.target===this) closeCard(); });
+render();
+</script>
+</body>
+</html>
