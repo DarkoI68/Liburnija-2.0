@@ -2,110 +2,122 @@
 <html lang="hr" data-theme="light">
 <head>
 <meta charset="utf-8">
-<title>Liburnija — Platforma · Kompletna struktura</title>
+<title>Liburnija — Platforma · Struktura (uređivanje)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-html[data-theme="dark"]{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2330;--bgh:#212936;--bdr:#2d3748;--tp:#f0f4f8;--ts:#8b95a1;--tm:#4b5563;--acc:#f97316;--accs:rgba(249,115,22,.12);--blu:#3b82f6;--grn:#22c55e;--red:#ef4444;--pur:#a855f7;--yel:#eab308}
-html[data-theme="light"]{--bg:#f0f4f8;--bg2:#fff;--bg3:#f8fafc;--bgh:#f1f5f9;--bdr:#e2e8f0;--tp:#0f172a;--ts:#64748b;--tm:#94a3b8;--acc:#f97316;--accs:rgba(249,115,22,.09);--blu:#3b82f6;--grn:#16a34a;--red:#dc2626;--pur:#9333ea;--yel:#ca8a04}
+html[data-theme="dark"]{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2330;--bgh:#212936;--bdr:#2d3748;--tp:#f0f4f8;--ts:#8b95a1;--tm:#4b5563;--acc:#f97316;--accs:rgba(249,115,22,.12);--blu:#3b82f6;--grn:#16a34a;--red:#dc2626}
+html[data-theme="light"]{--bg:#f0f4f8;--bg2:#fff;--bg3:#f8fafc;--bgh:#f1f5f9;--bdr:#e2e8f0;--tp:#0f172a;--ts:#64748b;--tm:#94a3b8;--acc:#f97316;--accs:rgba(249,115,22,.09);--blu:#3b82f6;--grn:#16a34a;--red:#dc2626}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--tp);display:flex;height:100vh;font-size:13px;overflow:hidden}
 
-.sb{width:248px;background:var(--bg2);border-right:1px solid var(--bdr);display:flex;flex-direction:column;padding:14px 10px;flex-shrink:0;height:100vh}
-.sb-logo{display:flex;align-items:center;gap:9px;padding:6px 6px 13px;border-bottom:1px solid var(--bdr);margin-bottom:6px}
+.sb{width:270px;background:var(--bg2);border-right:1px solid var(--bdr);display:flex;flex-direction:column;flex-shrink:0;height:100vh}
+.sb-logo{display:flex;align-items:center;gap:9px;padding:13px 14px;border-bottom:1px solid var(--bdr)}
 .sb-icon{width:32px;height:32px;border-radius:7px;border:1.5px solid var(--acc);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(249,115,22,.1)}
 .sb-nm{font-size:13.5px;font-weight:700}
 .sb-sub{font-size:10px;color:var(--ts);text-transform:uppercase;letter-spacing:.5px}
-.sb-scroll{flex:1;overflow-y:auto;min-height:0;margin:0 -4px;padding:2px 4px;scrollbar-gutter:stable}
-.glbl{font-size:9px;color:var(--tm);text-transform:uppercase;font-weight:700;letter-spacing:.8px;padding:11px 6px 5px}
-.m{margin-bottom:1px}
-.m-h{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:7px;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--tp);transition:background .12s}
-.m-h:hover{background:var(--bgh)}
-.m-h.on{background:rgba(249,115,22,.1);color:var(--acc)}
-.m-h svg.ic{width:15px;height:15px;stroke:currentColor;stroke-width:1.8;fill:none;flex-shrink:0}
-.m-h .chev{margin-left:auto;width:12px;height:12px;stroke:currentColor;stroke-width:2.2;fill:none;transition:transform .15s;opacity:.6}
-.m.open .m-h .chev{transform:rotate(90deg)}
-.m-body{display:none;padding:2px 0 6px}
-.m.open .m-body{display:block}
-.pg{display:flex;align-items:center;gap:7px;padding:5px 8px 5px 30px;border-radius:6px;cursor:pointer;font-size:11.5px;font-weight:500;color:var(--ts);transition:all .1s;margin-bottom:1px}
-.pg:hover{background:var(--bgh);color:var(--tp)}
-.pg.on{background:rgba(249,115,22,.09);color:var(--acc);font-weight:600}
-.pg.dash{color:var(--tp);font-weight:600}
-.pg .own{margin-left:auto;font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.2px;padding:1px 4px;border-radius:3px;background:rgba(100,116,139,.14);color:var(--tm);flex-shrink:0}
-.pg.on .own{background:var(--accs);color:var(--acc)}
-.pg .own.live{background:rgba(34,197,94,.16);color:var(--grn)}
-/* nested sekcije (Promet) */
-.sec{margin:2px 0 2px 18px}
-.sec-h{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:6px;cursor:pointer;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--ts)}
-.sec-h:hover{background:var(--bgh);color:var(--tp)}
-.sec-h .chev{margin-left:auto;width:11px;height:11px;stroke:currentColor;stroke-width:2.4;fill:none;transition:transform .15s}
-.sec.open .sec-h .chev{transform:rotate(90deg)}
-.sec-body{display:none}.sec.open .sec-body{display:block}
-.sec .pg{padding-left:24px;font-size:11px}
+.sb-scroll{flex:1;overflow-y:auto;min-height:0;padding:6px 8px}
 
-.sb-foot{margin-top:8px;border-top:1px solid var(--bdr);padding-top:10px;flex-shrink:0}
-.sb-settings{display:flex;gap:5px;margin-bottom:8px}
-.sb-settings button{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 6px;border:1px solid var(--bdr);background:var(--bg3);border-radius:7px;color:var(--ts);font-family:inherit;font-size:10.5px;font-weight:500;cursor:pointer}
-.sb-settings button:hover{border-color:var(--acc);color:var(--acc)}
-.sb-settings button svg{width:12px;height:12px;stroke:currentColor;stroke-width:1.8;fill:none}
-.ucard{display:flex;align-items:center;gap:9px;padding:7px;background:var(--bg3);border-radius:8px;border:1px solid var(--bdr)}
-.uavt{width:30px;height:30px;border-radius:50%;background:var(--acc);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.glbl{display:flex;align-items:center;gap:6px;font-size:9px;color:var(--tm);text-transform:uppercase;font-weight:700;letter-spacing:.8px;padding:11px 6px 5px}
+.glbl .gnm{flex:1}
+.m{margin-bottom:1px}
+.row{display:flex;align-items:center;gap:8px;border-radius:7px;cursor:pointer;transition:background .12s;position:relative}
+.row:hover{background:var(--bgh)}
+.m-h{padding:7px 8px;font-size:12.5px;font-weight:600;color:var(--tp)}
+.m-h.sel{background:rgba(249,115,22,.1);color:var(--acc)}
+.m-h svg.ic{width:15px;height:15px;stroke:currentColor;stroke-width:1.8;fill:none;flex-shrink:0}
+.chev{width:11px;height:11px;stroke:currentColor;stroke-width:2.4;fill:none;transition:transform .15s;opacity:.55;flex-shrink:0}
+.open>.row .chev{transform:rotate(90deg)}
+.m-body,.sec-body{display:none;padding:1px 0 4px}
+.m.open>.m-body{display:block}
+.sec.open>.sec-body{display:block}
+.sec{margin-left:16px}
+.sec-h{padding:5px 8px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--ts)}
+.pg{padding:5px 8px 5px 12px;font-size:11.5px;font-weight:500;color:var(--ts);margin-left:14px}
+.pg.sel{background:rgba(249,115,22,.09);color:var(--acc);font-weight:600}
+.pg.locked{color:var(--tp)}
+.nm{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.2px;padding:1px 5px;border-radius:3px;flex-shrink:0}
+.badge.live{background:rgba(34,197,94,.16);color:var(--grn)}
+.badge.lock{background:rgba(100,116,139,.16);color:var(--ts)}
+
+/* uređivanje — akcije skrivene dok nije edit mode */
+.acts{display:none;align-items:center;gap:2px;flex-shrink:0}
+body.editing .row:hover .acts{display:flex}
+.abtn{width:21px;height:21px;display:inline-flex;align-items:center;justify-content:center;border:none;background:transparent;border-radius:5px;cursor:pointer;color:var(--ts)}
+.abtn:hover{background:var(--bg);color:var(--tp)}
+.abtn svg{width:13px;height:13px;stroke:currentColor;stroke-width:2;fill:none;pointer-events:none}
+.abtn.del:hover{background:#fee2e2;color:var(--red)}
+.abtn.link:hover{background:#dcfce7;color:var(--grn)}
+.abtn.dis{opacity:.28;cursor:not-allowed}
+.add{display:none;align-items:center;gap:6px;margin:2px 0 2px 12px;padding:4px 9px;border:1.5px dashed var(--bdr);border-radius:6px;color:var(--ts);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;cursor:pointer;background:transparent}
+body.editing .add{display:inline-flex}
+.add:hover{border-color:var(--acc);color:var(--acc);background:var(--accs)}
+.add.grp{margin-left:6px}
+
+.sb-foot{border-top:1px solid var(--bdr);padding:10px;flex-shrink:0;display:flex;flex-direction:column;gap:7px}
+.foot-row{display:flex;gap:6px}
+.fbtn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 6px;border:1px solid var(--bdr);background:var(--bg3);border-radius:7px;color:var(--ts);font-family:inherit;font-size:10.5px;font-weight:600;cursor:pointer}
+.fbtn:hover{border-color:var(--acc);color:var(--acc)}
+.fbtn svg{width:12px;height:12px;stroke:currentColor;stroke-width:1.9;fill:none}
+.fbtn.on{background:var(--acc);border-color:var(--acc);color:#fff}
 
 .main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:11px 18px;background:var(--bg2);border-bottom:1px solid var(--bdr);gap:14px;flex-shrink:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--bg2);border-bottom:1px solid var(--bdr);gap:14px;flex-shrink:0}
 .crumb{font-size:11px;color:var(--ts);font-weight:600;margin-bottom:2px}.crumb b{color:var(--acc)}
-.topbar-title{font-size:15.5px;font-weight:700}
-.tcount{font-size:11px;color:var(--ts);font-weight:600;background:var(--bg3);border:1px solid var(--bdr);padding:5px 11px;border-radius:7px}
-.content{flex:1;padding:15px 18px;overflow-y:auto;background:var(--bg);min-height:0}
-
-.strip{display:grid;background:var(--bg2);border:1px solid var(--bdr);border-radius:11px;overflow:hidden;margin-bottom:13px}
-.st{padding:12px 15px;border-right:1px solid var(--bdr)}.st:last-child{border-right:none}
-.st-n{font-size:21px;font-weight:700;line-height:1;font-feature-settings:"tnum" 1;display:flex;align-items:center;gap:7px}
-.st-n .d{width:8px;height:8px;border-radius:50%;background:var(--tm)}
-.st-n .d.r{background:var(--red)}.st-n .d.y{background:var(--yel)}.st-n .d.g{background:var(--grn)}.st-n .d.b{background:var(--blu)}
-.st-l{font-size:10px;color:var(--ts);font-weight:600;margin-top:5px}
-
-.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;align-items:start}
-@media(max-width:1050px){.grid{grid-template-columns:1fr}}
-.panel{background:var(--bg2);border:1px solid var(--bdr);border-radius:11px;overflow:hidden}
-.panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--bdr)}
-.panel-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
-.panel-title svg{width:14px;height:14px;stroke:var(--acc);stroke-width:2;fill:none}
-.panel-cnt{font-size:11px;color:var(--ts);font-weight:600;background:var(--bg3);padding:2px 8px;border-radius:5px;border:1px solid var(--bdr)}
-.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:12px}
-.pgc{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .1s}
-.pgc:hover{border-color:var(--acc);transform:translateY(-1px)}
-.pgc .dot{width:6px;height:6px;border-radius:50%;background:var(--tm);flex-shrink:0}
-.pgc .dot.live{background:var(--grn)}
-.pgc .t{margin-left:auto;font-size:8px;font-weight:700;text-transform:uppercase;color:var(--ts)}
-.pgc .t.live{color:var(--grn)}
-.al{display:flex;align-items:center;gap:9px;padding:9px 14px;border-bottom:1px solid var(--bdr);font-size:12px}.al:last-child{border-bottom:none}
-.al .ad{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.al.r .ad{background:var(--red)}.al.y .ad{background:var(--yel)}.al.b .ad{background:var(--blu)}.al.g .ad{background:var(--grn)}
-.al .am{flex:1;font-weight:600}.al .an{font-weight:700;font-feature-settings:"tnum" 1}
-.al.r .an{color:var(--red)}.al.y .an{color:var(--yel)}.al.g .an{color:var(--grn)}.al.b .an{color:var(--blu)}
-
-.map{height:300px;position:relative;background:var(--bg3)}
-.map svg{position:absolute;inset:0;width:100%;height:100%}
-.veh{position:absolute;width:11px;height:11px;border-radius:50%;border:2px solid var(--bg2);transform:translate(-50%,-50%)}
-.veh.g{background:var(--grn)}.veh.y{background:var(--yel)}.veh.r{background:var(--red)}
-.veh.live{animation:pulse 1.8s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(249,115,22,.45)}70%{box-shadow:0 0 0 9px rgba(249,115,22,0)}100%{box-shadow:0 0 0 0 rgba(249,115,22,0)}}
-.tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--ts);font-weight:700;padding:9px 14px;border-bottom:1px solid var(--bdr);background:var(--bg3)}
-.tbl td{padding:9px 14px;border-bottom:1px solid var(--bdr);font-weight:500}.tbl tr:last-child td{border-bottom:none}
-.tbl tr:hover td{background:var(--bgh)}.tbl .num{font-feature-settings:"tnum" 1;font-weight:600}.tbl .ln{font-weight:700}
-.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600}.pill .pd{width:7px;height:7px;border-radius:50%}
-.pill.g .pd{background:var(--grn)}.pill.y .pd{background:var(--yel)}.pill.r .pd{background:var(--red)}.pill.b .pd{background:var(--blu)}
-.mt12{margin-top:12px}
-.ph{background:var(--bg2);border:1px solid var(--bdr);border-radius:11px;padding:32px;text-align:center;color:var(--ts)}
-.ph svg{width:28px;height:28px;stroke:var(--tm);stroke-width:1.6;fill:none;margin-bottom:9px}
-.ph h3{font-size:15px;color:var(--tp);font-weight:700;margin-bottom:5px}.ph p{font-size:12px;max-width:420px;margin:0 auto;line-height:1.5}
-.ph .open-btn{display:inline-flex;align-items:center;gap:7px;margin-top:14px;padding:9px 16px;background:var(--acc);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
-.note{margin-top:12px;font-size:11px;color:var(--ts);background:var(--bg2);border:1px dashed var(--bdr);border-radius:9px;padding:10px 13px;line-height:1.5}.note b{color:var(--tp)}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--tp);color:var(--bg2);padding:9px 16px;border-radius:8px;font-size:12px;font-weight:600;opacity:0;transition:all .25s;pointer-events:none;z-index:99}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.ttitle{font-size:15px;font-weight:700}
+.editbtn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border:1.5px solid var(--bdr);background:var(--bg2);border-radius:8px;color:var(--tp);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.editbtn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2;fill:none}
+.editbtn.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.content{flex:1;min-height:0;background:var(--bg);position:relative}
+.content iframe{width:100%;height:100%;border:none;background:#fff;display:block}
+.ph{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ts);padding:30px}
+.ph svg{width:30px;height:30px;stroke:var(--tm);stroke-width:1.6;fill:none;margin-bottom:10px}
+.ph h3{font-size:16px;color:var(--tp);font-weight:700;margin-bottom:6px}
+.ph p{font-size:12.5px;max-width:440px;line-height:1.55}
+.ph .linkbox{margin-top:16px;display:flex;gap:8px;align-items:center}
+.ph input{padding:8px 11px;border:1.5px solid var(--bdr);border-radius:8px;font-family:inherit;font-size:12.5px;width:260px;background:var(--bg2);color:var(--tp)}
+.ph input:focus{outline:none;border-color:var(--acc)}
+.ph button{padding:8px 14px;background:var(--acc);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.banner{background:#eff6ff;border-bottom:1px solid #bfdbfe;color:#1e40af;font-size:11.5px;padding:7px 16px;line-height:1.5;display:flex;gap:8px;align-items:center}
+html[data-theme="dark"] .banner{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.3);color:#93c5fd}
+.banner b{font-weight:700}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--tp);color:var(--bg2);padding:9px 16px;border-radius:8px;font-size:12px;font-weight:600;opacity:0;transition:all .25s;pointer-events:none;z-index:99}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.linkbox{margin-top:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
+.linkbox input{padding:8px 11px;border:1.5px solid var(--bdr);border-radius:8px;font-family:inherit;font-size:12.5px;width:240px;background:var(--bg2);color:var(--tp)}
+.linkbox input:focus{outline:none;border-color:var(--acc)}
+.linkbox button{padding:8px 14px;background:var(--acc);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.linkbox button.alt{background:var(--bg2);color:var(--tp);border:1.5px solid var(--bdr)}
+.pick-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:9800;padding:20px}
+.pick-bg.on{display:flex}
+.pick{background:var(--bg);border:1px solid var(--bdr);border-radius:12px;width:100%;max-width:480px;max-height:84vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.pick-hdr{display:flex;align-items:center;gap:8px;padding:13px 16px;border-bottom:1px solid var(--bdr)}
+.pick-tit{font-size:14px;font-weight:700;flex:1}
+.pick-body{overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.pick-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--ts);margin-top:4px}
+.pick-src{text-transform:none;letter-spacing:0;color:var(--tm);font-weight:600;margin-left:6px}
+.pick-list{border:1px solid var(--bdr);border-radius:9px;max-height:240px;overflow-y:auto;background:var(--bg2)}
+.pick-it{display:flex;align-items:center;gap:8px;padding:8px 11px;border-bottom:1px solid var(--bdr);cursor:pointer;font-size:12px;font-weight:600;color:var(--tp)}
+.pick-it:last-child{border-bottom:none}
+.pick-it:hover{background:var(--accs);color:var(--acc)}
+.pick-it span:first-child{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pick-pick{font-size:9px;font-weight:700;text-transform:uppercase;color:var(--ts)}
+.pick-it:hover .pick-pick{color:var(--acc)}
+.pick-empty{padding:18px;text-align:center;color:var(--ts);font-size:12px;line-height:1.5}
+.pick-inp{padding:9px 11px;border:1.5px solid var(--bdr);border-radius:8px;font-family:inherit;font-size:12.5px;background:var(--bg2);color:var(--tp);width:100%}
+.pick-inp:focus{outline:none;border-color:var(--acc)}
+.pick-disk{display:flex;flex-direction:column;gap:4px;margin-top:6px;padding-top:10px;border-top:1px dashed var(--bdr)}
+.pick-diskbtn{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border:1.5px solid var(--bdr);border-radius:8px;font-size:12px;font-weight:600;color:var(--tp);cursor:pointer;background:var(--bg2);width:fit-content}
+.pick-diskbtn:hover{border-color:var(--acc);color:var(--acc)}
+.pick-disknote{font-size:10.5px;color:var(--ts);line-height:1.4}
+.pick-foot{display:flex;align-items:center;gap:8px;padding:11px 16px;border-top:1px solid var(--bdr)}
+.cbtn{padding:8px 15px;border-radius:7px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;border:1.5px solid var(--bdr);background:var(--bg2);color:var(--tp)}
+.cbtn:hover{border-color:var(--ts)}
+.cbtn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+.refresh{width:26px;height:26px;border:1px solid var(--bdr);background:var(--bg2);border-radius:6px;cursor:pointer;color:var(--ts);display:inline-flex;align-items:center;justify-content:center}
+.refresh:hover{border-color:var(--acc);color:var(--acc)}
+.refresh svg{width:13px;height:13px;stroke:currentColor;stroke-width:2;fill:none}
 </style>
 </head>
 <body>
@@ -113,35 +125,70 @@ body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--tp);displ
 <nav class="sb">
   <div class="sb-logo">
     <div class="sb-icon"><svg style="width:17px;height:17px;stroke:#f97316;stroke-width:1.8;fill:none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg></div>
-    <div><div class="sb-nm">Liburnija</div><div class="sb-sub">Platforma</div></div>
+    <div><div class="sb-nm">Liburnija</div><div class="sb-sub">Platforma · struktura</div></div>
   </div>
   <div class="sb-scroll" id="SBNAV"></div>
   <div class="sb-foot">
-    <div class="sb-settings">
-      <button id="TBTN" onclick="toggleTheme()"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="tbtn-lbl">Auto</span></button>
-      <button onclick="toast('Postavke')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Postavke</button>
+    <div class="foot-row">
+      <button class="fbtn" id="EXPBTN" onclick="exportJSON()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
+      <button class="fbtn" onclick="document.getElementById('IMP').click()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Uvezi</button>
+      <button class="fbtn" onclick="resetAll()" title="Vrati na zadano"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
     </div>
-    <div class="ucard"><div class="uavt">AD</div><div><div style="font-size:13px;font-weight:600">Administrator</div><div style="font-size:11px;color:var(--ts)">Svi moduli</div></div></div>
+    <div class="foot-row">
+      <button class="fbtn" id="TBTN" onclick="toggleTheme()"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span class="tlbl">Auto</span></button>
+    </div>
+    <input type="file" id="IMP" accept="application/json" style="display:none" onchange="importJSON(event)">
   </div>
 </nav>
 
 <div class="main">
   <div class="topbar">
-    <div style="flex-shrink:0"><div class="crumb" id="CRUMB">—</div><div class="topbar-title" id="TTITLE">—</div></div>
-    <div class="tcount" id="TCOUNT">17 modula · 200+ stranica</div>
+    <div style="flex-shrink:0"><div class="crumb" id="CRUMB">—</div><div class="ttitle" id="TTITLE">Struktura platforme</div></div>
+    <button class="editbtn" id="EDITBTN" onclick="toggleEdit()"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/></svg><span>Uredi izbornik</span></button>
+  </div>
+  <div class="banner" id="BANNER" style="display:none">
+    <span>✏️ <b>Uređivanje uključeno.</b> Izmjene se same spremaju u tvom pregledniku. Za programera klikni <b>Export</b>. Zaključani 🔒 čvorovi (povezana stranica) ne mogu se obrisati.</span>
   </div>
   <div class="content" id="CONTENT"></div>
 </div>
+<div class="pick-bg" id="PICK-BG" onclick="if(event.target===this)closePick()">
+  <div class="pick">
+    <div class="pick-hdr">
+      <div class="pick-tit">Poveži datoteku</div>
+      <button class="refresh" onclick="REPOFILES=null;loadRepoFiles()" title="Osvježi popis"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+      <button class="abtn" onclick="closePick()" title="Zatvori"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="pick-body">
+      <div class="pick-lbl">Datoteke u repou <span class="pick-src" id="PICK-SRC"></span></div>
+      <div class="pick-list" id="PICK-LIST"><div class="pick-empty">Učitavam…</div></div>
+      <div class="pick-lbl">Ručno / dodaj #tab</div>
+      <input class="pick-inp" id="PICK-INP" placeholder="npr. promet-kalendar.html ili GLAVNA%20KNJIGA.html#kalendar">
+      <div class="pick-disk">
+        <label class="pick-diskbtn">📁 Pregledaj s diska (privremeno)<input type="file" accept=".html,.htm" style="display:none" onchange="diskPreview(event)"></label>
+        <span class="pick-disknote">S diska je samo brzi pregled u ovoj sesiji. Za trajno povezivanje datoteku commitaj u repo pa je odaberi s popisa gore.</span>
+      </div>
+    </div>
+    <div class="pick-foot">
+      <button class="cbtn" onclick="unlinkPick()">Ukloni vezu</button>
+      <span style="flex:1"></span>
+      <button class="cbtn" onclick="closePick()">Odustani</button>
+      <button class="cbtn primary" onclick="applyPick()">Poveži</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="TOAST"></div>
 
 <script>
-function ic(p){return '<svg class="ic" viewBox="0 0 24 24">'+p+'</svg>';}
+var LSKEY='liburnija_struktura_v1';
+
+// ─── Ikone modula ───
 var ICON={
  core:'<circle cx="12" cy="12" r="3"/><path d="M3 12h3M18 12h3M12 3v3M12 18v3"/>',
  dms:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
  promet:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10"/>',
  kontrola:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
- kolodvor:'<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01"/>',
+ kolodvor:'<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/>',
  prodaja:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/>',
  blagajne:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/>',
  tehnicka:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.1 2.1-2.1-.6-.6-2.1z"/>',
@@ -153,201 +200,296 @@ var ICON={
  kadr:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>',
  mkt:'<path d="M3 11l18-5v12L3 14v-3z"/>',
  crm:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
- bi:'<path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/>'};
+ bi:'<path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/>',
+ _new:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/>'};
+function ic(id){return '<svg class="ic" viewBox="0 0 24 24">'+(ICON[id]||ICON._new)+'</svg>';}
 
-/* MODULI: id,label,grp,ic, stats[[n,c,l]], alerts[[c,m,n]], pages[[name,tag,file?]] | sections[]
-   Treći element stranice = MAPIRANJE NA DATOTEKU. Kad postoji, klik otvara tu datoteku. */
-var M=[
- {id:'core',label:'CORE — matični podaci',grp:'Temelj',
-  stats:[['142','b','Aktivni korisnici'],['7','y','Nepotpuni podaci'],['58','','Vozila'],['23','','Linije']],
-  alerts:[['y','Vozila bez tehničkog pregleda',3],['y','Linije bez voznog reda',2],['b','Izmjene danas',14]],
-  pages:[['Djelatnici','Kadr'],['Odjeli',''],['Korisnici sustava',''],['Role i ovlasti',''],['Vozila',''],['Linije',''],['Stajališta',''],['Zone',''],['Tarife',''],['Partneri',''],['Dobavljači',''],['Poslovne jedinice',''],['Postavke sustava',''],['Audit log','']]},
- {id:'promet',label:'Upravljanje prometom',grp:'Operativa',sections:[
-   ['Postavke',[['Linije','CORE'],['Vozni redovi',''],['Rute',''],['Radni zadaci',''],['Planiranje rute (GPS)',''],['Režimi prometovanja',''],['GTFS / GTFS-RT export','']]],
-   ['Knjiga vožnje — Plan rada',[['Kalendar','','GLAVNA%20KNJIGA.html#kalendar'],['Predlošci','','GLAVNA%20KNJIGA.html#templati'],['Grupe linija','','GLAVNA%20KNJIGA.html#grupe'],['Postavke','','GLAVNA%20KNJIGA.html#postavke']]],
-   ['Dispečerski centar',[['Glavni pregled rada sustava',''],['Linijski pregled',''],['Linije i rute / polasci',''],['Status vozila',''],['Radovi na cesti',''],['Prijava kvara','Teh'],['Incidenti',''],['Poruke i obavijesti','']]],
-   ['Izvršenje voznog reda',[['Grafički prikaz izvršenja',''],['Kašnjenja',''],['Prerani polasci',''],['Neizvršeni polasci',''],['Izvanredni događaji',''],['Analiza vozača','']]],
-   ['Evidencija izvršenja',[['Evidencija radnih zadataka',''],['Evidencija kilometara',''],['Potrošnja goriva i energije','Infra'],['Korekcije i odstupanja','']]],
-   ['Pregled sati rada',[['Mjesečni obračun sati','→Kadr'],['Plan rada — pregled',''],['Radni sati po danima',''],['Kontrola pravilnosti','']]],
-   ['Informiranje putnika',[['Putničke informacije',''],['Ekrani na stajalištima','IT'],['Ekrani u autobusima','IT'],['Info na kolodvoru','Kol'],['WEB portal','Port'],['Mobilna aplikacija','Port'],['Push obavijesti','Port']]],
-   ['Izvještaji',[['Izvršenje voznog reda',''],['Kašnjenja',''],['Neizvršeni polasci',''],['Kilometri',''],['Vozila',''],['Vozači',''],['Posebne vožnje',''],['Ugovorene vožnje',''],['Prijevoz OSI',''],['KPI izvještaji','']]]]},
- {id:'kontrola',label:'Kontrola i brojanje',grp:'Operativa',
-  stats:[['12.4k','b','Putnici (APC)'],['10.1k','g','Validacije'],['18%','r','Razlika'],['7','','Kazne danas']],
-  alerts:[['r','Sumnjiv polazak — linija 4, 07:10',1],['y','Linije s visokom razlikom',3],['b','Preporuka kontrole',2]],
-  pages:[['Brojači putnika',''],['AI brojanje kamerama',''],['Ulaz/izlaz po stajalištu',''],['Popunjenost vozila',''],['App kontrolora',''],['Provjera karata',''],['Provjera pretplata',''],['Izdavanje kazni',''],['Zapisnici',''],['Naplata kazni',''],['Analitika švercanja',''],['Preporuka kontrole','']]},
- {id:'kolodvor',label:'Upravljanje kolodvorom',grp:'Operativa',
-  stats:[['38','g','Dolasci'],['41','b','Odlasci'],['6/8','y','Peroni'],['5','','Vanjski prijev.']],
-  alerts:[['y','Peron 3 — preklapanje rezervacije',1],['b','Naknade za fakturiranje',4]],
-  pages:[['Peroni',''],['Dolasci',''],['Odlasci',''],['Najave',''],['Displeji',''],['Razglas',''],['Kolodvorska prodaja',''],['Rezervacija perona',''],['Evidencija ulaza',''],['Parking autobusa',''],['Vanjski prijevoznici',''],['Kolodvorske naknade','→Fin'],['Najam prostora',''],['Obračun usluga','']]},
- {id:'prodaja',label:'Prodaja karata',grp:'Prihod',
-  stats:[['4.2k','g','Dnevna prodaja'],['3.8k','b','Validacije'],['11','r','Nefiskalizirani'],['6','','Kanali']],
-  alerts:[['r','Nefiskalizirani računi — retry',11],['y','Automat A3 — papir',1],['g','Aktivne pretplate',2840]],
-  pages:[['Tarifni sustav',''],['Vrste karata',''],['Pretplate',''],['Prepaid kartice',''],['QR karte',''],['NFC kartice',''],['Prodaja kod vozača',''],['Šalteri',''],['Web shop',''],['Mobilna aplikacija',''],['Self-service automati',''],['Kiosci',''],['Vanjski partneri',''],['Agregatori',''],['Fiskalizacija',''],['Povrati',''],['Storna',''],['Reklamacije karata','']]},
- {id:'blagajne',label:'Blagajne i cash',grp:'Prihod',
-  stats:[['2.1k','g','Promet vozača €'],['1.4k','b','Promet šaltera €'],['920','y','Za razduženje €'],['-15','r','Manjak €']],
-  alerts:[['y','Nerazduženi vozači',4],['r','Manjak na blagajni 2',1],['g','Pologa danas',3]],
-  pages:[['Blagajna vozača',''],['Razduživanje vozača',''],['Blagajna šaltera',''],['Razduživanje šaltera',''],['Centralna blagajna',''],['Polog u banku',''],['POS obračun',''],['Preuzimanje iz automata',''],['Dnevni zaključak',''],['Fiskalni zaključak',''],['Izvještaj po vozaču',''],['Izvještaj po blagajniku',''],['Izvještaj po mjestu','']]},
- {id:'tehnicka',label:'Tehnička služba',grp:'Flota',
-  stats:[['88%','g','Raspoloživost'],['5','r','U kvaru'],['12','y','Otvoreni nalozi'],['3','r','Servisi kasne']],
-  alerts:[['r','Vozila u kvaru',5],['y','Servisi koji kasne',3],['y','Kritični dijelovi',4],['g','Zatvoreni nalozi (tj.)',18]],
-  pages:[['Vozila','CORE'],['Prijava kvara',''],['Pregled kvarova',''],['Servisni plan',''],['Radni nalozi',''],['Tehnički pregledi',''],['Skladište',''],['Inventurno stanje',''],['Rezervni dijelovi',''],['Gume',''],['Nabava dijelova',''],['Jamstva',''],['Reklamacije dobavljačima',''],['Povijest vozila',''],['AI dijagnostika',''],['Predikcija kvarova',''],['Remote CANBUS','']]},
- {id:'infra',label:'Infrastruktura i energenti',grp:'Flota',
-  stats:[['7/8','g','Punjači OK'],['62%','b','Dizel spremnik'],['1.34','','€/km'],['2','r','Alarmi potrošnje']],
-  alerts:[['r','Anomalija potrošnje — vozilo 112',1],['y','Punjač P4 offline',1],['b','Narudžba goriva',1]],
-  pages:[['Interna pumpa',''],['Spremnici goriva',''],['Naručivanje goriva',''],['Zaprimanje goriva',''],['Ulaz robe',''],['Izdavanje goriva',''],['Evidencija točenja',''],['Potrošnja po vozilu',''],['Potrošnja po vozaču',''],['l/100 km',''],['Anomalije potrošnje',''],['Punjači',''],['Električni autobusi',''],['Baterije / SOC',''],['Raspored punjenja',''],['Trafostanice',''],['Solarna elektrana',''],['BESS',''],['EMS / peak shaving',''],['kWh/km',''],['Stajališta',''],['Nadstrešnice',''],['Displeji',''],['Parkirališta',''],['Inventar infrastrukture','']]},
- {id:'it',label:'IT služba',grp:'Tehnologija',
-  stats:[['3','r','Offline uređaji'],['1','y','Integracija degraded'],['9','y','API greške/h'],['0','g','Sig. alarmi']],
-  alerts:[['y','Fiskalizacija: degraded — retry',17],['r','Validator offline — vozilo 88',1],['r','Router offline',2]],
-  pages:[['Komunikacijski sloj',''],['API gateway',''],['Integracije',''],['MUP',''],['Fiskalizacija',''],['SMS',''],['E-mail',''],['Push notifikacije',''],['Banke',''],['POS sustavi',''],['Logovi',''],['Audit',''],['Service monitor',''],['Routeri',''],['SIM kartice',''],['VPN',''],['Validatori',''],['Onboard računala',''],['Vozački terminali',''],['Kamere (uređaj)',''],['Putnički displeji',''],['OTA update',''],['Remote desktop',''],['Remote shell',''],['Helpdesk','']]},
- {id:'video',label:'Video nadzor i sigurnost',grp:'Tehnologija',
-  stats:[['54','g','Online kamere'],['3','r','Offline'],['1','r','Panic alarm'],['2','b','Zahtjevi snimke']],
-  alerts:[['r','Panic alarm — vozilo 23',1],['y','Kamere offline',3],['b','GDPR rok čuvanja',2]],
-  pages:[['Kamere u autobusima',''],['Kamere na kolodvoru',''],['Live video',''],['Pregled snimki',''],['Incidenti',''],['Panic tipka',''],['AI: vandalizam',''],['AI: pad putnika',''],['AI: dim',''],['AI: ostavljeni predmet',''],['Evidencija pristupa',''],['Pravila čuvanja (GDPR)','']]},
- {id:'fin',label:'Financije i komercijala',grp:'Financije',
-  stats:[['186k','g','Prihodi €'],['14','y','Otvorene fakture'],['9.2k','r','Dugovanja €'],['74k','b','Subvencije €']],
-  alerts:[['y','Fakture > 30 dana',6],['r','Dospjela dugovanja',3],['b','Stavke za fakturu (Mkt, Kol)',8]],
-  pages:[['Prihodi od karata',''],['Subvencije grada',''],['Subvencije županije',''],['Školski prijevoz',''],['Ugovorni prijevoz',''],['Posebne linije',''],['Fakturiranje',''],['Izlazni računi',''],['Ulazni računi',''],['Obračun partnera',''],['Provizije kioska',''],['Provizije agregatora',''],['Prihod po liniji',''],['Trošak po km',''],['Trošak po putniku',''],['Export u računovodstvo','']]},
- {id:'nabava',label:'Javna nabava',grp:'Financije',
-  stats:[['4','','Aktivne nabave'],['2','b','U pripremi'],['3','y','Ugovori istječu'],['1','r','Garancija ističe']],
-  alerts:[['y','Ugovori koji istječu (60 d)',3],['r','Garancija ističe',1],['b','Nabava za objavu',2]],
-  pages:[['Plan nabave',''],['Predmeti nabave',''],['Dokumentacija',''],['Ponuditelji',''],['Dobavljači',''],['Ugovori',''],['Narudžbenice',''],['Realizacija ugovora',''],['Garancije',''],['Reklamacije',''],['EU / NPOO projekti',''],['Izvještaji o nabavi','']]},
- {id:'kadr',label:'Kadrovska služba',grp:'Ljudi',
-  stats:[['198','b','Zaposleni'],['11','y','Odsutni'],['4','r','Licence istječu'],['6','y','Liječnički']],
-  alerts:[['r','Licence vozača istječu (30 d)',4],['y','Liječnički uskoro',6],['r','Tahograf: prekoračenje',2],['y','HSE: obnova osposobljavanja',3]],
-  pages:[['Djelatnici',''],['Ugovori',''],['Evidencija rada',''],['Bolovanja',''],['Godišnji odmori',''],['Slobodni dani',''],['Licence vozača',''],['Liječnički pregledi',''],['Tahograf — radno vrijeme',''],['Zaštita na radu (HSE)',''],['Obuke (Kod 95)',''],['Raspored rada',''],['Obračun sati',''],['Payroll export',''],['Kadrovska analitika','']]},
- {id:'mkt',label:'Marketing i oglašavanje',grp:'Komercijala',
-  stats:[['7','','Aktivne kampanje'],['72%','b','Zauzete površine'],['8.4k','g','Prihod reklama €'],['2','y','Istječu']],
-  alerts:[['y','Kampanje koje istječu',2],['g','Slobodne površine',12]],
-  pages:[['Oglašavanje u autobusima',''],['Oglašavanje na stajalištima',''],['Oglašavanje na kolodvoru',''],['Digitalni ekrani',''],['Upravljanje sadržajem',''],['Kampanje',''],['Cjenici',''],['Ugovori s oglašivačima',''],['Statistika prikaza',''],['Fakturiranje oglašavanja','→Fin']]},
- {id:'crm',label:'CRM i podrška',grp:'Komercijala',
-  stats:[['23','y','Otvoreni zahtjevi'],['9','r','Reklamacije'],['2.4d','b','Pros. rješavanje'],['92%','g','Zadovoljstvo']],
-  alerts:[['r','Reklamacije > SLA',3],['y','Izgubljeno-nađeno',5]],
-  pages:[['Korisnici',''],['Prigovori',''],['Reklamacije',''],['Povrati novca',''],['Izgubljeno-nađeno',''],['Kontakt centar',''],['E-mail podrška',''],['Chat podrška',''],['Korisnički portal',''],['Loyalty',''],['Zadar City Card',''],['Obavijesti korisnicima','']]},
- {id:'dms',label:'DMS — dokumenti',grp:'Temelj',
-  stats:[['34','b','Novi dokumenti'],['6','y','Za odobrenje'],['3','r','Ugovori istječu'],['5','','Potpisi na čekanju']],
-  alerts:[['y','Dokumenti za odobrenje',6],['r','Ugovori koji istječu',3],['b','Potpisi na čekanju',5]],
-  pages:[['Dokumenti',''],['Ugovori',''],['Odluke',''],['Dopisi',''],['Zapisnici',''],['Putni nalozi',''],['Radni nalozi',''],['Digitalni potpisi',''],['Verzioniranje',''],['Arhiva',''],['Prava pristupa','']]},
- {id:'bi',label:'BI i AI analitika',grp:'Uvid',
-  stats:[['14','','KPI praćeno'],['3','r','Anomalije'],['5','b','Predikcije'],['4','g','Preporuke']],
-  alerts:[['r','Anomalija u prodaji',1],['b','Predikcija kašnjenja: vršni sat',1],['g','Preporuka optimizacije turnusa',1]],
-  pages:[['Dashboard direktora',''],['Dashboard prometa',''],['Dashboard financija',''],['Dashboard tehničke',''],['Dashboard IT-a',''],['Dashboard energije',''],['Dashboard kontrole',''],['Predikcija putnika',''],['Predikcija kvarova',''],['Predikcija kašnjenja',''],['Optimizacija voznog reda',''],['Optimizacija punjenja',''],['Optimizacija kontrole',''],['Anomalije u prodaji',''],['Anomalije u potrošnji','']]}
-];
-var GROUPS=['Temelj','Operativa','Prihod','Flota','Tehnologija','Financije','Ljudi','Komercijala','Uvid'];
-var IDX={};M.forEach(function(m,i){IDX[m.id]=i;});
-var active={mi:IDX.promet,page:'__dash__'},openMod={promet:true},openSec={'Knjiga vožnje — Plan rada':true};
+// ─── ZADANA STRUKTURA (seed). p = [naziv, datoteka?] ───
+function seed(){return {groups:[
+ {name:'Temelj',modules:[
+  mod('core','CORE — matični podaci',[['Djelatnici'],['Odjeli'],['Korisnici sustava'],['Role i ovlasti'],['Vozila'],['Linije'],['Stajališta'],['Zone'],['Tarife'],['Partneri'],['Dobavljači'],['Poslovne jedinice'],['Postavke sustava'],['Audit log']]),
+  mod('dms','DMS — dokumenti',[['Dokumenti'],['Ugovori'],['Odluke'],['Dopisi'],['Zapisnici'],['Putni nalozi'],['Radni nalozi'],['Digitalni potpisi'],['Verzioniranje'],['Arhiva'],['Prava pristupa']])]},
+ {name:'Operativa',modules:[
+  modS('promet','Upravljanje prometom',[
+   ['Postavke',[['Linije'],['Vozni redovi'],['Rute'],['Radni zadaci'],['Planiranje rute (GPS)'],['Režimi prometovanja'],['GTFS / GTFS-RT export']]],
+   ['Knjiga vožnje — Plan rada',[['Kalendar','GLAVNA%20KNJIGA.html#kalendar'],['Predlošci','GLAVNA%20KNJIGA.html#templati'],['Grupe linija','GLAVNA%20KNJIGA.html#grupe'],['Postavke','GLAVNA%20KNJIGA.html#postavke']]],
+   ['Dispečerski centar',[['Glavni pregled rada sustava'],['Linijski pregled'],['Linije i rute / polasci'],['Status vozila'],['Radovi na cesti'],['Prijava kvara'],['Incidenti'],['Poruke i obavijesti']]],
+   ['Izvršenje voznog reda',[['Grafički prikaz izvršenja'],['Kašnjenja'],['Prerani polasci'],['Neizvršeni polasci'],['Izvanredni događaji'],['Analiza vozača']]],
+   ['Evidencija izvršenja',[['Evidencija radnih zadataka'],['Evidencija kilometara'],['Potrošnja goriva i energije'],['Korekcije i odstupanja']]],
+   ['Pregled sati rada',[['Mjesečni obračun sati'],['Plan rada — pregled'],['Radni sati po danima'],['Kontrola pravilnosti']]],
+   ['Informiranje putnika',[['Putničke informacije'],['Ekrani na stajalištima'],['Ekrani u autobusima'],['Info na kolodvoru'],['WEB portal'],['Mobilna aplikacija'],['Push obavijesti']]],
+   ['Izvještaji',[['Izvršenje voznog reda'],['Kašnjenja'],['Neizvršeni polasci'],['Kilometri'],['Vozila'],['Vozači'],['Posebne vožnje'],['Ugovorene vožnje'],['Prijevoz OSI'],['KPI izvještaji']]]]),
+  mod('kontrola','Kontrola i brojanje',[['Brojači putnika'],['AI brojanje kamerama'],['Ulaz/izlaz po stajalištu'],['Popunjenost vozila'],['App kontrolora'],['Provjera karata'],['Provjera pretplata'],['Izdavanje kazni'],['Zapisnici'],['Naplata kazni'],['Analitika švercanja'],['Preporuka kontrole']]),
+  mod('kolodvor','Upravljanje kolodvorom',[['Peroni'],['Dolasci'],['Odlasci'],['Najave'],['Displeji'],['Razglas'],['Kolodvorska prodaja'],['Rezervacija perona'],['Evidencija ulaza'],['Parking autobusa'],['Vanjski prijevoznici'],['Kolodvorske naknade'],['Najam prostora'],['Obračun usluga']])]},
+ {name:'Prihod',modules:[
+  mod('prodaja','Prodaja karata',[['Tarifni sustav'],['Vrste karata'],['Pretplate'],['Prepaid kartice'],['QR karte'],['NFC kartice'],['Prodaja kod vozača'],['Šalteri'],['Web shop'],['Mobilna aplikacija'],['Self-service automati'],['Kiosci'],['Vanjski partneri'],['Agregatori'],['Fiskalizacija'],['Povrati'],['Storna'],['Reklamacije karata']]),
+  mod('blagajne','Blagajne i cash',[['Blagajna vozača'],['Razduživanje vozača'],['Blagajna šaltera'],['Razduživanje šaltera'],['Centralna blagajna'],['Polog u banku'],['POS obračun'],['Preuzimanje iz automata'],['Dnevni zaključak'],['Fiskalni zaključak'],['Izvještaj po vozaču'],['Izvještaj po blagajniku'],['Izvještaj po mjestu']])]},
+ {name:'Flota',modules:[
+  mod('tehnicka','Tehnička služba',[['Vozila'],['Prijava kvara'],['Pregled kvarova'],['Servisni plan'],['Radni nalozi'],['Tehnički pregledi'],['Skladište'],['Inventurno stanje'],['Rezervni dijelovi'],['Gume'],['Nabava dijelova'],['Jamstva'],['Reklamacije dobavljačima'],['Povijest vozila'],['AI dijagnostika'],['Predikcija kvarova'],['Remote CANBUS']]),
+  mod('infra','Infrastruktura i energenti',[['Interna pumpa'],['Spremnici goriva'],['Naručivanje goriva'],['Zaprimanje goriva'],['Ulaz robe'],['Izdavanje goriva'],['Evidencija točenja'],['Potrošnja po vozilu'],['Potrošnja po vozaču'],['l/100 km'],['Anomalije potrošnje'],['Punjači'],['Električni autobusi'],['Baterije / SOC'],['Raspored punjenja'],['Trafostanice'],['Solarna elektrana'],['BESS'],['EMS / peak shaving'],['kWh/km'],['Stajališta'],['Nadstrešnice'],['Displeji'],['Parkirališta'],['Inventar infrastrukture']])]},
+ {name:'Tehnologija',modules:[
+  mod('it','IT služba',[['Komunikacijski sloj'],['API gateway'],['Integracije'],['MUP'],['Fiskalizacija'],['SMS'],['E-mail'],['Push notifikacije'],['Banke'],['POS sustavi'],['Logovi'],['Audit'],['Service monitor'],['Routeri'],['SIM kartice'],['VPN'],['Validatori'],['Onboard računala'],['Vozački terminali'],['Kamere (uređaj)'],['Putnički displeji'],['OTA update'],['Remote desktop'],['Remote shell'],['Helpdesk']]),
+  mod('video','Video nadzor i sigurnost',[['Kamere u autobusima'],['Kamere na kolodvoru'],['Live video'],['Pregled snimki'],['Incidenti'],['Panic tipka'],['AI: vandalizam'],['AI: pad putnika'],['AI: dim'],['AI: ostavljeni predmet'],['Evidencija pristupa'],['Pravila čuvanja (GDPR)']])]},
+ {name:'Financije',modules:[
+  mod('fin','Financije i komercijala',[['Prihodi od karata'],['Subvencije grada'],['Subvencije županije'],['Školski prijevoz'],['Ugovorni prijevoz'],['Posebne linije'],['Fakturiranje'],['Izlazni računi'],['Ulazni računi'],['Obračun partnera'],['Provizije kioska'],['Provizije agregatora'],['Prihod po liniji'],['Trošak po km'],['Trošak po putniku'],['Export u računovodstvo']]),
+  mod('nabava','Javna nabava',[['Plan nabave'],['Predmeti nabave'],['Dokumentacija'],['Ponuditelji'],['Dobavljači'],['Ugovori'],['Narudžbenice'],['Realizacija ugovora'],['Garancije'],['Reklamacije'],['EU / NPOO projekti'],['Izvještaji o nabavi']])]},
+ {name:'Ljudi',modules:[
+  mod('kadr','Kadrovska služba',[['Djelatnici'],['Ugovori'],['Evidencija rada'],['Bolovanja'],['Godišnji odmori'],['Slobodni dani'],['Licence vozača'],['Liječnički pregledi'],['Tahograf — radno vrijeme'],['Zaštita na radu (HSE)'],['Obuke (Kod 95)'],['Raspored rada'],['Obračun sati'],['Payroll export'],['Kadrovska analitika']])]},
+ {name:'Komercijala',modules:[
+  mod('mkt','Marketing i oglašavanje',[['Oglašavanje u autobusima'],['Oglašavanje na stajalištima'],['Oglašavanje na kolodvoru'],['Digitalni ekrani'],['Upravljanje sadržajem'],['Kampanje'],['Cjenici'],['Ugovori s oglašivačima'],['Statistika prikaza'],['Fakturiranje oglašavanja']]),
+  mod('crm','CRM i podrška',[['Korisnici'],['Prigovori'],['Reklamacije'],['Povrati novca'],['Izgubljeno-nađeno'],['Kontakt centar'],['E-mail podrška'],['Chat podrška'],['Korisnički portal'],['Loyalty'],['Zadar City Card'],['Obavijesti korisnicima']])]},
+ {name:'Uvid',modules:[
+  mod('bi','BI i AI analitika',[['Dashboard direktora'],['Dashboard prometa'],['Dashboard financija'],['Dashboard tehničke'],['Dashboard IT-a'],['Dashboard energije'],['Dashboard kontrole'],['Predikcija putnika'],['Predikcija kvarova'],['Predikcija kašnjenja'],['Optimizacija voznog reda'],['Optimizacija punjenja'],['Optimizacija kontrole'],['Anomalije u prodaji'],['Anomalije u potrošnji']])]}
+]};}
+function pg(a){return {name:a[0],file:a[1]||'',locked:!!a[1]};}
+function mod(id,label,pages){return {id:id,label:label,icon:id,type:'flat',pages:pages.map(pg)};}
+function modS(id,label,secs){return {id:id,label:label,icon:id,type:'sections',sections:secs.map(function(s){return {name:s[0],pages:s[1].map(pg)};})};}
 
-function goFile(u){window.location.href=u;}
+// ─── Stanje ───
+var TREE=null, OPEN={}, SEL=null, EDIT=false;
 
-function renderSidebar(){
- var h='';
- GROUPS.forEach(function(g){
-  var inG=M.map(function(m,i){return [m,i];}).filter(function(x){return x[0].grp===g;});
-  if(!inG.length)return;
-  h+='<div class="glbl">'+g+'</div>';
-  inG.forEach(function(x){
-   var m=x[0],mi=x[1],isOpen=!!openMod[m.id],isAct=(active.mi===mi);
-   h+='<div class="m'+(isOpen?' open':'')+'">';
-   h+='<div class="m-h'+(isAct&&active.page==='__dash__'?' on':'')+'" onclick="clickMod('+mi+')">'+ic(ICON[m.id]||ICON.bi)+'<span>'+m.label.split('—')[0].trim()+'</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>';
-   h+='<div class="m-body">';
-   h+='<div class="pg dash'+(isAct&&active.page==='__dash__'?' on':'')+'" onclick="openDash('+mi+')"><span>Dashboard</span></div>';
-   if(m.sections){
-    m.sections.forEach(function(s){
-     var so=!!openSec[s[0]];
-     h+='<div class="sec'+(so?' open':'')+'"><div class="sec-h" onclick="toggleSec(\''+s[0].replace(/'/g,"")+'\')"><span>'+s[0]+'</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div><div class="sec-body">';
-     s[1].forEach(function(p){
-      if(p[2]){h+='<div class="pg" onclick="goFile(\''+p[2]+'\')"><span>'+p[0]+'</span><span class="own live">otvori ↗</span></div>';return;}
-      var on=(isAct&&active.page===s[0]+'/'+p[0]);
-      h+='<div class="pg'+(on?' on':'')+'" onclick="openP('+mi+',\''+s[0].replace(/'/g,"")+'/'+p[0].replace(/'/g,"")+'\')"><span>'+p[0]+'</span>'+(p[1]?'<span class="own">'+p[1]+'</span>':'')+'</div>';
-     });
-     h+='</div></div>';
-    });
-   } else {
-    m.pages.forEach(function(p){
-     if(p[2]){h+='<div class="pg" onclick="goFile(\''+p[2]+'\')"><span>'+p[0]+'</span><span class="own live">otvori ↗</span></div>';return;}
-     var on=(isAct&&active.page===p[0]);
-     h+='<div class="pg'+(on?' on':'')+'" onclick="openP('+mi+',\''+p[0].replace(/'/g,"")+'\')"><span>'+p[0]+'</span>'+(p[1]?'<span class="own">'+p[1]+'</span>':'')+'</div>';
-    });
-   }
-   h+='</div></div>';
-  });
- });
- document.getElementById('SBNAV').innerHTML=h;
+function load(){
+ try{var s=localStorage.getItem(LSKEY);if(s){TREE=JSON.parse(s);return;}}catch(e){}
+ TREE=seed();
 }
-function clickMod(mi){var m=M[mi];if(active.mi===mi&&openMod[m.id]){openMod[m.id]=false;}else{openMod[m.id]=true;active={mi:mi,page:'__dash__'};}renderSidebar();renderContent();}
-function openDash(mi){active={mi:mi,page:'__dash__'};openMod[M[mi].id]=true;renderSidebar();renderContent();}
-function openP(mi,page){active={mi:mi,page:page};openMod[M[mi].id]=true;renderSidebar();renderContent();}
-function toggleSec(s){openSec[s]=!openSec[s];renderSidebar();}
+function save(){try{localStorage.setItem(LSKEY,JSON.stringify(TREE));}catch(e){}}
+function uid(){return 'm'+Date.now().toString(36)+Math.floor(Math.random()*1e3);}
 
-function pageCount(m){if(m.sections){var n=0;m.sections.forEach(function(s){n+=s[1].length;});return n;}return m.pages.length;}
-function fileFor(m,sec,pg){
- if(m.sections){var f=null;m.sections.forEach(function(s){if(s[0]===sec)s[1].forEach(function(p){if(p[0]===pg&&p[2])f=p[2];});});return f;}
- var r=null;m.pages.forEach(function(p){if(p[0]===pg&&p[2])r=p[2];});return r;
+// ─── Pomoćno: lociranje čvora ───
+function node(g,m,s,p){
+ var G=TREE.groups[g];
+ if(m<0)return G;
+ var M=G.modules[m];
+ if(s<0&&p<0)return M;
+ if(s>=0&&p<0)return M.sections[s];
+ if(s<0&&p>=0)return M.pages[p];
+ return M.sections[s].pages[p];
+}
+function arrOf(g,m,s,p){
+ var G=TREE.groups[g];
+ if(m<0)return TREE.groups;
+ var M=G.modules[m];
+ if(s<0&&p<0)return G.modules;
+ if(s>=0&&p<0)return M.sections;
+ if(s<0&&p>=0)return M.pages;
+ return M.sections[s].pages;
+}
+function idxOf(g,m,s,p){if(m<0)return g;if(s<0&&p<0)return m;if(s>=0&&p<0)return s;return p;}
+function hasLocked(n){
+ if(!n)return false;
+ if(n.locked)return true;
+ if(n.pages&&n.pages.some(hasLocked))return true;
+ if(n.sections&&n.sections.some(hasLocked))return true;
+ if(n.modules&&n.modules.some(hasLocked))return true;
+ return false;
 }
 
-function renderContent(){
- var m=M[active.mi],C=document.getElementById('CONTENT');
- if(active.page==='__dash__'){
-  document.getElementById('CRUMB').innerHTML='<b>'+m.label.split('—')[0].trim()+'</b>';
-  document.getElementById('TTITLE').textContent='Dashboard';
-  document.getElementById('TCOUNT').textContent=pageCount(m)+' stranica'+(m.sections?' · '+m.sections.length+' sekcija':'');
-  C.innerHTML=(m.id==='promet')?prometDash():modDash(m);
-  return;
- }
- var parts=active.page.split('/'),sec=parts.length>1?parts[0]:null,pg=parts.length>1?parts[1]:parts[0];
- document.getElementById('CRUMB').innerHTML='<b>'+m.label.split('—')[0].trim()+'</b>'+(sec?' › '+sec:'');
- document.getElementById('TTITLE').textContent=pg;
- document.getElementById('TCOUNT').textContent='stranica';
- var file=fileFor(m,sec,pg);
- if(file){C.innerHTML='<div class="ph"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><h3>'+pg+'</h3><p>Ova stranica je <b>mapirana na datoteku</b> i otvara se kao zasebna stranica.</p><button class="open-btn" onclick="goFile(\''+file+'\')">Otvori '+pg+' ↗</button></div>';return;}
- if(m.id==='promet'&&pg==='Kašnjenja'&&sec==='Izvršenje voznog reda'){C.innerHTML=kasnjenja();return;}
- if(m.id==='promet'&&pg==='Neizvršeni polasci'&&sec==='Izvršenje voznog reda'){C.innerHTML=neizvrseni();return;}
- C.innerHTML='<div class="ph"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><h3>'+pg+'</h3><p>Stranica u modulu <b>'+m.label.split('—')[0].trim()+'</b>'+(sec?', sekcija <b>'+sec+'</b>':'')+'. Još nije mapirana na datoteku — kad je napraviš, upišemo joj naziv datoteke i otvarat će se odavde.</p></div>';
-}
-
-function modDash(m){
- var h='<div class="strip" style="grid-template-columns:repeat('+m.stats.length+',1fr)">';
- m.stats.forEach(function(s){h+='<div class="st"><div class="st-n">'+(s[1]?'<span class="d '+s[1]+'"></span>':'')+s[0]+'</div><div class="st-l">'+s[2]+'</div></div>';});
- h+='</div><div class="grid">';
- h+='<div class="panel"><div class="panel-hdr"><div class="panel-title">'+sIcon()+'Stranice u modulu</div><div class="panel-cnt">'+m.pages.length+'</div></div><div class="pgrid">';
- m.pages.forEach(function(p){var live=!!p[2];h+='<div class="pgc" onclick="'+(live?'goFile(\''+p[2]+'\')':'openP('+active.mi+',\''+p[0].replace(/'/g,"")+'\')')+'"><span class="dot'+(live?' live':'')+'"></span><span>'+p[0]+'</span>'+(live?'<span class="t live">otvori ↗</span>':(p[1]?'<span class="t">'+p[1]+'</span>':''))+'</div>';});
- h+='</div></div>';
- h+='<div class="panel"><div class="panel-hdr"><div class="panel-title">'+wIcon()+'Upozorenja</div><div class="panel-cnt">'+m.alerts.length+'</div></div>';
- m.alerts.forEach(function(a){h+='<div class="al '+a[0]+'"><span class="ad"></span><span class="am">'+a[1]+'</span><span class="an">'+a[2]+'</span></div>';});
- h+='</div></div>';
+// ─── Render izbornika ───
+function actBtns(g,m,s,p,locked){
+ var c='data-g="'+g+'" data-m="'+m+'" data-s="'+s+'" data-p="'+p+'"';
+ var h='<span class="acts">';
+ h+='<button class="abtn" data-act="rename" '+c+' title="Preimenuj"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>';
+ if(p>=0)h+='<button class="abtn link" data-act="link" '+c+' title="Poveži datoteku"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></button>';
+ h+='<button class="abtn" data-act="up" '+c+' title="Gore"><svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg></button>';
+ h+='<button class="abtn" data-act="down" '+c+' title="Dolje"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>';
+ h+='<button class="abtn del'+(locked?' dis':'')+'" data-act="del" '+c+' title="'+(locked?'Zaključano — povezana stranica':'Obriši')+'"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>';
+ h+='</span>';
  return h;
 }
-
-function prometDash(){
- var veh=[[18,28,'g'],[34,52,'g'],[48,22,'y'],[60,60,'g'],[72,38,'r'],[40,78,'g'],[82,68,'g'],[26,66,'y'],[66,30,'g'],[54,44,'g',1]];
- var dots='';veh.forEach(function(v){dots+='<div class="veh '+v[2]+(v[3]?' live':'')+'" style="left:'+v[0]+'%;top:'+v[1]+'%"></div>';});
- return '<div class="strip" style="grid-template-columns:repeat(6,1fr)">'+
-  st('46','b','Promet danas')+st('5','y','Kašnjenja')+st('2','r','Neizvršeni')+st('3','y','Izvan prometa')+st('1','r','Incidenti')+st('2','','Radovi na cesti')+'</div>'+
- '<div class="grid"><div class="panel"><div class="panel-hdr"><div class="panel-title">'+sIcon()+'Pregled prometa</div><div class="panel-cnt">uživo · 46 vozila</div></div>'+
-  '<div class="map"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><defs><pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M10 0H0V10" fill="none" stroke="currentColor" stroke-width=".3" opacity=".15"/></pattern></defs><rect width="100" height="100" fill="url(#g)" color="var(--tm)"/><path d="M8 30 Q40 20 60 55 T92 70" fill="none" stroke="var(--blu)" stroke-width="1.1" opacity=".55"/><path d="M20 88 Q45 60 55 40 T80 12" fill="none" stroke="var(--acc)" stroke-width="1.1" opacity=".55"/></svg>'+dots+'</div></div>'+
-  '<div class="panel"><div class="panel-hdr"><div class="panel-title">'+wIcon()+'Upozorenja</div><div class="panel-cnt">5</div></div>'+
-   al('r','Neizvršen polazak — linija 4, 08:10',4)+al('r','Incident — kvar, linija 8',11)+al('y','Kašnjenje 14′ — linija 2',6)+al('y','Radovi — Ul. kralja Tomislava','')+al('b','Bura — najava zatvaranja Maslenice','')+'</div></div>'+
- '<div class="note"><b>Mapiranje:</b> stavke pod „Knjiga vožnje — Plan rada" otvaraju datoteku <b>GLAVNA KNJIGA.html</b> (zeleno „otvori ↗"). Ostali čvorovi čekaju svoju datoteku.</div>';
+function selKey(g,m,s,p){return g+'.'+m+'.'+s+'.'+p;}
+function render(){
+ var H='';
+ H+='<div class="add grp" data-act="addGroup" data-g="-1" data-m="-1" data-s="-1" data-p="-1">＋ grupa</div>';
+ TREE.groups.forEach(function(G,gi){
+  H+='<div class="glbl"><span class="gnm">'+esc(G.name)+'</span>'+actBtns(gi,-1,-1,-1,hasLocked(G))+'</div>';
+  G.modules.forEach(function(M,mi){
+   var ok=OPEN['g'+gi+'.'+mi];
+   var selm=(SEL&&SEL.g===gi&&SEL.m===mi&&SEL.s<0&&SEL.p<0);
+   H+='<div class="m'+(ok?' open':'')+'">';
+   H+='<div class="row m-h'+(selm?' sel':'')+'" data-act="toggle" data-g="'+gi+'" data-m="'+mi+'" data-s="-1" data-p="-1">'+ic(M.icon)+'<span class="nm">'+esc(M.label)+'</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>'+actBtns(gi,mi,-1,-1,hasLocked(M))+'</div>';
+   H+='<div class="m-body">';
+   if(M.type==='sections'){
+    (M.sections||[]).forEach(function(S,si){
+     var so=OPEN['g'+gi+'.'+mi+'.'+si];
+     H+='<div class="sec'+(so?' open':'')+'">';
+     H+='<div class="row sec-h" data-act="toggle" data-g="'+gi+'" data-m="'+mi+'" data-s="'+si+'" data-p="-1"><svg class="chev" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg><span class="nm">'+esc(S.name)+'</span>'+actBtns(gi,mi,si,-1,hasLocked(S))+'</div>';
+     H+='<div class="sec-body">';
+     (S.pages||[]).forEach(function(P,pi){H+=pageRow(gi,mi,si,pi,P);});
+     H+='<div class="add" data-act="addPage" data-g="'+gi+'" data-m="'+mi+'" data-s="'+si+'" data-p="-1">＋ stranica</div>';
+     H+='</div></div>';
+    });
+    H+='<div class="add" data-act="addSection" data-g="'+gi+'" data-m="'+mi+'" data-s="-1" data-p="-1">＋ sekcija</div>';
+   } else {
+    (M.pages||[]).forEach(function(P,pi){H+=pageRow(gi,mi,-1,pi,P);});
+    H+='<div class="add" data-act="addPage" data-g="'+gi+'" data-m="'+mi+'" data-s="-1" data-p="-1">＋ stranica</div>';
+   }
+   H+='</div></div>';
+  });
+  H+='<div class="add" data-act="addModule" data-g="'+gi+'" data-m="-1" data-s="-1" data-p="-1">＋ modul</div>';
+ });
+ document.getElementById('SBNAV').innerHTML=H;
 }
-function kasnjenja(){return '<div class="strip" style="grid-template-columns:repeat(4,1fr)">'+st('5','y','Kašnjenja sad')+st('14′','r','Najveće')+st('+4.2′','b','Prosjek')+st('92%','g','U toleranciji')+'</div>'+
- '<div class="panel"><div class="panel-hdr"><div class="panel-title">'+sIcon()+'Kašnjenja — danas</div><div class="panel-cnt">±5′</div></div><table class="tbl"><thead><tr><th>Linija</th><th>Polazak</th><th>Stajalište</th><th>Vozilo</th><th>Vozač</th><th style="text-align:right">Kašnjenje</th></tr></thead><tbody>'+
- rk('5','08:05','Relja','088','Kulušić A.','+14′','r')+rk('2','07:40','Borik','112','Brkljača A.','+9′','y')+rk('11','08:12','Voštarnica','097','Skoblar I.','+7′','y')+'</tbody></table></div>';}
-function neizvrseni(){return '<div class="strip" style="grid-template-columns:repeat(4,1fr)">'+st('2','r','Danas')+st('1','r','U tijeku')+st('1','y','Zamjena')+st('0.9%','b','Udio')+'</div>'+
- '<div class="panel"><div class="panel-hdr"><div class="panel-title">'+sIcon()+'Neizvršeni polasci</div><div class="panel-cnt">2</div></div><table class="tbl"><thead><tr><th>Linija</th><th>Polazak</th><th>Razlog</th><th>Vozilo</th><th>Status</th><th style="text-align:right">Vrijeme</th></tr></thead><tbody>'+
- rk('4','08:10','Nedostatak vozila','—','r','08:10')+rk('8','07:55','Kvar u prometu','054','y','07:58')+'</tbody></table></div>';}
+function pageRow(g,m,s,p,P){
+ var sel=(SEL&&SEL.g===g&&SEL.m===m&&SEL.s===s&&SEL.p===p);
+ var badge=P.file?'<span class="badge live">otvori ↗</span>':'';
+ var lock=P.locked?'<span class="badge lock">🔒</span>':'';
+ return '<div class="row pg'+(sel?' sel':'')+(P.locked?' locked':'')+'" data-act="sel" data-g="'+g+'" data-m="'+m+'" data-s="'+s+'" data-p="'+p+'"><span class="nm">'+esc(P.name)+'</span>'+badge+lock+actBtns(g,m,s,p,P.locked)+'</div>';
+}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-function st(n,c,l){return '<div class="st"><div class="st-n">'+(c?'<span class="d '+c+'"></span>':'')+n+'</div><div class="st-l">'+l+'</div></div>';}
-function al(c,m,n){return '<div class="al '+c+'"><span class="ad"></span><span class="am">'+m+'</span>'+(n!==''?'<span class="an">'+n+'</span>':'')+'</div>';}
-function rk(ln,t,sj,v,vo,o,c){return '<tr><td class="ln">'+ln+'</td><td class="num">'+t+'</td><td>'+sj+'</td><td class="num">'+v+'</td><td>'+vo+'</td><td class="num" style="text-align:right;color:var(--'+(c==='r'?'red':'yel')+')">'+o+'</td></tr>';}
-function sIcon(){return '<svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 2 5-6"/></svg>';}
-function wIcon(){return '<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';}
+// ─── Klik delegacija ───
+document.getElementById('SBNAV').addEventListener('click',function(e){
+ var el=e.target.closest('[data-act]');if(!el)return;
+ var a=el.dataset.act,g=+el.dataset.g,m=+el.dataset.m,s=+el.dataset.s,p=+el.dataset.p;
+ dispatch(a,g,m,s,p);
+});
+function dispatch(a,g,m,s,p){
+ if(a==='toggle'){var k=(s<0)?('g'+g+'.'+m):('g'+g+'.'+m+'.'+s);OPEN[k]=!OPEN[k];
+   if(s<0&&p<0){SEL={g:g,m:m,s:-1,p:-1};} render();renderContent();return;}
+ if(a==='sel'){SEL={g:g,m:m,s:s,p:p};render();renderContent();return;}
+ if(a==='rename'){doRename(g,m,s,p);return;}
+ if(a==='del'){doDelete(g,m,s,p);return;}
+ if(a==='up'){doMove(g,m,s,p,-1);return;}
+ if(a==='down'){doMove(g,m,s,p,1);return;}
+ if(a==='link'){doLink(g,m,s,p);return;}
+ if(a==='addGroup'){var nm=prompt('Naziv nove grupe:');if(nm){TREE.groups.push({name:nm,modules:[]});commit('Dodana grupa');}return;}
+ if(a==='addModule'){var nm2=prompt('Naziv novog modula:');if(nm2){TREE.groups[g].modules.push({id:uid(),label:nm2,icon:'_new',type:'flat',pages:[]});OPEN['g'+g+'.'+(TREE.groups[g].modules.length-1)]=true;commit('Dodan modul');}return;}
+ if(a==='addSection'){var nm3=prompt('Naziv nove sekcije:');if(nm3){var M=node(g,m,-1,-1);if(!M.sections)M.sections=[];M.sections.push({name:nm3,pages:[]});commit('Dodana sekcija');}return;}
+ if(a==='addPage'){var nm4=prompt('Naziv nove stranice:');if(nm4){arrOf(g,m,s>=0?s:-1,0).constructor;var tgt=(s>=0)?node(g,m,s,-1).pages:node(g,m,-1,-1).pages;tgt.push({name:nm4,file:'',locked:false});commit('Dodana stranica');}return;}
+}
+function commit(msg){save();render();renderContent();if(msg)toast(msg);}
 
+function doRename(g,m,s,p){
+ var n=node(g,m,s,p),cur=n.label!=null?n.label:n.name;
+ var v=prompt('Novi naziv:',cur);if(v==null||!v.trim())return;
+ if(n.label!=null)n.label=v.trim();else n.name=v.trim();
+ commit('Preimenovano');
+}
+function doDelete(g,m,s,p){
+ var n=node(g,m,s,p);
+ if(hasLocked(n)){toast('🔒 Zaključano — povezana stranica se ne briše');return;}
+ var nm=n.label!=null?n.label:n.name;
+ if(!confirm('Obrisati „'+nm+'"?'+((n.pages||n.sections||n.modules)?' (i sav sadržaj)':'')))return;
+ var arr=arrOf(g,m,s,p),i=idxOf(g,m,s,p);arr.splice(i,1);
+ SEL=null;commit('Obrisano');
+}
+function doMove(g,m,s,p,dir){
+ var arr=arrOf(g,m,s,p),i=idxOf(g,m,s,p),j=i+dir;
+ if(j<0||j>=arr.length)return;
+ var t=arr[i];arr[i]=arr[j];arr[j]=t;
+ if(SEL){ // zadrži označeno ako se tiče ovog niza — jednostavno poništi
+ }
+ commit('');
+}
+function doLink(g,m,s,p){openLinkPicker(g,m,s,p);}
+
+// ─── Sadržaj (sredina) ───
+function renderContent(){
+ var C=document.getElementById('CONTENT'),cr=document.getElementById('CRUMB'),tt=document.getElementById('TTITLE');
+ if(!SEL){cr.innerHTML='—';tt.textContent='Struktura platforme';
+  C.innerHTML=ph('Odaberi stavku iz izbornika','Klik na povezanu stranicu (🟢 otvori ↗) učita je ovdje, a izbornik ostaje lijevo. Uključi „Uredi izbornik" za dodavanje, preimenovanje i brisanje.');return;}
+ var G=TREE.groups[SEL.g],M=G.modules[SEL.m];
+ var sec=SEL.s>=0?M.sections[SEL.s]:null;
+ var P=SEL.p>=0?(sec?sec.pages[SEL.p]:M.pages[SEL.p]):null;
+ cr.innerHTML='<b>'+esc(M.label)+'</b>'+(sec?' › '+esc(sec.name):'');
+ tt.textContent=P?P.name:(sec?sec.name:M.label);
+ if(P&&P.file){C.innerHTML='<iframe src="'+P.file.replace(/"/g,'&quot;')+'"></iframe>';return;}
+ if(P){
+  C.innerHTML=ph(P.name,'Stranica još nije povezana s datotekom.'+(EDIT?' Odaberi datoteku iz repoa ili upiši naziv:':' Uključi „Uredi izbornik" pa je poveži.'));
+  if(EDIT){
+   var box=document.createElement('div');box.className='linkbox';
+   box.innerHTML='<button class="alt" onclick="openLinkPicker(SEL.g,SEL.m,SEL.s,SEL.p)">📁 Odaberi datoteku…</button>';
+   C.querySelector('.ph').appendChild(box);
+  }
+  return;
+ }
+ C.innerHTML=ph(sec?sec.name:M.label, sec?'Sekcija modula '+esc(M.label)+'. Odaberi stranicu.':'Modul. Otvori sekciju/stranicu u izborniku.');
+}
+function ph(h3,p){return '<div class="ph"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><h3>'+esc(h3)+'</h3><p>'+p+'</p></div>';}
+function linkFromMiddle(){if(!SEL||SEL.p<0)return;var v=document.getElementById('LF').value.trim();var P=node(SEL.g,SEL.m,SEL.s,SEL.p);P.file=v;P.locked=!!v;commit(v?'Povezano 🔒':'Veza uklonjena');}
+
+// ─── Edit mode ───
+function toggleEdit(){EDIT=!EDIT;document.body.classList.toggle('editing',EDIT);
+ document.getElementById('EDITBTN').classList.toggle('on',EDIT);
+ document.getElementById('BANNER').style.display=EDIT?'flex':'none';
+ document.querySelector('#EDITBTN span').textContent=EDIT?'Gotovo':'Uredi izbornik';
+ renderContent();
+}
+
+// ─── Export / Import / Reset ───
+function exportJSON(){
+ var blob=new Blob([JSON.stringify(TREE,null,2)],{type:'application/json'});
+ var u=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=u;a.download='struktura.json';a.click();URL.revokeObjectURL(u);
+ toast('Export — pošalji struktura.json programeru');
+}
+function importJSON(ev){
+ var f=ev.target.files[0];if(!f)return;
+ var r=new FileReader();r.onload=function(){try{TREE=JSON.parse(r.result);SEL=null;commit('Uvezeno');}catch(e){toast('Greška u JSON datoteci');}};r.readAsText(f);
+ ev.target.value='';
+}
+function resetAll(){if(!confirm('Vratiti strukturu na zadano? Tvoje izmjene u pregledniku se brišu.'))return;localStorage.removeItem(LSKEY);TREE=seed();SEL=null;OPEN={};commit('Vraćeno na zadano');}
+
+// ─── Picker datoteka (popis iz GitHub repoa + pregled s diska) ───
+var REPO={owner:'DarkoI68',name:'Liburnija-2.0',branch:'main'};
+var LINKTARGET=null, REPOFILES=null;
+function openLinkPicker(g,m,s,p){
+ LINKTARGET={g:g,m:m,s:s,p:p};
+ var P=node(g,m,s,p);
+ document.getElementById('PICK-INP').value=P.file||'';
+ document.getElementById('PICK-BG').classList.add('on');
+ loadRepoFiles();
+}
+function closePick(){document.getElementById('PICK-BG').classList.remove('on');}
+function loadRepoFiles(){
+ var L=document.getElementById('PICK-LIST');
+ document.getElementById('PICK-SRC').textContent=REPO.owner+'/'+REPO.name;
+ if(REPOFILES){renderRepoList();return;}
+ L.innerHTML='<div class="pick-empty">Učitavam popis…</div>';
+ fetch('https://api.github.com/repos/'+REPO.owner+'/'+REPO.name+'/git/trees/'+REPO.branch+'?recursive=1')
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(!d.tree)throw 0;
+    REPOFILES=d.tree.filter(function(t){return t.type==='blob'&&/\.html?$/i.test(t.path);}).map(function(t){return t.path;}).sort();
+    renderRepoList();
+  })
+  .catch(function(){L.innerHTML='<div class="pick-empty">Ne mogu dohvatiti popis (otvori na GitHub Pages ili upiši ručno dolje).</div>';});
+}
+function renderRepoList(){
+ var L=document.getElementById('PICK-LIST');
+ if(!REPOFILES||!REPOFILES.length){L.innerHTML='<div class="pick-empty">Nema .html datoteka u repou.</div>';return;}
+ L.innerHTML=REPOFILES.map(function(p){return '<div class="pick-it" data-f="'+encodeURI(p)+'"><span>'+esc(p)+'</span><span class="pick-pick">odaberi ▸</span></div>';}).join('');
+}
+document.getElementById('PICK-LIST').addEventListener('click',function(e){
+ var it=e.target.closest('.pick-it');if(!it)return;
+ var inp=document.getElementById('PICK-INP'),hash='',ex=inp.value.indexOf('#');
+ if(ex>-1)hash=inp.value.slice(ex);
+ inp.value=it.dataset.f+hash;
+});
+function applyPick(){
+ if(!LINKTARGET)return;
+ var v=document.getElementById('PICK-INP').value.trim();
+ var P=node(LINKTARGET.g,LINKTARGET.m,LINKTARGET.s,LINKTARGET.p);
+ P.file=v;P.locked=!!v;closePick();commit(v?'Povezano 🔒':'Veza uklonjena');
+}
+function unlinkPick(){if(!LINKTARGET)return;var P=node(LINKTARGET.g,LINKTARGET.m,LINKTARGET.s,LINKTARGET.p);P.file='';P.locked=false;closePick();commit('Veza uklonjena');}
+function diskPreview(ev){
+ var f=ev.target.files[0];if(!f)return;
+ var u=URL.createObjectURL(f);
+ document.getElementById('CONTENT').innerHTML='<iframe src="'+u+'"></iframe>';
+ closePick();toast('Pregled s diska (privremeno) — commitaj u repo za trajno');
+ ev.target.value='';
+}
+
+// ─── Tema ───
 var THEMES=['auto','light','dark'],cur='auto';
-function applyTheme(t){if(t==='auto'){var d=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme',d?'dark':'light');}else document.documentElement.setAttribute('data-theme',t);var b=document.getElementById('TBTN').querySelector('.tbtn-lbl');if(b)b.textContent=t==='auto'?'Auto':(t==='light'?'Svijetla':'Tamna');}
+function applyTheme(t){if(t==='auto'){var d=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme',d?'dark':'light');}else document.documentElement.setAttribute('data-theme',t);var b=document.querySelector('#TBTN .tlbl');if(b)b.textContent=t==='auto'?'Auto':(t==='light'?'Svijetla':'Tamna');}
 function toggleTheme(){cur=THEMES[(THEMES.indexOf(cur)+1)%3];applyTheme(cur);}
 if(window.matchMedia)window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){if(cur==='auto')applyTheme('auto');});
-var tt;function toast(m){var e=document.getElementById('TOAST');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){e.classList.remove('show');},1700);}
+var tt;function toast(m){if(!m)return;var e=document.getElementById('TOAST');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){e.classList.remove('show');},1700);}
 
-applyTheme('auto');renderSidebar();renderContent();
+// ─── Init ───
+load();applyTheme('auto');render();renderContent();
 </script>
 </body>
 </html>
