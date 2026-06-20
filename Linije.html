@@ -196,13 +196,17 @@ add('grad','9','Gaženica','Kolodvor','Gaženica',dvosmjer('Kolodvor','Gaženica
 [['Veli Iž'],['Mali Iž','Mali Iž','sezonska','sezonska'],['Bršanj','Bršanj','sezonska','sezonska']]
 .forEach(function(r){ const n=r[0]; add('iz','',n,'Iž (luka)',r[1]||n,dvosmjer('Iž (luka)',r[1]||n),{vrsta:r[2]||'redovna',status:r[3]||'aktivna'}); });
 
+const PALETA=['#ef4444','#f97316','#eab308','#22c55e','#14b8a6','#3b82f6','#6366f1','#a855f7','#ec4899','#06b6d4','#84cc16','#f59e0b'];
+function contrastText(hex){ hex=(hex||'').replace('#',''); if(hex.length===3) hex=hex.split('').map(c=>c+c).join(''); const r=parseInt(hex.slice(0,2),16)||0,g=parseInt(hex.slice(2,4),16)||0,b=parseInt(hex.slice(4,6),16)||0; return ((0.299*r+0.587*g+0.114*b)/255)>0.6?'#111827':'#ffffff'; }
 let LINIJE = RAW.map(function(r,i){
   const g=geom(r.naziv,r.podr);
   const tip = r.podr==='grad'?'gradski':(r.podr==='prigrad'?'prigradski':'minibus');
   const sez = (r.status==='sezonska')?'ljetna':'cijelogodišnja';
+  const boja = PALETA[seedFrom(r.naziv)%PALETA.length];
   return { id:'l'+(i+1), broj:r.broj||'', naziv:r.naziv, podrucje:r.podr, status:r.status||'aktivna',
     polaziste:r.polaz, odrediste:r.odred, duljina:g.duljina, brStajalista:g.brStajalista, trajanje:g.trajanje,
-    rute:(r.rute||[]).slice(), vrsta:r.vrsta||'redovna', sezonalnost:sez, tipVozila:tip };
+    rute:(r.rute||[]).slice(), vrsta:r.vrsta||'redovna', sezonalnost:sez, tipVozila:tip,
+    boja:boja, bojaTeksta:contrastText(boja), sortOrder:i+1, opis:'', url:'' };
 });
 
 let fPod='', editId=null, editRute=[];
@@ -224,7 +228,7 @@ function render(){
     html+='<tr class="grp"><td colspan="8"><div class="grp-lbl">'+P[1]+'<span class="c">'+ls.length+'</span></div></td></tr>';
     ls.forEach(function(l){
       html+='<tr class="line" onclick="openLine(\''+l.id+'\')">'
-        +'<td><span class="ozn">'+(l.broj||'—')+'</span></td>'
+        +'<td><span class="ozn" style="'+(l.boja?'background:'+l.boja+';color:'+(l.bojaTeksta||'#fff')+';border-color:transparent':'')+'">'+(l.broj||'—')+'</span></td>'
         +'<td><span class="ln-nm">'+esc(l.naziv)+'</span></td>'
         +'<td class="trasa"><b>'+esc(l.polaziste)+'</b> → <b>'+esc(l.odrediste)+'</b></td>'
         +'<td class="num mono">'+l.duljina+' km</td>'
@@ -291,12 +295,21 @@ function openLine(id){
    + '<div class="fld"><label>Sezonalnost</label><select id="f_sezonalnost">'+opt(SEZON,l.sezonalnost)+'</select></div>'
    + '<div class="fld"><label>Tip vozila</label><select id="f_tipVozila">'+opt(TIPVOZ,l.tipVozila)+'</select></div>'
    + '</div>';
+  h+='<div class="sect-t" style="margin-top:20px">Prikaz i GTFS</div><div class="fgrid three">'
+   + '<div class="fld"><label>Boja linije</label><div style="display:flex;gap:8px;align-items:center"><input type="color" id="f_boja" value="'+(l.boja||'#3b82f6')+'" oninput="onBoja()" style="width:42px;height:36px;padding:2px;border:1.5px solid var(--bdr);border-radius:7px;background:var(--bg3);cursor:pointer"><span id="ljPrev" class="ozn"></span></div></div>'
+   + '<div class="fld"><label>Boja teksta</label><input type="color" id="f_bojaTeksta" value="'+(l.bojaTeksta||'#ffffff')+'" oninput="ljPreview()" style="width:42px;height:36px;padding:2px;border:1.5px solid var(--bdr);border-radius:7px;background:var(--bg3);cursor:pointer"></div>'
+   + '<div class="fld"><label>Redoslijed prikaza</label><input class="mono" id="f_sortOrder" value="'+(l.sortOrder==null?'':l.sortOrder)+'" placeholder="npr. 11"></div>'
+   + '</div><div class="fgrid">'
+   + '<div class="fld"><label>Opis linije (route_desc)</label><input id="f_opis" value="'+esc(l.opis||'')+'" placeholder="nije obavezno"></div>'
+   + '<div class="fld"><label>URL linije (route_url)</label><input class="mono" id="f_url" value="'+esc(l.url||'')+'" placeholder="https://…"></div>'
+   + '</div>';
   h+='</div>';
   h+='<div class="card-ft">'+(isNew?'':'<button class="btn btn-danger" onclick="deleteLine(\''+l.id+'\')">Obriši</button>')
    +'<div class="sp"></div><button class="btn btn-ghost" onclick="closeCard()">Odustani</button>'
    +'<button class="btn btn-acc" onclick="saveLine()">'+(isNew?'Kreiraj liniju':'Spremi')+'</button></div>';
   document.getElementById('cardEl').innerHTML=h;
   renderRute();
+  ljPreview();
   document.getElementById('cardBg').classList.add('on');
 }
 function renderRute(){
@@ -308,6 +321,9 @@ function renderRute(){
   document.getElementById('RUTE').innerHTML=h;
 }
 function setRuta(i,v){ editRute[i]=v; }
+function onBoja(){ const t=document.getElementById('f_bojaTeksta'); if(t) t.value=contrastText(document.getElementById('f_boja').value); ljPreview(); }
+function ljPreview(){ const p=document.getElementById('ljPrev'); if(!p) return; const b=document.getElementById('f_boja'), t=document.getElementById('f_bojaTeksta'), n=document.getElementById('f_broj');
+  const broj=(n&&n.value.trim())||'—'; p.textContent=broj; p.style.background=b?b.value:''; p.style.color=t?t.value:''; p.style.borderColor='transparent'; }
 function addRuta(){ editRute.push(''); renderRute(); const ins=document.querySelectorAll('#RUTE .ruta input'); if(ins.length) ins[ins.length-1].focus(); }
 function delRuta(i){ editRute.splice(i,1); renderRute(); }
 function closeCard(){ document.getElementById('cardBg').classList.remove('on'); editId=null; }
@@ -321,6 +337,7 @@ function saveLine(){
   l.polaziste=val('polaziste'); l.odrediste=val('odrediste');
   l.duljina=numOr('duljina'); l.brStajalista=numOr('brStajalista'); l.trajanje=numOr('trajanje');
   l.vrsta=val('vrsta'); l.sezonalnost=val('sezonalnost'); l.tipVozila=val('tipVozila');
+  l.boja=val('boja'); l.bojaTeksta=val('bojaTeksta'); l.sortOrder=numOr('sortOrder'); l.opis=val('opis'); l.url=val('url');
   l.rute=editRute.map(s=>s.trim()).filter(Boolean);
   closeCard(); render();
 }
