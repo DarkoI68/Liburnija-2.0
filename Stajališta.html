@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="hr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liburnija — Stajališta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<style>
+html[data-theme="dark"]{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2330;--bgh:#212936;--bdr:#2d3748;--tp:#f0f4f8;--ts:#8b95a1;--tm:#4b5563;--acc:#f97316;--accs:rgba(249,115,22,.14);--blu:#3b82f6;--blus:rgba(59,130,246,.16);--grn:#22c55e;--grns:rgba(34,197,94,.16);--red:#ef4444;--reds:rgba(239,68,68,.14);--yel:#eab308;--yels:rgba(234,179,8,.16)}
+html[data-theme="light"]{--bg:#f0f4f8;--bg2:#fff;--bg3:#f8fafc;--bgh:#f1f5f9;--bdr:#e2e8f0;--tp:#0f172a;--ts:#64748b;--tm:#94a3b8;--acc:#f97316;--accs:rgba(249,115,22,.1);--blu:#3b82f6;--blus:rgba(59,130,246,.11);--grn:#16a34a;--grns:rgba(22,163,74,.11);--red:#dc2626;--reds:rgba(220,38,38,.09);--yel:#ca8a04;--yels:rgba(202,138,4,.13)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--tp);height:100vh;display:flex;flex-direction:column;font-size:13px;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:5px}::-webkit-scrollbar-track{background:transparent}
+
+.top{display:flex;align-items:center;gap:12px;padding:11px 18px;background:var(--bg2);border-bottom:1.5px solid var(--bdr);flex-shrink:0}
+.brand{display:flex;align-items:center;gap:9px}
+.brand-ic{width:30px;height:30px;border-radius:8px;background:var(--accs);display:flex;align-items:center;justify-content:center}
+.brand-ic svg{width:17px;height:17px;stroke:var(--acc);stroke-width:2.2;fill:none}
+.brand-tit{font-size:14px;font-weight:800;letter-spacing:.2px}
+.brand-sub{font-size:10px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px}
+.crumb{font-size:11px;color:var(--ts);font-weight:600;margin-left:6px}.crumb b{color:var(--acc)}
+.top-sp{flex:1}
+.tbtn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:8px;color:var(--ts)}
+.tbtn:hover{border-color:var(--acc);color:var(--acc)}.tbtn svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none}
+
+.wrap{flex:1;overflow-y:auto;min-height:0}
+.inner{max-width:1340px;margin:0 auto;padding:20px 24px 60px}
+.hd{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.hd h1{font-size:22px;font-weight:800;letter-spacing:.2px}
+.hd .eyebrow{font-size:10px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.hd-act{display:flex;gap:9px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:8px;font-size:12px;font-weight:700;padding:8px 13px;transition:all .12s}
+.btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.4;fill:none}
+.btn-acc{background:var(--acc);color:#fff}.btn-acc:hover{filter:brightness(1.06)}
+.btn-ghost{background:var(--bg2);border:1.5px solid var(--bdr);color:var(--ts)}.btn-ghost:hover{border-color:var(--acc);color:var(--acc)}
+.btn-danger{background:transparent;border:1.5px solid var(--bdr);color:var(--red)}.btn-danger:hover{background:var(--red);border-color:var(--red);color:#fff}
+
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:11px;padding:12px 14px}
+.kpi-n{font-size:21px;font-weight:800;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:7px;line-height:1}
+.kpi-n .d{width:8px;height:8px;border-radius:50%;background:var(--tm)}.kpi-n .d.g{background:var(--grn)}.kpi-n .d.b{background:var(--blu)}.kpi-n .d.r{background:var(--red)}
+.kpi-l{font-size:10px;color:var(--ts);font-weight:600;margin-top:6px;text-transform:uppercase;letter-spacing:.3px}
+
+.toolbar{display:flex;align-items:center;gap:9px;margin-bottom:13px;flex-wrap:wrap}
+.search{position:relative;display:flex;align-items:center;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;padding:0 11px;height:38px;flex:1;min-width:200px}
+.search:focus-within{border-color:var(--acc)}
+.search svg{width:15px;height:15px;stroke:var(--ts);stroke-width:2;fill:none;flex-shrink:0;margin-right:8px}
+.search input{flex:1;background:transparent;border:0;outline:0;font-family:inherit;font-size:13px;font-weight:500;color:var(--tp)}
+.fchips{display:flex;gap:6px;flex-wrap:wrap}
+.fchip{padding:8px 13px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;font-size:11.5px;font-weight:700;color:var(--ts);transition:all .12s}
+.fchip:hover{border-color:var(--acc);color:var(--tp)}.fchip.on{background:var(--accs);border-color:var(--acc);color:var(--acc)}
+.fsel{height:38px;font-family:inherit;font-size:12px;font-weight:700;color:var(--tp);background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;padding:0 10px}.fsel:focus{outline:none;border-color:var(--acc)}
+
+.tblwrap{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:13px;overflow:hidden}
+table.st{width:100%;border-collapse:collapse;font-size:12.5px}
+table.st th{font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:11px 12px;border-bottom:1.5px solid var(--bdr);background:var(--bg3);white-space:nowrap}
+table.st td{padding:9px 12px;border-bottom:1px solid var(--bdr);vertical-align:middle;white-space:nowrap}
+table.st tr:last-child td{border-bottom:none}
+table.st tbody tr{cursor:pointer;transition:background .1s}table.st tbody tr:hover{background:var(--bgh)}
+.sif{font-family:"DM Mono",monospace;font-weight:600;font-size:11px;background:var(--bg3);border:1px solid var(--bdr);border-radius:6px;padding:2px 7px}
+.st-nm{font-weight:700}
+.smj{font-family:"DM Mono",monospace;font-weight:700;font-size:11px;color:var(--ts);width:20px;display:inline-block;text-align:center}
+.coord{font-family:"DM Mono",monospace;font-size:11px;color:var(--ts)}.coord.miss{color:var(--yel);font-weight:600}
+.opx{display:inline-flex;gap:3px}
+.opb{font-size:9px;font-weight:800;width:17px;height:17px;border-radius:4px;display:flex;align-items:center;justify-content:center;background:var(--accs);color:var(--acc);border:1px solid transparent}
+.opnone{color:var(--tm);font-size:11px}
+.pill{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:20px;display:inline-block;white-space:nowrap}
+.pill.aktivno{background:var(--grns);color:var(--grn)}.pill.privremeno{background:var(--yels);color:var(--yel)}.pill.ukinuto{background:var(--bg3);color:var(--tm);border:1px solid var(--bdr)}
+.empty-tbl{padding:40px;text-align:center;color:var(--ts);font-weight:600}
+
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-start;justify-content:center;z-index:200;padding:28px 20px;overflow-y:auto}
+.mbg.on{display:flex}
+.card{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:15px;width:100%;max-width:840px;box-shadow:0 24px 70px rgba(0,0,0,.32);overflow:hidden}
+.card-hd{display:flex;align-items:flex-start;gap:14px;padding:17px 22px;border-bottom:1.5px solid var(--bdr);background:var(--bg3)}
+.card-hd .sif{font-size:12px;padding:4px 9px}
+.card-hd-main{flex:1;min-width:0}
+.card-hd-tit{font-size:17px;font-weight:800;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.card-hd-sub{font-size:11.5px;color:var(--ts);font-weight:600;margin-top:3px}
+.card-x{width:30px;height:30px;border:none;background:transparent;border-radius:7px;color:var(--ts);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-x:hover{background:var(--bgh);color:var(--tp)}.card-x svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none}
+.card-bd{padding:18px 22px;max-height:70vh;overflow-y:auto}
+.sect-t{font-size:10px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin:4px 0 11px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px 20px;margin-bottom:20px}
+.fgrid.three{grid-template-columns:1.4fr .6fr 1fr}
+.fld{display:flex;flex-direction:column;gap:4px}.fld.full{grid-column:1/-1}
+.fld label{font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.4px}
+.fld input,.fld select{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--tp);background:var(--bg3);border:1.5px solid var(--bdr);border-radius:7px;padding:7px 10px;width:100%}
+.fld input.mono{font-family:"DM Mono",monospace;font-weight:500}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--acc);background:var(--bg2)}
+
+#pickMap{height:280px;border-radius:11px;border:1.5px solid var(--bdr);overflow:hidden;background:var(--bg3)}
+.map-off{height:100%;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--ts);font-size:12px;font-weight:600;padding:20px}
+.maprow{display:flex;align-items:flex-end;gap:12px;margin-top:11px;flex-wrap:wrap}
+.maprow .fld{flex:1;min-width:130px}
+.maphint{font-size:11px;color:var(--ts);font-weight:600;margin-bottom:9px;display:flex;align-items:center;gap:7px}
+.maphint svg{width:14px;height:14px;stroke:var(--acc);stroke-width:2;fill:none;flex-shrink:0}
+.maplayers{display:flex;border-radius:7px;overflow:hidden;box-shadow:0 1px 5px rgba(0,0,0,.22);border:1px solid rgba(0,0,0,.15)}
+.mlbtn{font-family:"DM Sans",sans-serif;font-size:11px;font-weight:700;padding:5px 12px;border:none;background:#fff;color:#475569;cursor:pointer;line-height:1.4}
+.mlbtn.on{background:var(--acc);color:#fff}
+.mlbtn+.mlbtn{border-left:1px solid rgba(0,0,0,.12)}
+.slika-wrap{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.slika-prev{width:168px;height:112px;border-radius:10px;border:1.5px solid var(--bdr);background:var(--bg3);overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.slika-prev img{width:100%;height:100%;object-fit:cover}
+.slika-ph{font-size:11px;color:var(--tm);font-weight:600}
+.slika-actions{display:flex;flex-direction:column;gap:8px;flex:1;min-width:200px}
+.slika-url{font-family:"DM Mono",monospace;font-size:11px;font-weight:500;color:var(--tp);background:var(--bg3);border:1.5px solid var(--bdr);border-radius:7px;padding:7px 10px}
+.slika-url:focus{outline:none;border-color:var(--acc)}
+
+.toggles{display:flex;flex-wrap:wrap;gap:8px}
+.tg{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:8px;font-size:12px;font-weight:700;color:var(--ts);cursor:pointer;user-select:none}
+.tg input{display:none}
+.tg .bx{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tg .bx svg{width:11px;height:11px;stroke:#fff;stroke-width:3;fill:none;opacity:0}
+.tg.on{border-color:var(--acc);color:var(--acc);background:var(--accs)}
+.tg.on .bx{background:var(--acc);border-color:var(--acc)}.tg.on .bx svg{opacity:1}
+
+.card-ft{display:flex;align-items:center;gap:9px;padding:14px 22px;border-top:1.5px solid var(--bdr);background:var(--bg3)}
+.card-ft .sp{flex:1}
+@media(max-width:760px){.kpis{grid-template-columns:repeat(3,1fr)}.fgrid,.fgrid.three{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">
+    <div class="brand-ic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+    <div><div class="brand-tit">Liburnija</div><div class="brand-sub">Stajališta</div></div>
+  </div>
+  <div class="crumb"><b>CORE</b> › Stajališta</div>
+  <div class="top-sp"></div>
+  <button class="tbtn" id="themeBtn" title="Tema" onclick="toggleTheme()"><svg id="themeIc" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+</div>
+
+<div class="wrap"><div class="inner">
+  <div class="hd">
+    <div><div class="eyebrow">Matični registar stajališta</div><h1>Stajališta</h1></div>
+    <div class="hd-act">
+      <button class="btn btn-ghost" onclick="window.print()"><svg viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Izvezi</button>
+      <button class="btn btn-acc" onclick="openStop(null)"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Novo stajalište</button>
+    </div>
+  </div>
+  <div class="kpis" id="KPIS"></div>
+  <div class="toolbar">
+    <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg><input id="q" type="text" placeholder="Traži po imenu, šifri, zoni, opisu…" oninput="render()"></div>
+    <select class="fsel" id="fstat" onchange="render()"><option value="">Svi statusi</option><option value="aktivno">Aktivna</option><option value="privremeno">Privremena</option><option value="ukinuto">Ukinuta</option></select>
+    <div class="fchips" id="FCH"></div>
+  </div>
+  <div class="tblwrap"><table class="st">
+    <thead><tr><th>Šifra</th><th>Ime</th><th>Smj.</th><th>Područje</th><th>Zona</th><th>Vrsta</th><th>Koordinate</th><th>Oprema</th><th>Status</th></tr></thead>
+    <tbody id="TBODY"></tbody>
+  </table></div>
+</div></div>
+
+<div class="mbg" id="cardBg"><div class="card" id="cardEl"></div></div>
+
+<script>
+const PODR=[["grad","Grad"],["prigrad","Prigrad"],["ugljan","Otok Ugljan"],["dugi","Dugi otok"],["iz","Otok Iž"]];
+function podrNaziv(id){ const p=PODR.find(x=>x[0]===id); return p?p[1]:id; }
+const VRSTE=["Stajalište","Terminal","Okretište","Na zahtjev"];
+const STATUSI=[["aktivno","Aktivno"],["privremeno","Privremeno"],["ukinuto","Ukinuto"]];
+const OPREMA=[["vertSig","Vert. signalizacija","V"],["horizSig","Horiz. signalizacija","H"],["krov","Nadstrešnica (krov)","⌂"],["ugibaliste","Ugibalište","U"],["oglasi","Oglasi","O"],["zaklj","Zaklj.","Z"]];
+const esc=s=>(s==null?'':(''+s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+let STAJ=[];
+function S(sifra,ime,kratko,smjer,podr,zona,opis,lat,lon,vrsta,status,pristup,op){
+  STAJ.push({id:'s'+(STAJ.length+1),sifra,ime,kratko,smjer:smjer||'',podrucje:podr,zona,opis:opis||'',lat:(lat==null?null:lat),lon:(lon==null?null:lon),
+    vrsta:vrsta||'Stajalište',status:status||'aktivno',pristup:!!pristup,
+    stopCode:'',infoPanel:'',locationType:'stop',parentStation:'',platformCode:'',
+    oprema:Object.assign({vertSig:false,horizSig:false,krov:false,ugibaliste:false,oglasi:false,zaklj:false},op||{}),slika:''});
+}
+// — stvarna stajališta (sa slike starog sustava) —
+S('ZD-0001','Mala Pošta (B)','Mala Pošta','B','grad','ZADAR','',44.116695,15.232669,'Stajalište','aktivno',false,{zaklj:true});
+S('ZD-0002','Biogradska 1 (A)','Biog.1','A','grad','ZADAR','',44.102619,15.247534,'Stajalište','aktivno',false,{zaklj:true});
+S('ZD-0003','Gradsko groblje (Biogradska) (B)','Gradsko Groblje','B','grad','ZADAR','',44.10321,15.261486,'Stajalište','aktivno',false,{});
+S('ZD-0004','Melada (A)','Melada','A','grad','ZADAR','Put Nina',44.124424,15.233029,'Stajalište','aktivno',false,{});
+S('ZD-0005','Trgovački sud (A)','Trgovački sud','A','grad','ZADAR','Ulica dr. Franje Tuđmana',44.119675,15.234926,'Stajalište','aktivno',true,{});
+S('ZD-0006','Jadranska magistrala 1 (A)','Jadr.1','A','grad','ZADAR','Intermod',44.103111,15.264141,'Stajalište','aktivno',false,{});
+S('ZD-0007','Jadranska magistrala 2 (A)','Jadr.2','A','grad','ZADAR','Emezeta',44.098808,15.270144,'Stajalište','aktivno',false,{});
+S('ZD-0008','Zagrebačka ulica 1 (A)','Zagrebačka ulica 1','A','grad','ZADAR','Kod Plodina',44.114487,15.255487,'Stajalište','aktivno',false,{});
+S('ZD-0009','Zagrebačka ulica 3 (A)','Zagrebačka ulica 3','A','grad','ZADAR','Supernova (vanjska)',44.117626,15.269131,'Stajalište','aktivno',false,{});
+S('ZD-0010','Benkovačka 5 (B)','Benk.5','B','grad','ZADAR','Kod crkve',44.10173,15.282464,'Stajalište','aktivno',true,{vertSig:true,horizSig:true,krov:true,ugibaliste:true,oglasi:true});
+S('ZD-0011','Benkovačka 4 (B)','Benk.4','B','grad','ZADAR','KBR: 35',44.103687,15.271194,'Stajalište','aktivno',true,{vertSig:true,horizSig:true,krov:true,ugibaliste:true});
+S('ZD-0012','Benkovačka 3 (B)','Benk.3','B','grad','ZADAR','Caffe Bar Marino',44.104237,15.268081,'Stajalište','aktivno',false,{});
+S('ZD-0013','Put Nina 1 (B)','Put Nina 1','B','grad','ZADAR','',44.130711,15.230902,'Stajalište','aktivno',false,{});
+S('ZD-0014','Benkovačka 5 (A)','Benk.5','A','grad','ZADAR','Kod crkve',44.101715,15.282458,'Stajalište','aktivno',false,{vertSig:true,horizSig:true,ugibaliste:true});
+S('ZD-0015','Put Nina 1 (A)','Put Nina 1','A','grad','ZADAR','Belafuža',44.130234,15.231065,'Stajalište','aktivno',false,{});
+S('ZD-0016','Gradsko groblje jug','Gradsko groblje Jug','','grad','ZADAR','',44.103451,15.262092,'Stajalište','aktivno',false,{});
+S('ZD-0017','Jadranska magistrala 2 (B)','Jadr.2','B','grad','ZADAR','Sabunjar',44.099293,15.26975,'Stajalište','aktivno',false,{});
+S('ZD-0018','Put Nina 2 (A)','Put Nina 2','A','grad','ZADAR','',44.142559,15.226562,'Stajalište','aktivno',false,{});
+S('ZD-0100','Autobusni kolodvor - Zadar (prigradski peroni)','Autobusni kolodvor - Zadar','','prigrad','ZADAR','Prigradske linije',44.10564,15.241876,'Terminal','aktivno',true,{krov:true,oglasi:true});
+S('ZD-0101','Franje Tuđmana (A)','F.T.','A','prigrad','ZADAR','ispod Policije',44.109535,15.240007,'Stajalište','aktivno',false,{});
+S('ZD-0102','Žmirići (A)','Žmirići','A','prigrad','ZADAR','ispod Plodina',44.13966,15.228439,'Stajalište','aktivno',false,{});
+S('KZ-0001','Kožino Magistrala (A)','Kož.M.','A','prigrad','KOŽINO','Kožino',44.170967,15.194309,'Stajalište','aktivno',false,{});
+S('PE-0001','Petrčane Magistrala (A)','Petrč.M.','A','prigrad','PETRČANE','Magistrala',44.193405,15.178621,'Stajalište','aktivno',false,{krov:true});
+S('ZA-0001','Zaton (A)','Zaton','A','prigrad','ZATON','Zaton',44.218311,15.177453,'Stajalište','aktivno',false,{});
+S('VI-0005','Vir 5 (A)','Vir 5','A','prigrad','VIR','Autobusni kolodvor',44.304668,15.078233,'Terminal','aktivno',true,{krov:true});
+// — otočna (približne koordinate) —
+S('UG-0001','Preko (luka)','Preko','','ugljan','PREKO','Trajektna luka',44.0808,15.1869,'Terminal','aktivno',true,{krov:true});
+S('UG-0002','Kali (centar)','Kali','','ugljan','KALI','',44.0586,15.19,'Stajalište','aktivno',false,{});
+S('DO-0001','Sali (luka)','Sali','','dugi','SALI','Luka',43.9389,15.1631,'Terminal','aktivno',false,{krov:true});
+S('IZ-0001','Veli Iž (luka)','Veli Iž','','iz','IŽ','Luka',44.0436,15.1119,'Terminal','sezonsko'==='x'?'aktivno':'aktivno',false,{});
+// — varijacije statusa / kvaliteta podataka —
+S('ZD-0200','Diklo škola (A)','Diklo škola','A','grad','ZADAR','privremeno premješteno',null,null,'Stajalište','privremeno',false,{});
+S('ZD-0201','Stari kolodvor','Stari kolodvor','','grad','ZADAR','izvan upotrebe',44.1118,15.2208,'Stajalište','ukinuto',false,{});
+
+let fPod='', editId=null, pickMap=null, pickMarker=null, baseLayer=null, satLayer=null, mapMode='karta', editSlika='';
+(function(){ const k=STAJ.find(x=>x.sifra==='ZD-0100'); if(k) k.locationType='station'; })();
+
+function fmtCoord(la,lo){ if(la==null||lo==null||la===''||lo==='') return null; return (+la).toFixed(4)+', '+(+lo).toFixed(4); }
+
+function render(){
+  const q=(document.getElementById('q').value||'').toLowerCase().trim();
+  const fs=document.getElementById('fstat').value;
+  let rows=STAJ.filter(function(s){
+    if(fPod && s.podrucje!==fPod) return false;
+    if(fs && s.status!==fs) return false;
+    if(q){ const hay=(s.sifra+' '+s.ime+' '+s.kratko+' '+s.zona+' '+s.opis).toLowerCase(); if(!hay.includes(q)) return false; }
+    return true;
+  });
+  rows.sort((a,b)=>a.ime.localeCompare(b.ime,'hr'));
+  renderKpis(); renderChips();
+  if(!rows.length){ document.getElementById('TBODY').innerHTML='<tr><td colspan="9" class="empty-tbl">Nema stajališta za zadane filtere.</td></tr>'; return; }
+  document.getElementById('TBODY').innerHTML=rows.map(function(s){
+    const c=fmtCoord(s.lat,s.lon);
+    const opr=OPREMA.filter(o=>s.oprema[o[0]]);
+    let badges=opr.map(o=>'<span class="opb" title="'+o[1]+'">'+o[2]+'</span>');
+    if(s.infoPanel) badges.push('<span class="opb" title="Info panel: '+esc(s.infoPanel)+'" style="background:var(--blus);color:var(--blu)">i</span>');
+    if(s.slika) badges.push('<span class="opb" title="Ima sliku" style="background:var(--grns);color:var(--grn)">▣</span>');
+    const oprH = badges.length ? '<span class="opx">'+badges.join('')+'</span>' : '<span class="opnone">—</span>';
+    return '<tr onclick="openStop(\''+s.id+'\')">'
+      +'<td><span class="sif">'+esc(s.sifra)+'</span></td>'
+      +'<td><span class="st-nm">'+esc(s.ime)+'</span>'+(s.opis?' <span style="color:var(--ts);font-weight:500">· '+esc(s.opis)+'</span>':'')+'</td>'
+      +'<td><span class="smj">'+(s.smjer||'—')+'</span></td>'
+      +'<td>'+podrNaziv(s.podrucje)+'</td>'
+      +'<td>'+esc(s.zona||'—')+'</td>'
+      +'<td>'+esc(s.vrsta)+'</td>'
+      +'<td>'+(c?'<span class="coord">'+c+'</span>':'<span class="coord miss">bez koord.</span>')+'</td>'
+      +'<td>'+oprH+'</td>'
+      +'<td><span class="pill '+s.status+'">'+(STATUSI.find(x=>x[0]===s.status)||['','?'])[1]+'</span></td>'
+      +'</tr>';
+  }).join('');
+}
+function renderKpis(){
+  const tot=STAJ.length, akt=STAJ.filter(s=>s.status==='aktivno').length;
+  const krov=STAJ.filter(s=>s.oprema.krov).length;
+  const pri=STAJ.filter(s=>s.pristup).length;
+  const noc=STAJ.filter(s=>s.lat==null||s.lon==null).length;
+  const grad=STAJ.filter(s=>s.podrucje==='grad').length;
+  const k=[[tot,'','Ukupno stajališta'],[akt,'g','Aktivnih'],[krov,'b','S nadstrešnicom'],[pri,'b','Pristupačnih'],[noc,noc?'r':'','Bez koordinata'],[grad,'','Gradskih']];
+  document.getElementById('KPIS').innerHTML=k.map(s=>'<div class="kpi"><div class="kpi-n">'+(s[1]?'<span class="d '+s[1]+'"></span>':'')+s[0]+'</div><div class="kpi-l">'+s[2]+'</div></div>').join('');
+}
+function renderChips(){
+  const c={'':STAJ.length}; PODR.forEach(P=>c[P[0]]=STAJ.filter(s=>s.podrucje===P[0]).length);
+  let h='<button class="fchip'+(fPod===''?' on':'')+'" onclick="setPod(\'\')">Sve · '+c['']+'</button>';
+  PODR.forEach(P=>{ if(!c[P[0]]) return; h+='<button class="fchip'+(fPod===P[0]?' on':'')+'" onclick="setPod(\''+P[0]+'\')">'+P[1]+' · '+c[P[0]]+'</button>'; });
+  document.getElementById('FCH').innerHTML=h;
+}
+function setPod(p){ fPod=p; render(); }
+function toggleTheme(){ const h=document.documentElement,dk=h.getAttribute('data-theme')==='dark'; h.setAttribute('data-theme',dk?'light':'dark');
+  document.getElementById('themeIc').innerHTML=dk?'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>':'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/>';
+  if(pickMap) setTimeout(()=>pickMap.invalidateSize(),50); }
+
+/* ─── Kartica stajališta ─── */
+function openStop(id){
+  editId=id;
+  const s = id ? STAJ.find(x=>x.id===id) : { sifra:'', stopCode:'', ime:'', kratko:'', smjer:'', podrucje:'grad', zona:'', opis:'', lat:null, lon:null, vrsta:'Stajalište', status:'aktivno', pristup:false, infoPanel:'', locationType:'stop', parentStation:'', platformCode:'', oprema:{}, slika:'' };
+  const isNew=!id;
+  editSlika = s.slika||'';
+  function fi(label,key,mono,ph){ return '<div class="fld"><label>'+label+'</label><input class="'+(mono?'mono':'')+'" id="f_'+key+'" value="'+esc(s[key]==null?'':s[key])+'" placeholder="'+(ph||'')+'"></div>'; }
+  let h='<div class="card-hd"><span class="sif">'+(isNew?'NOVO':esc(s.sifra||'—'))+'</span>'
+   +'<div class="card-hd-main"><div class="eyebrow" style="font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px">'+(isNew?'Novo stajalište':'Stajalište')+'</div>'
+   +'<div class="card-hd-tit">'+(isNew?'Novo stajalište':esc(s.ime))+'<span class="pill '+s.status+'">'+(STATUSI.find(x=>x[0]===s.status)||['','?'])[1]+'</span></div>'
+   +'<div class="card-hd-sub">'+podrNaziv(s.podrucje)+(s.zona?' · '+esc(s.zona):'')+'</div></div>'
+   +'<button class="card-x" onclick="closeCard()"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>';
+  h+='<div class="card-bd">';
+  h+='<div class="sect-t">Osnovno</div><div class="fgrid">'
+   + fi('Šifra / stop_id','sifra',true,'npr. ZD-0001')
+   + fi('Javna oznaka (stop_code)','stopCode',true,'npr. 1024')
+   + '<div class="fld"><label>Status</label><select id="f_status">'+STATUSI.map(x=>'<option value="'+x[0]+'"'+(s.status===x[0]?' selected':'')+'>'+x[1]+'</option>').join('')+'</select></div>'
+   + '<div class="fld full"><label>Ime stajališta</label><input id="f_ime" value="'+esc(s.ime)+'" placeholder="npr. Benkovačka 5 (B)"></div>'
+   + fi('Kratko ime (za displej)','kratko',false,'npr. Benk.5')
+   + '<div class="fld"><label>Smjer</label><select id="f_smjer"><option value=""'+(!s.smjer?' selected':'')+'>—</option><option'+(s.smjer==='A'?' selected':'')+'>A</option><option'+(s.smjer==='B'?' selected':'')+'>B</option></select></div>'
+   + '<div class="fld"><label>Područje prometovanja</label><select id="f_podrucje">'+PODR.map(P=>'<option value="'+P[0]+'"'+(s.podrucje===P[0]?' selected':'')+'>'+P[1]+'</option>').join('')+'</select></div>'
+   + fi('Zona','zona',false,'npr. ZADAR')
+   + '<div class="fld"><label>Vrsta</label><select id="f_vrsta">'+VRSTE.map(v=>'<option'+(s.vrsta===v?' selected':'')+'>'+v+'</option>').join('')+'</select></div>'
+   + fi('Opis / orijentir','opis',false,'npr. Kod crkve')
+   + '</div>';
+  h+='<div class="sect-t">Hijerarhija (GTFS)</div><div class="fgrid three">'
+   + '<div class="fld"><label>Tip lokacije</label><select id="f_locationType"><option value="stop"'+(s.locationType!=='station'?' selected':'')+'>Stajalište / peron</option><option value="station"'+(s.locationType==='station'?' selected':'')+'>Kolodvor (stanica)</option></select></div>'
+   + '<div class="fld"><label>Peron (platform_code)</label><input class="mono" id="f_platformCode" value="'+esc(s.platformCode||'')+'" placeholder="npr. 1"></div>'
+   + '<div class="fld"><label>Vremenska zona</label><input class="mono" value="Europe/Zagreb" readonly style="opacity:.65"></div>'
+   + '</div><div class="fgrid"><div class="fld full"><label>Pripada kolodvoru (parent_station)</label><select id="f_parentStation"><option value="">—</option>'
+   + STAJ.filter(x=>x.locationType==='station'&&x.id!==s.id).map(x=>'<option value="'+x.id+'"'+(s.parentStation===x.id?' selected':'')+'>'+esc(x.ime)+'</option>').join('')
+   + '</select></div></div>';
+  h+='<div class="sect-t">Lokacija</div>'
+   + '<div class="maphint"><svg viewBox="0 0 24 24"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Klikni na kartu za postavljanje pozicije; marker se može povući. Koordinate se mogu i upisati ručno.</div>'
+   + '<div id="pickMap"></div>'
+   + '<div class="maprow">'
+   +   '<div class="fld"><label>G. širina (lat)</label><input class="mono" id="f_lat" value="'+(s.lat==null?'':s.lat)+'" placeholder="44.000000" onchange="coordsFromInputs()"></div>'
+   +   '<div class="fld"><label>G. dužina (lon)</label><input class="mono" id="f_lon" value="'+(s.lon==null?'':s.lon)+'" placeholder="15.000000" onchange="coordsFromInputs()"></div>'
+   +   '<button class="btn btn-ghost" onclick="openStreetView()">Street View ↗</button>'
+   +   '<button class="btn btn-ghost" onclick="centerZadar()">Centriraj na Zadar</button>'
+   + '</div>';
+  h+='<div class="sect-t" style="margin-top:20px">Oprema i pristupačnost</div><div class="toggles">'
+   + OPREMA.map(o=>'<label class="tg'+(s.oprema[o[0]]?' on':'')+'"><input type="checkbox" id="f_op_'+o[0]+'"'+(s.oprema[o[0]]?' checked':'')+' onchange="this.closest(\'.tg\').classList.toggle(\'on\',this.checked)"><span class="bx"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>'+o[1]+'</label>').join('')
+   + '<label class="tg'+(s.pristup?' on':'')+'" style="border-color:'+(s.pristup?'var(--acc)':'var(--bdr)')+'"><input type="checkbox" id="f_pristup"'+(s.pristup?' checked':'')+' onchange="this.closest(\'.tg\').classList.toggle(\'on\',this.checked)"><span class="bx"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Pristupačno (invalidi)</label>'
+   + '</div>';
+  h+='<div class="fgrid" style="margin-top:14px"><div class="fld"><label>Info panel (oznaka / ID)</label><input id="f_infoPanel" value="'+esc(s.infoPanel||'')+'" placeholder="prazno = nema info panela"></div></div>';
+  h+='<div class="sect-t" style="margin-top:18px">Slika stajališta</div>'
+   + '<div class="slika-wrap"><div class="slika-prev" id="slikaPrev">'+slikaPrevHTML(editSlika)+'</div>'
+   + '<div class="slika-actions">'
+   +   '<input type="file" accept="image/*" id="f_slikafile" style="display:none" onchange="onSlikaFile(event)">'
+   +   '<div style="display:flex;gap:8px"><button class="btn btn-ghost" onclick="document.getElementById(\'f_slikafile\').click()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Učitaj sliku</button><button class="btn btn-ghost" onclick="clearSlika()">Ukloni</button></div>'
+   +   '<input class="slika-url" id="f_slikaurl" value="'+esc((editSlika&&editSlika.slice(0,5)!=='data:')?editSlika:'')+'" placeholder="ili zalijepi URL slike" onchange="setSlika(this.value)">'
+   +   '<div style="font-size:10.5px;color:var(--ts);font-weight:500">Preview za prototip; pohrana se spaja kod integracije.</div>'
+   + '</div></div>';
+  h+='</div>';
+  h+='<div class="card-ft">'+(isNew?'':'<button class="btn btn-danger" onclick="deleteStop(\''+s.id+'\')">Obriši</button>')
+   +'<div class="sp"></div><button class="btn btn-ghost" onclick="closeCard()">Odustani</button>'
+   +'<button class="btn btn-acc" onclick="saveStop()">'+(isNew?'Kreiraj stajalište':'Spremi')+'</button></div>';
+  document.getElementById('cardEl').innerHTML=h;
+  document.getElementById('cardBg').classList.add('on');
+  setTimeout(()=>setupMap(s.lat,s.lon),60);
+}
+function slikaPrevHTML(src){ return src ? '<img src="'+esc(src)+'" alt="slika stajališta">' : '<div class="slika-ph">Nema slike</div>'; }
+function refreshSlikaPrev(){ const p=document.getElementById('slikaPrev'); if(p) p.innerHTML=slikaPrevHTML(editSlika); }
+function onSlikaFile(ev){ const f=ev.target.files&&ev.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=function(){ editSlika=r.result; refreshSlikaPrev(); const u=document.getElementById('f_slikaurl'); if(u) u.value=''; }; r.readAsDataURL(f); }
+function setSlika(v){ editSlika=(v||'').trim(); refreshSlikaPrev(); }
+function clearSlika(){ editSlika=''; const u=document.getElementById('f_slikaurl'); if(u) u.value=''; const fl=document.getElementById('f_slikafile'); if(fl) fl.value=''; refreshSlikaPrev(); }
+function setupMap(lat,lon){
+  const el=document.getElementById('pickMap'); if(!el) return;
+  if(typeof L==='undefined'){ el.innerHTML='<div class="map-off">Karta se učitava online (Leaflet + pločice).<br>Bez interneta: koordinate upiši ručno ispod.</div>'; return; }
+  try{
+    const hasC = (lat!=null&&lat!==''&&lon!=null&&lon!=='');
+    const start=[ hasC?+lat:44.1190, hasC?+lon:15.2310 ];
+    pickMap=L.map(el,{attributionControl:true,zoomControl:true}).setView(start, hasC?16:12);
+    baseLayer=L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:20,subdomains:'abcd',attribution:'© OpenStreetMap, © CARTO'});
+    satLayer=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:20,attribution:'Snimke © Esri'});
+    (mapMode==='sat'?satLayer:baseLayer).addTo(pickMap);
+    const Toggle=L.Control.extend({options:{position:'topright'},onAdd:function(){
+      const d=L.DomUtil.create('div','maplayers');
+      d.innerHTML='<button type="button" id="mlKarta" class="mlbtn'+(mapMode==='karta'?' on':'')+'">Karta</button><button type="button" id="mlSat" class="mlbtn'+(mapMode==='sat'?' on':'')+'">Satelit</button>';
+      L.DomEvent.disableClickPropagation(d);
+      d.querySelector('#mlKarta').onclick=function(){ setMapMode('karta'); };
+      d.querySelector('#mlSat').onclick=function(){ setMapMode('sat'); };
+      return d;
+    }});
+    pickMap.addControl(new Toggle());
+    if(hasC) addMarker(start);
+    pickMap.on('click',function(e){ if(!pickMarker) addMarker(e.latlng); else pickMarker.setLatLng(e.latlng); writeCoords(e.latlng.lat,e.latlng.lng); });
+    setTimeout(()=>pickMap.invalidateSize(),80);
+  }catch(err){ el.innerHTML='<div class="map-off">Karta nije dostupna. Koordinate upiši ručno.</div>'; }
+}
+function setMapMode(m){ mapMode=m; if(!pickMap) return;
+  if(m==='sat'){ if(baseLayer) pickMap.removeLayer(baseLayer); if(satLayer) satLayer.addTo(pickMap); }
+  else { if(satLayer) pickMap.removeLayer(satLayer); if(baseLayer) baseLayer.addTo(pickMap); }
+  const a=document.getElementById('mlKarta'),b=document.getElementById('mlSat'); if(a)a.classList.toggle('on',m==='karta'); if(b)b.classList.toggle('on',m==='sat');
+}
+function openStreetView(){
+  const la=parseFloat(document.getElementById('f_lat').value), lo=parseFloat(document.getElementById('f_lon').value);
+  if(isNaN(la)||isNaN(lo)){ alert('Prvo postavi poziciju na karti ili upiši koordinate.'); return; }
+  window.open('https://www.google.com/maps/@?api=1&map_action=pano&viewpoint='+la+','+lo,'_blank');
+}
+function addMarker(ll){ pickMarker=L.marker(ll,{draggable:true}).addTo(pickMap); pickMarker.on('dragend',function(){ const p=pickMarker.getLatLng(); writeCoords(p.lat,p.lng); }); }
+function writeCoords(la,lo){ const a=document.getElementById('f_lat'),b=document.getElementById('f_lon'); if(a)a.value=(+la).toFixed(6); if(b)b.value=(+lo).toFixed(6); }
+function coordsFromInputs(){ const la=parseFloat(document.getElementById('f_lat').value), lo=parseFloat(document.getElementById('f_lon').value); if(isNaN(la)||isNaN(lo)||!pickMap) return; if(!pickMarker) addMarker([la,lo]); else pickMarker.setLatLng([la,lo]); pickMap.setView([la,lo],Math.max(pickMap.getZoom(),15)); }
+function centerZadar(){ if(pickMap) pickMap.setView([44.1190,15.2310],12); }
+function closeCard(){ document.getElementById('cardBg').classList.remove('on'); if(pickMap){ try{pickMap.remove();}catch(e){} pickMap=null; pickMarker=null; } editId=null; }
+function val(k){ const e=document.getElementById('f_'+k); return e?e.value.trim():''; }
+function saveStop(){
+  const ime=val('ime'); if(!ime){ document.getElementById('f_ime').focus(); return; }
+  let s = editId ? STAJ.find(x=>x.id===editId) : null;
+  if(!s){ s={id:'s'+Date.now(),oprema:{}}; STAJ.push(s); }
+  s.sifra=val('sifra'); s.ime=ime; s.kratko=val('kratko'); s.smjer=val('smjer');
+  s.podrucje=val('podrucje'); s.zona=val('zona'); s.vrsta=val('vrsta'); s.opis=val('opis'); s.status=val('status');
+  s.stopCode=val('stopCode'); s.infoPanel=val('infoPanel');
+  s.locationType=val('locationType'); s.platformCode=val('platformCode'); s.parentStation=val('parentStation');
+  s.slika=editSlika;
+  const la=parseFloat(val('lat')), lo=parseFloat(val('lon')); s.lat=isNaN(la)?null:la; s.lon=isNaN(lo)?null:lo;
+  s.pristup=document.getElementById('f_pristup').checked;
+  s.oprema={}; OPREMA.forEach(o=>{ s.oprema[o[0]]=document.getElementById('f_op_'+o[0]).checked; });
+  closeCard(); render();
+}
+function deleteStop(id){ const s=STAJ.find(x=>x.id===id); if(!s) return; if(!confirm('Obrisati stajalište „'+s.ime+'"?')) return; STAJ=STAJ.filter(x=>x.id!==id); closeCard(); render(); }
+
+document.getElementById('cardBg').addEventListener('click',function(e){ if(e.target===this) closeCard(); });
+render();
+</script>
+</body>
+</html>
