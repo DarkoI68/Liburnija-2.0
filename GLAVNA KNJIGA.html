@@ -858,7 +858,7 @@ var PU_GRAD = [
   { id:"diklo1",     naziv:"DIKLO I",                broj:"8",  gbr:"252",     smjene:3 },
   { id:"diklo2",     naziv:"DIKLO II",               broj:"8",  gbr:"258",     smjene:2 },
   { id:"gazenica",   naziv:"GAŽENICA",               broj:"9",  gbr:"253", smjene:2 },
-  { id:"crvene",     naziv:"CRVENE KUĆE",            broj:"11", gbr:"303",     smjene:2 },
+  { id:"crvene",     naziv:"CRVENE KUĆE",            broj:"11/1", gbr:"303",     smjene:2 },
   { id:"dezurni1",   naziv:"DEŽURNI I",              broj:"",   gbr:"301",     smjene:3 },
   { id:"dezurni2",   naziv:"DEŽURNI II",             broj:"",   gbr:"305",     smjene:2 },
   { id:"dezurni3",   naziv:"DEŽURNI III",            broj:"",   gbr:"300",     smjene:1 }
@@ -1901,7 +1901,7 @@ function renderDan(){
   L += '<div class="kn-sect"><div class="kn-sect-tit">Raspored prigradskog osoblja</div>';
   L += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 14px">';
   [PU_PRIGRAD.slice(0,19), PU_PRIGRAD.slice(19)].forEach(function(half, hi){
-    L += '<table class="kn-tbl"><thead><tr><th>Rb</th><th>Linija</th><th>Gar. br.</th><th colspan="2">Vozači</th></tr></thead><tbody>';
+    L += '<table class="kn-tbl"><thead><tr><th>Rb</th><th>Radni zadatak</th><th>Gar. br.</th><th colspan="2">Vozači</th></tr></thead><tbody>';
     half.forEach(function(l, i){
       var rb = hi * 19 + i + 1;
       var voz = dan ? (dan.prigrad[l.id] || []) : [];
@@ -1920,7 +1920,7 @@ function renderDan(){
   L += '</div></div>';
 
   L += '<div class="kn-sect"><div class="kn-sect-tit">Raspored gradskog osoblja</div>';
-  L += '<table class="kn-tbl"><thead><tr><th>Rb</th><th>Linija</th><th>Br.</th><th>Gar. br.</th><th>I smjena</th><th>II smjena</th><th>III smjena</th></tr></thead><tbody>';
+  L += '<table class="kn-tbl"><thead><tr><th>Rb</th><th>Radni zadatak</th><th>Linije</th><th>Gar. br.</th><th>I smjena</th><th>II smjena</th><th>III smjena</th></tr></thead><tbody>';
   PU_GRAD.forEach(function(l, i){
     var voz = dan ? (dan.grad[l.id] || []) : [];
     var tplT = tplDana.grad[l.id] || [];
