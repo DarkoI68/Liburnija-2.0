@@ -1,0 +1,1680 @@
+{
+  "groups": [
+    {
+      "name": "Temelj",
+      "modules": [
+        {
+          "id": "core",
+          "label": "CORE — matični podaci",
+          "icon": "core",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Djelatnici",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Odjeli",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Korisnici sustava",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Role i ovlasti",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Vozila",
+              "file": "Vozila.html",
+              "locked": true
+            },
+            {
+              "name": "Linije",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Stajališta",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Zone",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Tarife",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Partneri",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Dobavljači",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Poslovne jedinice",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Postavke sustava",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Audit log",
+              "file": "",
+              "locked": false
+            }
+          ]
+        },
+        {
+          "id": "dms",
+          "label": "DMS — dokumenti",
+          "icon": "dms",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Dokumenti",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Ugovori",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Odluke",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Dopisi",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Zapisnici",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Putni nalozi",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Radni nalozi",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Digitalni potpisi",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Verzioniranje",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Arhiva",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Prava pristupa",
+              "file": "",
+              "locked": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Operativa",
+      "modules": [
+        {
+          "id": "promet",
+          "label": "Upravljanje prometom",
+          "icon": "promet",
+          "type": "sections",
+          "sections": [
+            {
+              "name": "Postavke",
+              "pages": [
+                {
+                  "name": "Linije",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Vozni redovi",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Rute",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Radni zadaci",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Planiranje rute (GPS)",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Režimi prometovanja",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "GTFS / GTFS-RT export",
+                  "file": "",
+                  "locked": false
+                }
+              ]
+            },
+            {
+              "name": "Knjiga vožnje — Plan rada",
+              "pages": [
+                {
+                  "name": "Kalendar",
+                  "file": "GLAVNA%20KNJIGA.html#kalendar",
+                  "locked": true
+                },
+                {
+                  "name": "Predlošci",
+                  "file": "GLAVNA%20KNJIGA.html#templati",
+                  "locked": true
+                },
+                {
+                  "name": "Grupe linija",
+                  "file": "GLAVNA%20KNJIGA.html#grupe",
+                  "locked": true
+                },
+                {
+                  "name": "Postavke",
+                  "file": "GLAVNA%20KNJIGA.html#postavke",
+                  "locked": true
+                }
+              ]
+            },
+            {
+              "name": "Dispečerski centar",
+              "pages": [
+                {
+                  "name": "Glavni pregled rada sustava",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Linijski pregled",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Linije i rute / polasci",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Status vozila",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Radovi na cesti",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Prijava kvara",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Incidenti",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Poruke i obavijesti",
+                  "file": "",
+                  "locked": false
+                }
+              ]
+            },
+            {
+              "name": "Izvršenje voznog reda",
+              "pages": [
+                {
+                  "name": "Grafički prikaz izvršenja",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Kašnjenja",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Prerani polasci",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Neizvršeni polasci",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Izvanredni događaji",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Analiza vozača",
+                  "file": "",
+                  "locked": false
+                }
+              ]
+            },
+            {
+              "name": "Evidencija izvršenja",
+              "pages": [
+                {
+                  "name": "Evidencija radnih zadataka",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Evidencija kilometara",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Potrošnja goriva i energije",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Korekcije i odstupanja",
+                  "file": "",
+                  "locked": false
+                }
+              ]
+            },
+            {
+              "name": "Pregled sati rada",
+              "pages": [
+                {
+                  "name": "Mjesečni obračun sati",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Plan rada — pregled",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Radni sati po danima",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Kontrola pravilnosti",
+                  "file": "",
+                  "locked": false
+                }
+              ]
+            },
+            {
+              "name": "Informiranje putnika",
+              "pages": [
+                {
+                  "name": "Putničke informacije",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Ekrani na stajalištima",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Ekrani u autobusima",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Info na kolodvoru",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "WEB portal",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Mobilna aplikacija",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Push obavijesti",
+                  "file": "",
+                  "locked": false
+                }
+              ]
+            },
+            {
+              "name": "Izvještaji",
+              "pages": [
+                {
+                  "name": "Izvršenje voznog reda",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Kašnjenja",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Neizvršeni polasci",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Kilometri",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Vozila",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Vozači",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Posebne vožnje",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Ugovorene vožnje",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "Prijevoz OSI",
+                  "file": "",
+                  "locked": false
+                },
+                {
+                  "name": "KPI izvještaji",
+                  "file": "",
+                  "locked": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "kontrola",
+          "label": "Kontrola i brojanje",
+          "icon": "kontrola",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Brojači putnika",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "AI brojanje kamerama",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Ulaz/izlaz po stajalištu",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Popunjenost vozila",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "App kontrolora",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Provjera karata",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Provjera pretplata",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Izdavanje kazni",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Zapisnici",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Naplata kazni",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Analitika švercanja",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Preporuka kontrole",
+              "file": "",
+              "locked": false
+            }
+          ]
+        },
+        {
+          "id": "kolodvor",
+          "label": "Upravljanje kolodvorom",
+          "icon": "kolodvor",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Peroni",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Dolasci",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Odlasci",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Najave",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Displeji",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Razglas",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Kolodvorska prodaja",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Rezervacija perona",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Evidencija ulaza",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Parking autobusa",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Vanjski prijevoznici",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Kolodvorske naknade",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Najam prostora",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Obračun usluga",
+              "file": "",
+              "locked": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Prihod",
+      "modules": [
+        {
+          "id": "prodaja",
+          "label": "Prodaja karata",
+          "icon": "prodaja",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Tarifni sustav",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Vrste karata",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Pretplate",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Prepaid kartice",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "QR karte",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "NFC kartice",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Prodaja kod vozača",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Šalteri",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Web shop",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Mobilna aplikacija",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Self-service automati",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Kiosci",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Vanjski partneri",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Agregatori",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Fiskalizacija",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Povrati",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Storna",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Reklamacije karata",
+              "file": "",
+              "locked": false
+            }
+          ]
+        },
+        {
+          "id": "blagajne",
+          "label": "Blagajne i cash",
+          "icon": "blagajne",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Blagajna vozača",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Razduživanje vozača",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Blagajna šaltera",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Razduživanje šaltera",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Centralna blagajna",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Polog u banku",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "POS obračun",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Preuzimanje iz automata",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Dnevni zaključak",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Fiskalni zaključak",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Izvještaj po vozaču",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Izvještaj po blagajniku",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Izvještaj po mjestu",
+              "file": "",
+              "locked": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Flota",
+      "modules": [
+        {
+          "id": "tehnicka",
+          "label": "Tehnička služba",
+          "icon": "tehnicka",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Vozila",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Prijava kvara",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Pregled kvarova",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Servisni plan",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Radni nalozi",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Tehnički pregledi",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Skladište",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Inventurno stanje",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Rezervni dijelovi",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Gume",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Nabava dijelova",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Jamstva",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Reklamacije dobavljačima",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Povijest vozila",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "AI dijagnostika",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Predikcija kvarova",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Remote CANBUS",
+              "file": "",
+              "locked": false
+            }
+          ]
+        },
+        {
+          "id": "infra",
+          "label": "Infrastruktura i energenti",
+          "icon": "infra",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Interna pumpa",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Spremnici goriva",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Naručivanje goriva",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Zaprimanje goriva",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Ulaz robe",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Izdavanje goriva",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Evidencija točenja",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Potrošnja po vozilu",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Potrošnja po vozaču",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "l/100 km",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Anomalije potrošnje",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Punjači",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Električni autobusi",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Baterije / SOC",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Raspored punjenja",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Trafostanice",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Solarna elektrana",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "BESS",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "EMS / peak shaving",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "kWh/km",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Stajališta",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Nadstrešnice",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Displeji",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Parkirališta",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Inventar infrastrukture",
+              "file": "",
+              "locked": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tehnologija",
+      "modules": [
+        {
+          "id": "it",
+          "label": "IT služba",
+          "icon": "it",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Komunikacijski sloj",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "API gateway",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Integracije",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "MUP",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Fiskalizacija",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "SMS",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "E-mail",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Push notifikacije",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Banke",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "POS sustavi",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Logovi",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Audit",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Service monitor",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Routeri",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "SIM kartice",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "VPN",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Validatori",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Onboard računala",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Vozački terminali",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Kamere (uređaj)",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Putnički displeji",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "OTA update",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Remote desktop",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Remote shell",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Helpdesk",
+              "file": "",
+              "locked": false
+            }
+          ]
+        },
+        {
+          "id": "video",
+          "label": "Video nadzor i sigurnost",
+          "icon": "video",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Kamere u autobusima",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Kamere na kolodvoru",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Live video",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Pregled snimki",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Incidenti",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Panic tipka",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "AI: vandalizam",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "AI: pad putnika",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "AI: dim",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "AI: ostavljeni predmet",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Evidencija pristupa",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Pravila čuvanja (GDPR)",
+              "file": "",
+              "locked": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Financije",
+      "modules": [
+        {
+          "id": "fin",
+          "label": "Financije i komercijala",
+          "icon": "fin",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Prihodi od karata",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Subvencije grada",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Subvencije županije",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Školski prijevoz",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Ugovorni prijevoz",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Posebne linije",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Fakturiranje",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Izlazni računi",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Ulazni računi",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Obračun partnera",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Provizije kioska",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Provizije agregatora",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Prihod po liniji",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Trošak po km",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Trošak po putniku",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Export u računovodstvo",
+              "file": "",
+              "locked": false
+            }
+          ]
+        },
+        {
+          "id": "nabava",
+          "label": "Javna nabava",
+          "icon": "nabava",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Plan nabave",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Predmeti nabave",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Dokumentacija",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Ponuditelji",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Dobavljači",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Ugovori",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Narudžbenice",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Realizacija ugovora",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Garancije",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Reklamacije",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "EU / NPOO projekti",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Izvještaji o nabavi",
+              "file": "",
+              "locked": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ljudi",
+      "modules": [
+        {
+          "id": "kadr",
+          "label": "Kadrovska služba",
+          "icon": "kadr",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Djelatnici",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Ugovori",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Evidencija rada",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Bolovanja",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Godišnji odmori",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Slobodni dani",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Licence vozača",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Liječnički pregledi",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Tahograf — radno vrijeme",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Zaštita na radu (HSE)",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Obuke (Kod 95)",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Raspored rada",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Obračun sati",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Payroll export",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Kadrovska analitika",
+              "file": "",
+              "locked": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Komercijala",
+      "modules": [
+        {
+          "id": "mkt",
+          "label": "Marketing i oglašavanje",
+          "icon": "mkt",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Oglašavanje u autobusima",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Oglašavanje na stajalištima",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Oglašavanje na kolodvoru",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Digitalni ekrani",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Upravljanje sadržajem",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Kampanje",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Cjenici",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Ugovori s oglašivačima",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Statistika prikaza",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Fakturiranje oglašavanja",
+              "file": "",
+              "locked": false
+            }
+          ]
+        },
+        {
+          "id": "crm",
+          "label": "CRM i podrška",
+          "icon": "crm",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Korisnici",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Prigovori",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Reklamacije",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Povrati novca",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Izgubljeno-nađeno",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Kontakt centar",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "E-mail podrška",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Chat podrška",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Korisnički portal",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Loyalty",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Zadar City Card",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Obavijesti korisnicima",
+              "file": "",
+              "locked": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Uvid",
+      "modules": [
+        {
+          "id": "bi",
+          "label": "BI i AI analitika",
+          "icon": "bi",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Dashboard direktora",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Dashboard prometa",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Dashboard financija",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Dashboard tehničke",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Dashboard IT-a",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Dashboard energije",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Dashboard kontrole",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Predikcija putnika",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Predikcija kvarova",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Predikcija kašnjenja",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Optimizacija voznog reda",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Optimizacija punjenja",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Optimizacija kontrole",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Anomalije u prodaji",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Anomalije u potrošnji",
+              "file": "",
+              "locked": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
