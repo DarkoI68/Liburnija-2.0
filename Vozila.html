@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="hr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liburnija — Vozila</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+html[data-theme="dark"]{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2330;--bgh:#212936;--bdr:#2d3748;--tp:#f0f4f8;--ts:#8b95a1;--tm:#4b5563;--acc:#f97316;--accs:rgba(249,115,22,.14);--blu:#3b82f6;--grn:#22c55e;--red:#ef4444;--grns:rgba(34,197,94,.15);--reds:rgba(239,68,68,.14);--yel:#eab308;--yels:rgba(234,179,8,.15)}
+html[data-theme="light"]{--bg:#f0f4f8;--bg2:#fff;--bg3:#f8fafc;--bgh:#f1f5f9;--bdr:#e2e8f0;--tp:#0f172a;--ts:#64748b;--tm:#94a3b8;--acc:#f97316;--accs:rgba(249,115,22,.09);--blu:#3b82f6;--grn:#16a34a;--red:#dc2626;--grns:rgba(22,163,74,.1);--reds:rgba(220,38,38,.09);--yel:#ca8a04;--yels:rgba(202,138,4,.12)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--tp);height:100vh;display:flex;flex-direction:column;font-size:13px;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:5px}::-webkit-scrollbar-track{background:transparent}
+
+.top{display:flex;align-items:center;gap:12px;padding:11px 18px;background:var(--bg2);border-bottom:1.5px solid var(--bdr);flex-shrink:0}
+.brand{display:flex;align-items:center;gap:9px}
+.brand-ic{width:30px;height:30px;border-radius:8px;background:var(--accs);display:flex;align-items:center;justify-content:center}
+.brand-ic svg{width:17px;height:17px;stroke:var(--acc);stroke-width:2.2;fill:none}
+.brand-tit{font-size:14px;font-weight:800;letter-spacing:.2px}
+.brand-sub{font-size:10px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px}
+.crumb{font-size:11px;color:var(--ts);font-weight:600;margin-left:6px}.crumb b{color:var(--acc)}
+.top-sp{flex:1}
+.tbtn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:8px;color:var(--ts)}
+.tbtn:hover{border-color:var(--acc);color:var(--acc)}
+.tbtn svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none}
+
+.wrap{flex:1;overflow-y:auto;min-height:0}
+.inner{max-width:1320px;margin:0 auto;padding:20px 24px 60px}
+.hd{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.hd h1{font-size:22px;font-weight:800;letter-spacing:.2px}
+.hd .eyebrow{font-size:10px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.hd-act{display:flex;gap:9px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:8px;font-size:12px;font-weight:700;padding:8px 13px;transition:all .12s}
+.btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.4;fill:none}
+.btn-acc{background:var(--acc);color:#fff}.btn-acc:hover{filter:brightness(1.06)}
+.btn-ghost{background:var(--bg2);border:1.5px solid var(--bdr);color:var(--ts)}.btn-ghost:hover{border-color:var(--acc);color:var(--acc)}
+.btn-danger{background:transparent;border:1.5px solid var(--bdr);color:var(--red)}.btn-danger:hover{background:var(--red);border-color:var(--red);color:#fff}
+
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:11px;padding:12px 14px}
+.kpi-n{font-size:21px;font-weight:800;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:7px;line-height:1}
+.kpi-n .d{width:8px;height:8px;border-radius:50%;background:var(--tm)}.kpi-n .d.g{background:var(--grn)}.kpi-n .d.r{background:var(--red)}.kpi-n .d.b{background:var(--blu)}.kpi-n .d.y{background:var(--yel)}
+.kpi-l{font-size:10px;color:var(--ts);font-weight:600;margin-top:6px;text-transform:uppercase;letter-spacing:.3px}
+
+.toolbar{display:flex;align-items:center;gap:9px;margin-bottom:13px;flex-wrap:wrap}
+.search{position:relative;display:flex;align-items:center;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;padding:0 11px;height:38px;flex:1;min-width:220px}
+.search:focus-within{border-color:var(--acc)}
+.search svg{width:15px;height:15px;stroke:var(--ts);stroke-width:2;fill:none;flex-shrink:0;margin-right:8px}
+.search input{flex:1;background:transparent;border:0;outline:0;font-family:inherit;font-size:13px;font-weight:500;color:var(--tp)}
+.fchips{display:flex;gap:6px;flex-wrap:wrap}
+.fchip{padding:8px 13px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;font-size:11.5px;font-weight:700;color:var(--ts);transition:all .12s}
+.fchip:hover{border-color:var(--acc);color:var(--tp)}
+.fchip.on{background:var(--accs);border-color:var(--acc);color:var(--acc)}
+.fsel{height:38px;font-family:inherit;font-size:12px;font-weight:700;color:var(--tp);background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;padding:0 10px}
+.fsel:focus{outline:none;border-color:var(--acc)}
+
+.tblwrap{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:13px;overflow:hidden}
+table.fleet{width:100%;border-collapse:collapse;font-size:12.5px}
+table.fleet th{font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:11px 12px;border-bottom:1.5px solid var(--bdr);white-space:nowrap;cursor:pointer;user-select:none;background:var(--bg3)}
+table.fleet th:hover{color:var(--acc)}
+table.fleet th .ar{opacity:.5;font-size:9px}
+table.fleet td{padding:9px 12px;border-bottom:1px solid var(--bdr);vertical-align:middle;white-space:nowrap}
+table.fleet tr:last-child td{border-bottom:none}
+table.fleet tbody tr{cursor:pointer;transition:background .1s}
+table.fleet tbody tr:hover{background:var(--bgh)}
+.gbr{font-family:"DM Mono",monospace;font-weight:600;font-size:12.5px;background:var(--bg3);border:1px solid var(--bdr);border-radius:6px;padding:2px 8px;display:inline-block;font-variant-numeric:tabular-nums}
+.reg{font-family:"DM Mono",monospace;font-weight:500;letter-spacing:.3px}
+.mk{font-weight:700}.md{color:var(--ts);font-weight:500}
+.num{text-align:center;font-variant-numeric:tabular-nums}
+.euro{font-size:10px;font-weight:800;letter-spacing:.3px;padding:2px 7px;border-radius:5px;background:var(--bg3);border:1px solid var(--bdr);color:var(--ts)}
+.euro.e6{background:var(--grns);color:var(--grn);border-color:transparent}
+.pill{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:20px;display:inline-block}
+.pill.aktivno{background:var(--grns);color:var(--grn)}
+.pill.odjavljeno{background:var(--bg3);color:var(--ts);border:1px solid var(--bdr)}
+.pill.rashod{background:var(--reds);color:var(--red)}
+.dexp{font-family:"DM Mono",monospace;font-size:11.5px}.dexp.soon{color:var(--yel);font-weight:600}.dexp.over{color:var(--red);font-weight:600}.dexp.none{color:var(--tm)}
+.empty-tbl{padding:40px;text-align:center;color:var(--ts);font-weight:600}
+
+/* Card modal */
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-start;justify-content:center;z-index:200;padding:32px 20px;overflow-y:auto}
+.mbg.on{display:flex}
+.card{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:15px;width:100%;max-width:760px;box-shadow:0 24px 70px rgba(0,0,0,.32);overflow:hidden}
+.card-hd{display:flex;align-items:flex-start;gap:14px;padding:18px 22px;border-bottom:1.5px solid var(--bdr);background:var(--bg3)}
+.card-hd .gbr{font-size:14px;padding:4px 11px}
+.card-hd-main{flex:1;min-width:0}
+.card-hd-tit{font-size:18px;font-weight:800;margin-top:7px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.card-hd-sub{font-size:11.5px;color:var(--ts);font-weight:600;margin-top:3px}
+.card-x{width:30px;height:30px;border:none;background:transparent;border-radius:7px;color:var(--ts);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-x:hover{background:var(--bgh);color:var(--tp)}.card-x svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none}
+.card-bd{padding:18px 22px}
+.sect-t{font-size:10px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin:4px 0 11px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px 22px;margin-bottom:20px}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.4px}
+.fld input,.fld select{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--tp);background:var(--bg3);border:1.5px solid var(--bdr);border-radius:7px;padding:7px 10px;width:100%}
+.fld input.mono{font-family:"DM Mono",monospace;font-weight:500}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--acc);background:var(--bg2)}
+.servis-link{display:flex;align-items:center;gap:11px;padding:13px 15px;background:var(--bg3);border:1.5px dashed var(--bdr);border-radius:10px;margin-bottom:6px}
+.servis-link .si{width:34px;height:34px;border-radius:8px;background:var(--bg2);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.servis-link .si svg{width:17px;height:17px;stroke:var(--acc);stroke-width:2;fill:none}
+.servis-link .st{flex:1}.servis-link .st b{font-size:12.5px;font-weight:700}.servis-link .st div{font-size:11px;color:var(--ts);font-weight:500;margin-top:1px}
+.card-ft{display:flex;align-items:center;gap:9px;padding:15px 22px;border-top:1.5px solid var(--bdr);background:var(--bg3)}
+.card-ft .sp{flex:1}
+@media (max-width:720px){.kpis{grid-template-columns:repeat(3,1fr)}.fgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">
+    <div class="brand-ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 18v2M16 18v2"/><circle cx="7.5" cy="13.5" r="1"/><circle cx="16.5" cy="13.5" r="1"/></svg></div>
+    <div><div class="brand-tit">Liburnija</div><div class="brand-sub">Vozila</div></div>
+  </div>
+  <div class="crumb"><b>CORE</b> › Vozila</div>
+  <div class="top-sp"></div>
+  <button class="tbtn" id="themeBtn" title="Tema" onclick="toggleTheme()"><svg id="themeIc" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+</div>
+
+<div class="wrap"><div class="inner">
+  <div class="hd">
+    <div><div class="eyebrow">Matični registar flote</div><h1>Vozila</h1></div>
+    <div class="hd-act">
+      <button class="btn btn-ghost" onclick="window.print()"><svg viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Ispis registra</button>
+      <button class="btn btn-acc" onclick="openCard(null)"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Novo vozilo</button>
+    </div>
+  </div>
+
+  <div class="kpis" id="KPIS"></div>
+
+  <div class="toolbar">
+    <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg><input id="q" type="text" placeholder="Traži po GBR-u, registraciji, marki, modelu, šasiji…" oninput="render()"></div>
+    <select class="fsel" id="fkat" onchange="render()"><option value="">Sve vrste</option><option>Autobus</option><option>Minibus</option><option>Osobno</option><option>Teretno</option></select>
+    <div class="fchips" id="FSTAT"></div>
+  </div>
+
+  <div class="tblwrap"><table class="fleet">
+    <thead><tr id="THEAD"></tr></thead>
+    <tbody id="TBODY"></tbody>
+  </table></div>
+</div></div>
+
+<div class="mbg" id="cardBg"><div class="card" id="cardEl"></div></div>
+
+<script>
+var VEHICLES_RAW = {"26":{"reg":"ZD 659 MS","vrsta":"MA","marka":"VOLKSWAGEN","tip":null,"model":"CRAFTER 2.5 TDI","sasija":"WV1ZZZ2EZ96018433","god":2009,"prva_reg":"2009-01-14","reg_istek":"2027-02-08","sjedenje":23,"stajanje":null,"masa":3080,"snaga":100,"motor":"DIESEL - EURO IV","duzina":7345,"gume_p":"195/75 R 16","gume_z":"195/75 R 16"},"29":{"reg":"ZD 566 RH","vrsta":"M2","marka":"MERCEDES","tip":null,"model":"SPRINTER C-243297 515 CDI","sasija":"WDB9066571S329199","god":2008,"prva_reg":"2009-02-09","reg_istek":"2027-03-09","sjedenje":20,"stajanje":null,"masa":3340,"snaga":110,"motor":"DIESEL - EURO IV","duzina":7345,"gume_p":"205/75R16","gume_z":"205/75R16"},"240":{"reg":"ZD 314 PF","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"O 530","model":"CITARO","sasija":"WEB62808313700580","god":2008,"prva_reg":"2008-05-28","reg_istek":"2026-06-16","sjedenje":33,"stajanje":73,"masa":10695,"snaga":220,"motor":"DIESEL - EURO IV","duzina":11950,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"},"241":{"reg":"ZD 764 FI","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"O 530 CITARO","model":null,"sasija":"WEB62808313700581","god":2008,"prva_reg":"2008-05-28","reg_istek":"2026-05-28","sjedenje":33,"stajanje":73,"masa":10695,"snaga":185,"motor":"DIESEL - EURO IV","duzina":11950,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"},"242":{"reg":"ZD 763 FI","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"O 530","model":"CITARO","sasija":"WEB62808313700582","god":2008,"prva_reg":"2008-05-28","reg_istek":"2025-05-28","sjedenje":33,"stajanje":73,"masa":10770,"snaga":220,"motor":"DIESEL - EURO IV","duzina":11950,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"},"243":{"reg":"ZD 794 FI","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"O 530","model":"CITARO","sasija":"WEB62808313700583","god":2008,"prva_reg":"2008-05-30","reg_istek":"2026-05-30","sjedenje":33,"stajanje":73,"masa":10695,"snaga":220,"motor":"DIESEL - EURO IV","duzina":11950,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"},"244":{"reg":"ZD 611 PK","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"O530 CITARO","model":null,"sasija":"WEB62808313700584","god":2008,"prva_reg":"2008-06-04","reg_istek":"2026-12-11","sjedenje":33,"stajanje":73,"masa":10695,"snaga":220,"motor":"DIESEL EURO IV","duzina":11950,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"},"245":{"reg":"ZD 264 OF","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"CITARO","model":"O 530","sasija":"WEB62808313700587","god":2008,"prva_reg":"2008-06-05","reg_istek":"2025-09-20","sjedenje":32,"stajanje":74,"masa":10695,"snaga":220,"motor":"DIESEL - EURO IV","duzina":11950,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"},"246":{"reg":"ZD 613 GZ","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"CITARO C-270800","model":"O 530","sasija":"WEBE85GE693117737","god":2009,"prva_reg":"2012-07-02","reg_istek":"2026-06-28","sjedenje":34,"stajanje":48,"masa":12410,"snaga":220,"motor":"DIESEL - EURO V","duzina":12000,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"},"247":{"reg":"ZD 502 HB","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"CITARO C-270798","model":"O 530","sasija":"WEBE85GE693117740","god":2012,"prva_reg":"2012-07-02","reg_istek":"2026-12-29","sjedenje":34,"stajanje":48,"masa":12410,"snaga":220,"motor":"DIESEL - EURO V","duzina":12000,"gume_p":"275/70 R 22.5 145J","gume_z":"275/70 R 22.5 145J"},"248":{"reg":"ZD 248 HB","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"CITARO C-272601","model":"O 530","sasija":"WEBE85GE893117853","god":2009,"prva_reg":"2012-07-02","reg_istek":"2026-06-28","sjedenje":34,"stajanje":48,"masa":12410,"snaga":220,"motor":"DIESEL - EURO V","duzina":12000,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"},"249":{"reg":"ZD 247 HB","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"CITARO C-270797","model":"O 530","sasija":"WEBE85GE793117889","god":2012,"prva_reg":"2012-07-02","reg_istek":"2026-06-28","sjedenje":34,"stajanje":48,"masa":12410,"snaga":220,"motor":"DIESEL - EURO V","duzina":12000,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"},"250":{"reg":"ZD 162 HB","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"CITARO C-270799","model":"O 530","sasija":"WEBE85GE693117950","god":2012,"prva_reg":"2012-07-09","reg_istek":"2026-06-28","sjedenje":34,"stajanje":48,"masa":12410,"snaga":220,"motor":"DIESEL - EURO V","duzina":12000,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"},"251":{"reg":"ZD 272 IC","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"O 530","model":"CITARO","sasija":"WEB62808313111456","god":2006,"prva_reg":"2015-01-12","reg_istek":"2027-01-12","sjedenje":34,"stajanje":57,"masa":11610,"snaga":220,"motor":"DIESEL - EURO IV","duzina":12000,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"},"253":{"reg":"ZD 253 JI","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"CITARO C2","model":"O 530","sasija":"WEB62803513133160","god":2017,"prva_reg":"2017-05-04","reg_istek":"2026-06-14","sjedenje":32,"stajanje":70,"masa":11100,"snaga":220,"motor":"DIESEL - EURO VI","duzina":12135,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"},"254":{"reg":"ZD 254 JI","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"CITARO C2","model":"O 530","sasija":"WEB62803513133161","god":2017,"prva_reg":"2017-05-04","reg_istek":"2027-05-04","sjedenje":32,"stajanje":70,"masa":11100,"snaga":220,"motor":"DIESEL - EURO VI","duzina":12135,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"},"255":{"reg":"ZD 255 JI","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"CITARO C2","model":"O 530","sasija":"WEB62803513133162","god":2017,"prva_reg":"2017-05-04","reg_istek":"2027-05-04","sjedenje":32,"stajanje":70,"masa":11100,"snaga":220,"motor":"DIESEL - EURO VI","duzina":12135,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"},"256":{"reg":"ZD 256 JI","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"CITARO C2","model":"O 530","sasija":"WEB62803513133163","god":2017,"prva_reg":"2017-05-04","reg_istek":"2027-05-04","sjedenje":32,"stajanje":70,"masa":11100,"snaga":220,"motor":"DIESEL - EURO VI","duzina":12135,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"},"257":{"reg":"ZD 257 JI","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"CITARO C2","model":"O 530","sasija":"WEB62803513133164","god":2017,"prva_reg":"2017-05-04","reg_istek":"2026-05-04","sjedenje":32,"stajanje":70,"masa":11100,"snaga":220,"motor":"DIESEL - EURO VI","duzina":12135,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"},"258":{"reg":"ZD 120 NI","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"628B01","model":"CONECTO","sasija":"WEB62833113291945","god":2022,"prva_reg":"2022-10-04","reg_istek":"2026-10-04","sjedenje":35,"stajanje":64,"masa":10863,"snaga":220,"motor":"Diesel","duzina":12134,"gume_p":"275/70 R 22,5","gume_z":"275/70 R 22,5"},"259":{"reg":"ZD 121 NI","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"628B01","model":"CONECTO","sasija":"WEB62833113291946","god":2022,"prva_reg":"2022-10-05","reg_istek":"2026-10-05","sjedenje":35,"stajanje":64,"masa":10863,"snaga":220,"motor":"Diesel","duzina":12134,"gume_p":"275/70 R 22,5","gume_z":"275/70 R 22,5"},"260":{"reg":"ZD 122 NI","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"628B01","model":"CONECTO","sasija":"WEB62833113291947","god":2022,"prva_reg":"2022-10-06","reg_istek":"2025-10-06","sjedenje":35,"stajanje":64,"masa":10863,"snaga":220,"motor":"Diesel","duzina":12134,"gume_p":"275/70 R 22,5","gume_z":"275/70 R 22,5"},"261":{"reg":"ZD 123 NI","vrsta":"M3 - AUTOBUS","marka":"Mercedes-Benz","tip":"628B01","model":"Conecto","sasija":"WEB62833113291948","god":2022,"prva_reg":"2022-10-11","reg_istek":"2026-10-11","sjedenje":35,"stajanje":64,"masa":10863,"snaga":220,"motor":"DIESEL","duzina":12134,"gume_p":"275/70R22,5","gume_z":"275/70R22,5"},"262":{"reg":"ZD 124 NI","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"628B01","model":"CONECTO","sasija":"WEB62833113291949","god":2022,"prva_reg":"2022-10-12","reg_istek":"2026-10-12","sjedenje":35,"stajanje":64,"masa":10863,"snaga":220,"motor":"DIESEL","duzina":12134,"gume_p":"275/70R22,5","gume_z":"275/70R22,5"},"263":{"reg":"ZD 125 NI","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"628B01","model":"CONECTO","sasija":"WEB62833113291950","god":2022,"prva_reg":"2022-10-13","reg_istek":"2026-10-13","sjedenje":35,"stajanje":64,"masa":10863,"snaga":220,"motor":"DIESEL","duzina":12134,"gume_p":"275/70R22,5","gume_z":"275/70R22,5"},"300":{"reg":"ZD 763 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"PS","model":"URBANWAY","sasija":"VNE4226P400310724","god":2019,"prva_reg":"2019-08-30","reg_istek":"2026-08-30","sjedenje":31,"stajanje":58,"masa":12035,"snaga":265,"motor":"DIESEL - EURO VI","duzina":12000,"gume_p":"275/70 R 22,5","gume_z":"275/70 R 22,5"},"301":{"reg":"ZD 764 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"PS","model":"URBANWAY","sasija":"VNE4226P200310785","god":2019,"prva_reg":"2019-08-30","reg_istek":"2026-08-30","sjedenje":31,"stajanje":58,"masa":12035,"snaga":265,"motor":"DIESEL - EURO VI","duzina":12000,"gume_p":"275/70 R 22,5","gume_z":"275/70 R 22,5"},"302":{"reg":"ZD 765 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"PS","model":"URBANWAY","sasija":"VNE4226PX00310789","god":2019,"prva_reg":"2019-08-30","reg_istek":"2026-08-30","sjedenje":31,"stajanje":58,"masa":12035,"snaga":265,"motor":"DIESEL - EURO VI","duzina":12000,"gume_p":"275/70 R 22,5","gume_z":"275/70 R 22,5"},"303":{"reg":"ZD 766 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"URBANWAY","model":"CURSOR","sasija":"VNE4226P800310788","god":2019,"prva_reg":"2019-08-28","reg_istek":"2026-08-28","sjedenje":31,"stajanje":58,"masa":12035,"snaga":265,"motor":"DIESEL - EURO VI","duzina":12000,"gume_p":"275/70 R 22,5","gume_z":"275/70 R 22,5"},"304":{"reg":"ZD 767 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"URBANWAY","model":"CURSOR","sasija":"VNE4226P100310793","god":2019,"prva_reg":"2019-08-28","reg_istek":"2026-08-28","sjedenje":31,"stajanje":58,"masa":12035,"snaga":265,"motor":"DIESEL - EURO VI","duzina":12000,"gume_p":"275/70 R 22,5","gume_z":"275/70 R 22,5"},"305":{"reg":"ZD 768 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"URBANWAY","model":"CURSOR","sasija":"VNE4226P700310796","god":2019,"prva_reg":"2019-08-28","reg_istek":"2026-08-28","sjedenje":31,"stajanje":58,"masa":12035,"snaga":265,"motor":"DIESEL - EURO VI","duzina":12000,"gume_p":"275/70 R 22,5","gume_z":"275/70 R 22,5"},"400":{"reg":"ZD 874 LB","vrsta":"M3 - AUTOBUS","marka":"IRISBUS","tip":"CROSSWAY","model":"SFR160","sasija":"VNESFR1600M009391","god":2010,"prva_reg":"2010-09-08","reg_istek":"2026-05-17","sjedenje":54,"stajanje":20,"masa":12300,"snaga":243,"motor":"DIESEL - EURO V","duzina":11995,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"401":{"reg":"ZD 418 HG","vrsta":"M3 - AUTOBUS","marka":"IRISBUS","tip":"ARWAY","model":"SFR160","sasija":"VNESFR1600M006819","god":2010,"prva_reg":"2010-08-02","reg_istek":"2027-01-17","sjedenje":51,"stajanje":22,"masa":12300,"snaga":243,"motor":"DIESEL - EURO V","duzina":11995,"gume_p":"295/80R22.5 152M","gume_z":"295/80R22.5 148M"},"402":{"reg":"ZD 684 JB","vrsta":"M3 - AUTOBUS","marka":"IRISBUS","tip":"CROSSWAY","model":"LINE 12M","sasija":"VNE623P50M026901","god":2016,"prva_reg":"2016-10-18","reg_istek":"2026-10-18","sjedenje":50,"stajanje":21,"masa":11975,"snaga":265,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"403":{"reg":"ZD 769 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N70M039556","god":2019,"prva_reg":"2019-08-01","reg_istek":"2026-08-03","sjedenje":50,"stajanje":30,"masa":11725,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"404":{"reg":"ZD 770 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N90M039557","god":2019,"prva_reg":"2019-08-01","reg_istek":"2026-08-26","sjedenje":50,"stajanje":30,"masa":11725,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"405":{"reg":"ZD 771 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N50M039569","god":2019,"prva_reg":"2019-08-01","reg_istek":"2026-08-27","sjedenje":50,"stajanje":30,"masa":11725,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"406":{"reg":"ZD 772 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N30M039571","god":2019,"prva_reg":"2019-08-01","reg_istek":"2026-08-26","sjedenje":50,"stajanje":30,"masa":11725,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"407":{"reg":"ZD 773 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N20M039593","god":2019,"prva_reg":"2019-07-31","reg_istek":"2026-07-31","sjedenje":50,"stajanje":30,"masa":11550,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"408":{"reg":"ZD 774 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N00M039589","god":2019,"prva_reg":"2019-07-31","reg_istek":"2026-07-31","sjedenje":50,"stajanje":30,"masa":11550,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"409":{"reg":"ZD 775 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N90M039591","god":2019,"prva_reg":"2019-07-31","reg_istek":"2026-07-31","sjedenje":50,"stajanje":30,"masa":11725,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"410":{"reg":"ZD 776 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N40M039594","god":2019,"prva_reg":"2019-07-29","reg_istek":"2026-08-31","sjedenje":50,"stajanje":30,"masa":11550,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"411":{"reg":"ZD 777 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N60M039595","god":2019,"prva_reg":"2019-07-26","reg_istek":"2026-07-29","sjedenje":54,"stajanje":30,"masa":11550,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"412":{"reg":"ZD 778 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N80M039596","god":2019,"prva_reg":"2019-07-24","reg_istek":"2026-08-28","sjedenje":54,"stajanje":30,"masa":11550,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"413":{"reg":"ZD 779 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N00M039608","god":2019,"prva_reg":"2019-07-26","reg_istek":"2026-08-28","sjedenje":54,"stajanje":30,"masa":11550,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"414":{"reg":"ZD 780 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N90M039610","god":2019,"prva_reg":"2019-07-24","reg_istek":"2026-08-27","sjedenje":54,"stajanje":30,"masa":11550,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"415":{"reg":"ZD 781 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N20M039612","god":2019,"prva_reg":"2019-07-25","reg_istek":"2026-07-25","sjedenje":54,"stajanje":30,"masa":11550,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"416":{"reg":"ZD 782 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N10M039861","god":2019,"prva_reg":"2019-07-23","reg_istek":"2026-07-22","sjedenje":54,"stajanje":30,"masa":11550,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"417":{"reg":"ZD 783 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N50M039863","god":2019,"prva_reg":"2019-07-25","reg_istek":"2026-08-27","sjedenje":54,"stajanje":30,"masa":11550,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"418":{"reg":"ZD 784 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N90M039865","god":2019,"prva_reg":"2019-07-25","reg_istek":"2026-07-25","sjedenje":54,"stajanje":30,"masa":11550,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"419":{"reg":"ZD 785 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N50M039880","god":2019,"prva_reg":"2019-07-23","reg_istek":"2026-07-22","sjedenje":54,"stajanje":30,"masa":11550,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"420":{"reg":"ZD 786 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N70M039881","god":2019,"prva_reg":"2019-07-24","reg_istek":"2026-08-31","sjedenje":54,"stajanje":30,"masa":11550,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"421":{"reg":"ZD 787 KU","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N90M039882","god":2019,"prva_reg":"2019-07-24","reg_istek":"2026-08-31","sjedenje":54,"stajanje":30,"masa":11550,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"422":{"reg":"ZD 867 MV","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036NX0M052088","god":2022,"prva_reg":"2022-03-28","reg_istek":"2027-03-28","sjedenje":52,"stajanje":31,"masa":11675,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"423":{"reg":"ZD 868 MV","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N10M052092","god":2022,"prva_reg":"2022-03-28","reg_istek":"2027-03-28","sjedenje":52,"stajanje":31,"masa":11675,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"424":{"reg":"ZD 869 MV","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N30M052093","god":2022,"prva_reg":"2022-03-29","reg_istek":"2027-03-29","sjedenje":52,"stajanje":31,"masa":11675,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"425":{"reg":"ZD 870 MV","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N00M052097","god":2022,"prva_reg":"2022-03-29","reg_istek":"2027-03-29","sjedenje":52,"stajanje":31,"masa":11675,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"426":{"reg":"ZD 871 MV","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N20M052098","god":2022,"prva_reg":"2022-03-30","reg_istek":"2026-03-30","sjedenje":52,"stajanje":31,"masa":11675,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"427":{"reg":"ZD 872 MV","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N40M052099","god":2022,"prva_reg":"2022-03-30","reg_istek":"2027-03-30","sjedenje":52,"stajanje":31,"masa":11675,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"428":{"reg":"ZD 873 MV","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N40M052104","god":2022,"prva_reg":"2022-04-05","reg_istek":"2026-04-05","sjedenje":52,"stajanje":31,"masa":11675,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"429":{"reg":"ZD 874 MV","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N30M052109","god":2022,"prva_reg":"2022-04-05","reg_istek":"2027-04-05","sjedenje":53,"stajanje":31,"masa":11675,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"430":{"reg":"ZD 875 MV","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036NX0M052110","god":2022,"prva_reg":"2022-04-07","reg_istek":"2027-04-07","sjedenje":52,"stajanje":31,"masa":11675,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"431":{"reg":"ZD 876 MV","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N10M052111","god":2022,"prva_reg":"2022-04-08","reg_istek":"2027-04-08","sjedenje":52,"stajanje":31,"masa":11675,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"432":{"reg":"ZD 877 MV","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N30M052112","god":2022,"prva_reg":"2022-04-13","reg_istek":"2027-04-13","sjedenje":52,"stajanje":31,"masa":11675,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"433":{"reg":"ZD 878 MV","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N50M052113","god":2022,"prva_reg":"2022-04-14","reg_istek":"2027-04-14","sjedenje":52,"stajanje":31,"masa":11675,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"434":{"reg":"ZD 879 MV","vrsta":"M3 - AUTOBUS","marka":"IVECO","tip":"CROSSWAY","model":"CBCW3","sasija":"VNE6036N70M052114","god":2022,"prva_reg":"2022-04-14","reg_istek":"2027-04-14","sjedenje":48,"stajanje":31,"masa":11825,"snaga":235,"motor":"DIESEL - EURO VI","duzina":12097,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"507":{"reg":"ZD 404 HO","vrsta":"M3","marka":"MAN","tip":"R14","model":"UL354","sasija":"WMAR14ZZ58T012980","god":2008,"prva_reg":"2014-01-21","reg_istek":"2026-01-21","sjedenje":56,"stajanje":10,"masa":12195,"snaga":257,"motor":"DIESEL EURO IV","duzina":13010,"gume_p":"295/80 R 22.5","gume_z":"295/80 R 22.5"},"508":{"reg":"ZD 406 HO","vrsta":"M3","marka":"MAN","tip":"R14","model":"UL354","sasija":"WMAR14ZZ48T012940","god":2008,"prva_reg":"2014-01-21","reg_istek":"2027-01-21","sjedenje":56,"stajanje":10,"masa":12195,"snaga":257,"motor":"DIESEL EURO IV","duzina":13010,"gume_p":"295/80 R 22.5","gume_z":"295/80 R 22.5"},"509":{"reg":"ZD 360 HU","vrsta":"M3","marka":"MAN","tip":"LIONS CITY LL","model":"A 26","sasija":"WMAA26ZZ08B025549","god":2008,"prva_reg":"2014-07-22","reg_istek":"2026-07-22","sjedenje":43,"stajanje":90,"masa":13910,"snaga":257,"motor":"DIESEL EURO IV","duzina":14705,"gume_p":"275/70 R 22,5","gume_z":"275/70 R 22,5"},"510":{"reg":"ZD 531 HZ","vrsta":"M3","marka":"MAN","tip":"R12","model":"LION'S REGIO R12","sasija":"WMAR12ZZ47T011063","god":2008,"prva_reg":"2014-10-21","reg_istek":"2026-10-21","sjedenje":58,"stajanje":null,"masa":11420,"snaga":225,"motor":"DIESEL EURO IV","duzina":12250,"gume_p":"295/80 R 22.5","gume_z":"295/80 R 22.5"},"512":{"reg":"ZD 745 IL","vrsta":"M3","marka":"MAN","tip":"LIONS REGIO","model":null,"sasija":"WMAR12ZZ97T009759","god":2007,"prva_reg":"2015-11-27","reg_istek":"2026-11-27","sjedenje":54,"stajanje":15,"masa":12450,"snaga":257,"motor":"DIESEL EURO IV","duzina":12250,"gume_p":"295/80 R 22.5","gume_z":"295/80 R 22.5"},"513":{"reg":"ZD 536 IM","vrsta":"M3","marka":"MAN","tip":"LIONS REGIO","model":null,"sasija":"WMAR12ZZ28T012911","god":2008,"prva_reg":"2008-08-21","reg_istek":"2025-12-17","sjedenje":54,"stajanje":30,"masa":12350,"snaga":228,"motor":"DIESEL EURO IV","duzina":12250,"gume_p":"295/80 R 22.5","gume_z":"295/80 R 22.5"},"514":{"reg":"ZD 562 IM","vrsta":"M3","marka":"MAN","tip":"LIONS REGIO","model":null,"sasija":"WMAR12ZZ38T012898","god":2008,"prva_reg":"2008-08-21","reg_istek":"2026-12-18","sjedenje":54,"stajanje":30,"masa":12350,"snaga":228,"motor":"DIESEL EURO IV","duzina":12250,"gume_p":"295/80 R 22.5","gume_z":"295/80 R 22.5"},"516":{"reg":"ZD 258 JI","vrsta":"M3","marka":"MAN","tip":"LIONS REGIO","model":null,"sasija":"WMAR12ZZ19T014358","god":2009,"prva_reg":"2009-05-04","reg_istek":"2026-05-30","sjedenje":57,"stajanje":32,"masa":12350,"snaga":228,"motor":"DIESEL EURO IV","duzina":12250,"gume_p":"295/80 R 22.5","gume_z":"295/80 R 22.5"},"517":{"reg":"ZD 655 PH","vrsta":"M3","marka":"MAN","tip":"SU 313 A72","model":null,"sasija":"WMAA72ZZX7T010088","god":2007,"prva_reg":"2007-11-21","reg_istek":"2026-10-22","sjedenje":51,"stajanje":26,"masa":12100,"snaga":228,"motor":"DIESEL EURO IV","duzina":11857,"gume_p":"295/80 R 22.5","gume_z":"295/80 R 22.5"},"558":{"reg":"ZD 763 FV","vrsta":"M3 - AUTOBUS","marka":"MERCEDES","tip":"O550 U INTEGRO","model":"C-241261","sasija":"WEB62700010520170","god":2001,"prva_reg":"2009-09-16","reg_istek":"2025-09-16","sjedenje":44,"stajanje":33,"masa":11870,"snaga":184,"motor":"DIESEL - EURO II","duzina":12000,"gume_p":"295/80R22,5 152/148M","gume_z":"295/80R22,5 152/148M"},"559":{"reg":"ZD 426 GE","vrsta":"M3 - AUTOBUS","marka":"MERCEDES","tip":"627 001","model":"INTEGRO 0505","sasija":"WEB62700113521309","god":2002,"prva_reg":"2010-04-23","reg_istek":"2026-04-23","sjedenje":45,"stajanje":24,"masa":12180,"snaga":185,"motor":"DIESEL - EURO III","duzina":12000,"gume_p":"295/80R22,5 152/148L","gume_z":"295/80R22,5 152/148L"},"560":{"reg":"ZD 701 IR","vrsta":"M3 - AUTOBUS","marka":"MERCEDES","tip":"O505","model":"INTEGRO","sasija":"WEB62700113521310","god":2002,"prva_reg":"2010-04-23","reg_istek":"2027-04-23","sjedenje":45,"stajanje":24,"masa":12180,"snaga":185,"motor":"DIESEL - EURO III","duzina":12000,"gume_p":"295/80R22,5 152/148L","gume_z":"295/80R22,5 152/148L"},"561":{"reg":"ZD 628 LA","vrsta":"M3 - AUTOBUS","marka":"MERCEDES","tip":"INTOURO","model":"633 051","sasija":"NMB63305113243588","god":2007,"prva_reg":"2007-07-03","reg_istek":"2026-09-18","sjedenje":52,"stajanje":null,"masa":11800,"snaga":210,"motor":"DIESEL - EURO IV","duzina":12140,"gume_p":"295/80R22,5 152/148M","gume_z":"295/80R22,5 152/148M"},"562":{"reg":"ZD 507 NI","vrsta":"M3","marka":"EVOBUS","tip":"O550-16","model":"MERCEDES-BENZ O550-16","sasija":"WEB62703113520021","god":2003,"prva_reg":"2013-07-30","reg_istek":"2026-10-05","sjedenje":56,"stajanje":15,"masa":12960,"snaga":260,"motor":"DIESEL - EURO III","duzina":12870,"gume_p":"295/80R22","gume_z":"295/80R22"},"563":{"reg":"ZD 927 HJ","vrsta":"M3 - AUTOBUS","marka":"MERCEDES-BENZ O550 UH","tip":"C-280590","model":null,"sasija":"VF962702140300222","god":2004,"prva_reg":"2013-07-30","reg_istek":"2025-07-30","sjedenje":54,"stajanje":20,"masa":12380,"snaga":260,"motor":"DIESEL - EURO III","duzina":12000,"gume_p":"295/80R22,5","gume_z":"295/80R22,5"},"565":{"reg":"ZD 343 HM","vrsta":"M3","marka":"MERCEDES","tip":"O550","model":"INTEGRO","sasija":"WEB62700113521822","god":2003,"prva_reg":"2013-11-13","reg_istek":"2026-11-13","sjedenje":50,"stajanje":21,"masa":12460,"snaga":185,"motor":"DIESEL - EURO III","duzina":12000,"gume_p":"295/80R22,5 150K","gume_z":"295/80R22,5 150K"},"566":{"reg":"ZD 639 JB","vrsta":"M3","marka":"SETRA","tip":"S417UL","model":null,"sasija":"WKK63310313111735","god":2011,"prva_reg":null,"reg_istek":"2026-10-26","sjedenje":66,"stajanje":26,"masa":15000,"snaga":260,"motor":"DIESEL - EURO V","duzina":14050,"gume_p":"295/80R22,5 150K","gume_z":"295/80R22,5 150K"},"567":{"reg":"ZD 674 NJ","vrsta":"M3","marka":"MERCEDES-BENZ","tip":"633 03","model":"MB E 19 UE","sasija":"WEB41075013292459","god":2022,"prva_reg":"2022-11-04","reg_istek":"2026-11-03","sjedenje":70,"stajanje":29,"masa":14268,"snaga":290,"motor":"DIESEL - EURO VI","duzina":14880,"gume_p":"295/80R22,5 150K","gume_z":"295/80R22,5 150K"},"568":{"reg":"ZD 675 NJ","vrsta":"M3","marka":"MERCEDES-BENZ","tip":"633 03","model":"MB E 19 UE","sasija":"WEB41075013292460","god":2022,"prva_reg":"2022-11-04","reg_istek":"2026-11-04","sjedenje":70,"stajanje":29,"masa":14268,"snaga":290,"motor":"DIESEL - EURO VI","duzina":14880,"gume_p":"295/80R22,5 150K","gume_z":"295/80R22,5 150K"},"875":{"reg":"ZD 771 FI","vrsta":"autobus","marka":"MAN","tip":"LION","model":"S COACH","sasija":"WMAR07ZZ28T012732","god":2008,"prva_reg":"2008-05-15","reg_istek":"2026-05-15","sjedenje":44,"stajanje":null,"masa":13925,"snaga":301,"motor":"DIZEL EURO III","duzina":12000,"gume_p":"295/80 R22.5","gume_z":"295/80 R22.5"},"1111":{"reg":"ZD 247 RJ","vrsta":"autobus","marka":"MERCEDES","tip":"410 02","model":"MB E 15 RHD","sasija":"WEB1054071J406267","god":2025,"prva_reg":"2025-04-03","reg_istek":"2027-04-03","sjedenje":51,"stajanje":null,"masa":13348,"snaga":315,"motor":"DIZEL EURO VI","duzina":12295,"gume_p":"295/80 R22.5","gume_z":"295/80 R22.5"},"punto crveni":{"reg":"ZD 798 NE","vrsta":"osobni automobil","marka":"FIAT","tip":"Punto","model":"1.2 8V","sasija":"ZFA18800000723860","god":2004,"prva_reg":"2005-03-11","reg_istek":"2026-09-19","sjedenje":5,"stajanje":null,"masa":875,"snaga":44,"motor":"otto (4 takta)","duzina":3865,"gume_p":"165/70 R 14","gume_z":"165/70 R 14"},"ford":{"reg":"ZD 654 GA","vrsta":"M1 - osobni automobil","marka":"FORD","tip":"MONDEO","model":"2.0 TDCI","sasija":"WF0EXXGBBE8D78909","god":2008,"prva_reg":"2008-11-14","reg_istek":"2026-12-04","sjedenje":5,"stajanje":null,"masa":1490,"snaga":103,"motor":"DIESEL - EURO IV","duzina":4890,"gume_p":"235/40ZR18 95Y","gume_z":"235/40ZR18 95Y"},"grande punto":{"reg":"ZD 863 IM","vrsta":"osobni automobil","marka":"FIAT","tip":"Punto","model":"1.2 8V","sasija":"ZFA19900001865010","god":2012,"prva_reg":"2012-04-05","reg_istek":"2026-04-21","sjedenje":5,"stajanje":null,"masa":1030,"snaga":51,"motor":"otto (4 takta)","duzina":4065,"gume_p":"175/65 R 15","gume_z":"175/65 R 15"},"caddy":{"reg":"ZD 602 IV","vrsta":"N1-TERETNI AUTOMOBIL","marka":"Volkswagen","tip":"Caddy","model":"1.6 TDI","sasija":"WV1ZZZ2KZCX149932","god":2012,"prva_reg":"2012-05-22","reg_istek":"2026-08-26","sjedenje":2,"stajanje":null,"masa":1609,"snaga":55,"motor":"DIZEL - EURO V","duzina":4406,"gume_p":"205/55 R 15","gume_z":"205/55 R 15"},"caddy novi":{"reg":"ZD 299 OB","vrsta":"N1-TERETNI AUTOMOBIL","marka":"Volkswagen","tip":"Caddy","model":"1.6 TDI","sasija":null,"god":2012,"prva_reg":"2012-05-22","reg_istek":"2026-10-28","sjedenje":2,"stajanje":null,"masa":1609,"snaga":55,"motor":"DIZEL - EURO V","duzina":4406,"gume_p":"205/55 R 15","gume_z":"205/55 R 15"},"passat crni":{"reg":"ZD 495 JF","vrsta":"M1","marka":"VOLKSWAGEN","tip":"PASSAT","model":"2.0 TSI highline","sasija":"WVWZZZ3CZEP009719","god":2013,"prva_reg":"2013-10-21","reg_istek":"2026-09-25","sjedenje":5,"stajanje":null,"masa":1537,"snaga":155,"motor":"BENZIN","duzina":4769,"gume_p":"235/40/18","gume_z":"235/40/18"},"crafter invalidi":{"reg":"ZD 910 KI","vrsta":"M1","marka":"VOLKSWAGEN","tip":null,"model":"CRAFTER 2.0 TDI","sasija":"WV1ZZZSYZK9001475","god":2018,"prva_reg":"2018-10-30","reg_istek":"2026-10-31","sjedenje":7,"stajanje":null,"masa":2460,"snaga":103,"motor":"DIESEL - EURO VI","duzina":5986,"gume_p":"205/75 R 16","gume_z":"205/75 R 16"},"transporter":{"reg":"ZD 769 KK","vrsta":"N1","marka":"VOLKSWAGEN","tip":"7J0","model":"TRANSPORTER","sasija":"WV1ZZZ7HZGH065352","god":2015,"prva_reg":"2016-01-04","reg_istek":"2026-01-04","sjedenje":3,"stajanje":null,"masa":1897,"snaga":103,"motor":"DIESEL - EURO V","duzina":5304,"gume_p":"215/65 R 16","gume_z":"215/65 R 16"},"transporter preko":{"reg":"ZD 819 NF","vrsta":"N1","marka":"VOLKSWAGEN","tip":"7HK","model":"TRANSPORTER","sasija":"WV1ZZZ7HZ7H018519","god":2006,"prva_reg":"2006-11-30","reg_istek":"2027-04-06","sjedenje":3,"stajanje":null,"masa":2000,"snaga":62,"motor":"DIESEL - EURO IV","duzina":4890,"gume_p":"205/65 R 16","gume_z":"205/65 R 16"},"vito":{"reg":"ZD 340 JO","vrsta":"n1 - teretni automobil","marka":"MERCEDES","tip":"VITO 108D","model":"2.3D","sasija":"VSA63806413188086","god":1999,"prva_reg":"2003-08-08","reg_istek":"2022-08-10","sjedenje":3,"stajanje":null,"masa":1600,"snaga":58,"motor":"DIESEL EURO II","duzina":4660,"gume_p":"195/70 R 15","gume_z":"195/70 R 15"},"Berlingo":{"reg":"ZD 729 JK","vrsta":"N1-TERETNI AUTOMOBIL","marka":"CITROEN","tip":"BERLINGO","model":"1.9D","sasija":"VF7MCWJYB65899489","god":2002,"prva_reg":"2002-10-31","reg_istek":"2023-08-28","sjedenje":2,"stajanje":null,"masa":1165,"snaga":51,"motor":"DIZEL - EURO III","duzina":4108,"gume_p":"175/65R14","gume_z":"175/65R14"},"800":{"reg":"ZD 598 FU","vrsta":"M3 - AUTOBUS","marka":"MERCEDES","tip":"O 550 INTEGRO","model":"EVOBUS, C-241238","sasija":"WEB62700013520922","god":2000,"prva_reg":"2009-05-12","reg_istek":"odjava","sjedenje":50,"stajanje":28,"masa":12460,"snaga":220,"motor":"DIESEL EURO II","duzina":12000,"gume_p":"295/80R22.5","gume_z":"295/80R22.5"},"806":{"reg":"ZD 873 EZ","vrsta":"autobus","marka":"MERCEDES","tip":"O405","model":"612 010","sasija":"WDB61201013083269","god":1996,"prva_reg":"2007-07-31","reg_istek":"odjava","sjedenje":45,"stajanje":54,"masa":10200,"snaga":184,"motor":"diesel motor","duzina":11070,"gume_p":"275/70R22,5","gume_z":"275/70R22,5"},"839":{"reg":"ZD 834 CP","vrsta":"autobus","marka":"MERCEDES","tip":"O407","model":null,"sasija":"WDB35710013072063","god":1993,"prva_reg":"05.10.2001","reg_istek":"odjava","sjedenje":50,"stajanje":45,"masa":10200,"snaga":184,"motor":"diesel motor","duzina":11920,"gume_p":"275/70x22.5","gume_z":"275/70x22.5"},"849":{"reg":"ZD 599 FU","vrsta":"M3 - AUTOBUS","marka":"MERCEDES","tip":"405N","model":"612 426","sasija":"WEB61242613094409","god":1999,"prva_reg":"2009-05-12","reg_istek":"odjava","sjedenje":43,"stajanje":34,"masa":11100,"snaga":220,"motor":"DIESEL - EURO II","duzina":11090,"gume_p":"275/70R22.5","gume_z":"275/70R22.5"},"874":{"reg":"ZD 521 CT","vrsta":"autobus","marka":"MAN","tip":"18.420 C-253572","model":"HOCL/NOGE","sasija":"WMAA511468W034487","god":1998,"prva_reg":"19.06.2001","reg_istek":"odjava","sjedenje":50,"stajanje":null,"masa":14300,"snaga":294,"motor":"diesel motor","duzina":12875,"gume_p":"295/80x22.5 152M","gume_z":"295/80x22.5 148M"},"520":{"reg":"ZD 146 MK","vrsta":"M3 AUTOBUS","marka":"MERCEDES","tip":"H 0","model":"345  CONECTO","sasija":"NMB67104213233563","god":2002,"prva_reg":"2002-06-12","reg_istek":"2024-08-26","sjedenje":49,"stajanje":36,"masa":10500,"snaga":185,"motor":"DIESEL - EURO IV","duzina":11800,"gume_p":"275/70R22.5","gume_z":"275/70R22.5"},"553":{"reg":"ZD 357 FM","vrsta":"M3 - AUTOBUS","marka":"MERCEDES","tip":"627 011","model":"INTEGRO L","sasija":"WEB62701113520151","god":2002,"prva_reg":"2008-10-10","reg_istek":"2022-11-10","sjedenje":66,"stajanje":61,"masa":15220,"snaga":310,"motor":"DIESEL - EURO III","duzina":14950,"gume_p":"295/80R22,5 152/148M","gume_z":"295/80R22,5 152/148M"},"555":{"reg":"ZD 327 MK","vrsta":"M3 - AUTOBUS","marka":"MERCEDES","tip":"627 011","model":"INTEGRO L","sasija":"WEB62701113520167","god":2002,"prva_reg":"2008-10-10","reg_istek":"2022-10-10","sjedenje":66,"stajanje":61,"masa":15220,"snaga":310,"motor":"DIESEL - EURO III","duzina":14950,"gume_p":"295/80R22,5 152/148M","gume_z":"295/80R22,5 152/148M"},"556":{"reg":"ZD 761 FV","vrsta":"M3 - AUTOBUS","marka":"MERCEDES","tip":"O550 U INTEGRO","model":"C-241263","sasija":"WEB62700010520168","god":2001,"prva_reg":"2009-09-16","reg_istek":"odjava","sjedenje":44,"stajanje":33,"masa":11710,"snaga":184,"motor":"DIESEL - EURO II","duzina":12000,"gume_p":"295/80R22,5 152/148M","gume_z":"295/80R22,5 152/148M"},"557":{"reg":"ZD 762 FV","vrsta":"M3 - AUTOBUS","marka":"MERCEDES","tip":"O550 U INTEGRO","model":"C-241262","sasija":"WEB62700010520169","god":2001,"prva_reg":"2009-09-17","reg_istek":"2023-09-16","sjedenje":44,"stajanje":33,"masa":11790,"snaga":184,"motor":"DIESEL - EURO II","duzina":12000,"gume_p":"295/80R22,5 152/148M","gume_z":"295/80R22,5 152/148M"},"564":{"reg":"ZD 514 HL","vrsta":"M3","marka":"MERCEDES","tip":"O550","model":"INTEGRO","sasija":"WEB62700113521990","god":2004,"prva_reg":"2013-11-04","reg_istek":"2023-12-10","sjedenje":44,"stajanje":null,"masa":12560,"snaga":185,"motor":"DIESEL - EURO III","duzina":12000,"gume_p":"295/80R22,5","gume_z":"295/80R22,5"},"500":{"reg":"ZD 691 GA","vrsta":"M3 AUTOBUS","marka":"MAN","tip":"UL 313","model":"C-253153","sasija":"WMAA01ZZZ2B021856","god":2001,"prva_reg":"2009-11-24","reg_istek":"odjava","sjedenje":50,"stajanje":21,"masa":11930,"snaga":228,"motor":"DIESEL EURO II","duzina":12000,"gume_p":"295/80R22,5 152M","gume_z":"295/80R22.5 148M"},"501":{"reg":"ZD 327 GC","vrsta":"M3 AUTOBUS","marka":"MAN","tip":"A 01","model":"UL 363","sasija":"WMAA01ZZZ3B022827","god":2002,"prva_reg":"2010-01-08","reg_istek":"odjava","sjedenje":52,"stajanje":16,"masa":12500,"snaga":265,"motor":"DIESEL EURO III","duzina":12000,"gume_p":"295/80R22,5 152M","gume_z":"295/80R22,5 152M"},"502":{"reg":"ZD 243 GG","vrsta":"M3 AUTOBUS","marka":"MAN","tip":"NU 313 C-260357","model":null,"sasija":"WMAA20ZZZ1B020747","god":2000,"prva_reg":"2010-08-26","reg_istek":"odjava","sjedenje":45,"stajanje":44,"masa":11740,"snaga":228,"motor":"DIESEL EURO III","duzina":11950,"gume_p":"275/70R22,5 148/145J","gume_z":"275/70R22,5 148/145J"},"504":{"reg":"ZD 672 GL","vrsta":"M3 AUTOBUS","marka":"MAN","tip":"a20 C-262321","model":"CITY NU 313","sasija":"WMAA20ZZZ1B020746","god":2000,"prva_reg":"2011-02-10","reg_istek":"odjava","sjedenje":45,"stajanje":39,"masa":12060,"snaga":228,"motor":"DIESEL EURO III","duzina":11950,"gume_p":"275/70R22,5 148/145J","gume_z":"275/70R22,5 148/145J"},"505":{"reg":"ZD 805 GS","vrsta":"M3 AUTOBUS","marka":"MAN","tip":"A01","model":"UL353","sasija":"WMAA01ZZZ1B021631","god":2001,"prva_reg":"2011-12-05","reg_istek":"odjava","sjedenje":50,"stajanje":27,"masa":12800,"snaga":257,"motor":"DIESEL EURO III","duzina":12000,"gume_p":"295/80 R 22.5","gume_z":"295/80 R 22.5"},"506":{"reg":"ZD 321 LD","vrsta":"M3 AUTOBUS","marka":"MAN","tip":"A72 C-253599","model":"SU 363","sasija":"WMAA72ZZZ3T003641","god":2002,"prva_reg":"2011-12-05","reg_istek":"odjava","sjedenje":43,"stajanje":22,"masa":13350,"snaga":265,"motor":"DIESEL EURO III","duzina":11857,"gume_p":"295/80 R 22.5","gume_z":"295/80 R 22.5"},"511":{"reg":"ZD 197 IE","vrsta":"M3","marka":"MAN","tip":"SU 313 A72","model":null,"sasija":"WMAA72ZZ27T010070","god":2007,"prva_reg":"2007-10-02","reg_istek":"2023-11-04","sjedenje":51,"stajanje":26,"masa":12175,"snaga":228,"motor":"DIESEL EURO IV","duzina":17980,"gume_p":"295/80 R 22.5","gume_z":"295/80 R 22.5"},"515":{"reg":"ZD 578 JC","vrsta":"M3","marka":"NEOPLAN","tip":"N4416U","model":null,"sasija":"WAG2441662PU33074","god":2002,"prva_reg":"2010-05-26","reg_istek":"odjava","sjedenje":48,"stajanje":47,"masa":12690,"snaga":191,"motor":"DIESEL EURO III","duzina":12000,"gume_p":"295/80 R 22.5","gume_z":"295/80 R 22.5"},"232":{"reg":"ZD 977 JC","vrsta":"autobus","marka":"MERCEDES","tip":"O 530","model":"CITARO","sasija":"WEB62800013089866","god":1998,"prva_reg":"23.11.2001","reg_istek":"odjava","sjedenje":34,"stajanje":70,"masa":11000,"snaga":205,"motor":"diesel motor","duzina":12000,"gume_p":"275/70 22.5","gume_z":"275/70 22.5"},"234":{"reg":"ZD 433 HZ","vrsta":"m3","marka":"Mercedes","tip":"O 530","model":null,"sasija":"WEB62800013087998","god":1997,"prva_reg":"2005-05-23","reg_istek":"odjava","sjedenje":36,"stajanje":58,"masa":10750,"snaga":170,"motor":"diesel motor","duzina":12000,"gume_p":"275/70 R 22,5 145J","gume_z":"275/70 R 22,5 145J"},"235":{"reg":"ZD 597 EA","vrsta":"autobus","marka":"Mercedes","tip":"O 530","model":"CITARO","sasija":"WEB62800013088016","god":1997,"prva_reg":"2005-05-23","reg_istek":"odjava","sjedenje":36,"stajanje":58,"masa":10750,"snaga":170,"motor":"diesel motor","duzina":12000,"gume_p":"275/70 R 22,5 145J","gume_z":"275/70 R 22,5 145J"},"238":{"reg":"ZD 343 EI","vrsta":"M3","marka":"Mercedes","tip":"O 530","model":"CITARO","sasija":"WEB62800013088429","god":1998,"prva_reg":"2004-09-25","reg_istek":"odjava","sjedenje":37,"stajanje":64,"masa":10750,"snaga":170,"motor":"diesel motor","duzina":12000,"gume_p":"275/70 R 22,5","gume_z":"275/70 R 22,5"},"239":{"reg":"ZD 342 EI","vrsta":"M3- AUTOBUS","marka":"MERCEDES","tip":"O 530","model":"CITARO","sasija":"WEB62800013088422","god":1998,"prva_reg":"2004-09-25","reg_istek":"odjava","sjedenje":37,"stajanje":64,"masa":10750,"snaga":170,"motor":"DIESEL - EURO II","duzina":12000,"gume_p":"275/70 R 22,5","gume_z":"275/70 R 22,5"},"252":{"reg":"ZD 261 IC","vrsta":"M3 - AUTOBUS","marka":"Mercedes","tip":"O 530","model":"CITARO","sasija":"WEB62808313111455","god":2006,"prva_reg":"2015-01-15","reg_istek":"odjava","sjedenje":34,"stajanje":57,"masa":11610,"snaga":220,"motor":"DIESEL - EURO IV","duzina":12000,"gume_p":"275/70 R 22.5","gume_z":"275/70 R 22.5"}};
+
+const TODAY = new Date('2026-06-20T00:00:00');
+const STATUSI = [['u prometu','U prometu','aktivno'],['odjavljeno','Odjavljeno','odjavljeno'],['rashod','Rashod','rashod']];
+function statusMeta(s){ return STATUSI.find(x=>x[0]===s)||STATUSI[0]; }
+
+function normVrsta(v){ v=(v||'').toUpperCase();
+  if(v.includes('M2')) return 'Minibus';
+  if(v.includes('N1')||v.includes('TERETNI')) return 'Teretno';
+  if(v.includes('M1')||v.includes('OSOBNI')) return 'Osobno';
+  if(v.includes('AUTOBUS')||v.includes('M3')||v.includes('MA')) return 'Autobus';
+  return 'Ostalo'; }
+function euroOf(m){ m=(m||'').toUpperCase(); const x=m.match(/EURO\s*-?\s*(VI|IV|III|II|V|I)\b/); return x?('EURO '+x[1]):'—'; }
+function statusOf(r){ if(r.reg_istek==='odjava'){ return (r.god && r.god<2003)?'rashod':'odjavljeno'; } return 'u prometu'; }
+function parseDate(s){ if(!s||s==='odjava') return null;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return new Date(s+'T00:00:00');
+  let m=s.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m) return new Date(+m[3],+m[2]-1,+m[1]); return null; }
+function fmtDate(s){ const d=parseDate(s); if(!d) return '—'; return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear()+'.'; }
+function daysTo(s){ const d=parseDate(s); if(!d) return null; return Math.round((d-TODAY)/86400000); }
+function gbrNum(g){ const n=parseInt(g,10); return isNaN(n)?999999:n; }
+const esc=s=>(s==null?'':(''+s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+let VOZILA = Object.keys(VEHICLES_RAW).map(function(gbr){
+  const r=VEHICLES_RAW[gbr];
+  return { gbr:gbr, _id:gbr, reg:r.reg||'', vrsta:r.vrsta||'', kat:normVrsta(r.vrsta),
+    marka:(r.marka||'').toUpperCase(), tip:r.tip||'', model:r.model||'', sasija:r.sasija||'',
+    god:r.god||null, prva_reg:r.prva_reg||null, reg_istek:r.reg_istek||null,
+    sjedenje:r.sjedenje, stajanje:r.stajanje, masa:r.masa, snaga:r.snaga,
+    motor:r.motor||'', euro:euroOf(r.motor), duzina:r.duzina, gume_p:r.gume_p||'', gume_z:r.gume_z||'',
+    status:statusOf(r) };
+});
+
+let sortKey='gbr', sortDir=1, fStatus='', editId=null;
+
+const COLS=[['gbr','GBR'],['reg','Registracija'],['kat','Vrsta'],['marka','Marka / model'],['god','God.'],['euro','Euro'],['mjesta','Mjesta'],['reg_istek','Istek reg.'],['status','Status']];
+
+function render(){
+  const q=(document.getElementById('q').value||'').toLowerCase().trim();
+  const fkat=document.getElementById('fkat').value;
+  let rows=VOZILA.filter(function(v){
+    if(fStatus && v.status!==fStatus) return false;
+    if(fkat && v.kat!==fkat) return false;
+    if(q){ const hay=(v.gbr+' '+v.reg+' '+v.marka+' '+v.model+' '+v.tip+' '+v.sasija).toLowerCase(); if(!hay.includes(q)) return false; }
+    return true;
+  });
+  rows.sort(function(a,b){
+    let A,B;
+    if(sortKey==='gbr'){A=gbrNum(a.gbr);B=gbrNum(b.gbr);}
+    else if(sortKey==='god'){A=a.god||0;B=b.god||0;}
+    else if(sortKey==='mjesta'){A=(a.sjedenje||0)+(a.stajanje||0);B=(b.sjedenje||0)+(b.stajanje||0);}
+    else if(sortKey==='reg_istek'){A=parseDate(a.reg_istek)?parseDate(a.reg_istek).getTime():0;B=parseDate(b.reg_istek)?parseDate(b.reg_istek).getTime():0;}
+    else {A=(a[sortKey]||'').toString().toLowerCase();B=(b[sortKey]||'').toString().toLowerCase();}
+    return A<B?-1*sortDir:A>B?1*sortDir:0;
+  });
+  renderKpis();
+  // thead
+  document.getElementById('THEAD').innerHTML=COLS.map(function(c){
+    const ar=sortKey===c[0]?'<span class="ar">'+(sortDir>0?'▲':'▼')+'</span>':'';
+    return '<th onclick="setSort(\''+c[0]+'\')">'+c[1]+' '+ar+'</th>';
+  }).join('');
+  // body
+  if(!rows.length){ document.getElementById('TBODY').innerHTML='<tr><td colspan="9" class="empty-tbl">Nema vozila za zadane filtere.</td></tr>'; return; }
+  document.getElementById('TBODY').innerHTML=rows.map(function(v){
+    const sm=statusMeta(v.status);
+    const dd=daysTo(v.reg_istek);
+    let dcl='none',dtx='—';
+    if(v.reg_istek==='odjava'){ dcl='none'; dtx='—'; }
+    else if(parseDate(v.reg_istek)){ dtx=fmtDate(v.reg_istek); dcl = dd<0?'over':(dd<=45?'soon':''); }
+    const mj=((v.sjedenje||0)+'+'+(v.stajanje||0));
+    return '<tr onclick="openCard(\''+v._id+'\')">'
+      +'<td><span class="gbr">'+esc(v.gbr)+'</span></td>'
+      +'<td><span class="reg">'+esc(v.reg||'—')+'</span></td>'
+      +'<td>'+esc(v.kat)+'</td>'
+      +'<td><span class="mk">'+esc(v.marka)+'</span> <span class="md">'+esc(v.model||v.tip||'')+'</span></td>'
+      +'<td class="num">'+(v.god||'—')+'</td>'
+      +'<td class="num"><span class="euro'+(v.euro==='EURO VI'?' e6':'')+'">'+v.euro+'</span></td>'
+      +'<td class="num">'+mj+'</td>'
+      +'<td class="num"><span class="dexp '+dcl+'">'+dtx+'</span></td>'
+      +'<td><span class="pill '+sm[2]+'">'+sm[1]+'</span></td>'
+      +'</tr>';
+  }).join('');
+}
+
+function renderKpis(){
+  const tot=VOZILA.length;
+  const uprom=VOZILA.filter(v=>v.status==='u prometu').length;
+  const odj=VOZILA.filter(v=>v.status==='odjavljeno').length;
+  const rash=VOZILA.filter(v=>v.status==='rashod').length;
+  const bus=VOZILA.filter(v=>v.kat==='Autobus'&&v.status==='u prometu').length;
+  const e6=VOZILA.filter(v=>v.euro==='EURO VI'&&v.status==='u prometu').length;
+  const isteku=VOZILA.filter(function(v){ const d=daysTo(v.reg_istek); return v.status==='u prometu' && d!=null && d>=0 && d<=45; }).length;
+  const k=[[tot,'','Ukupno vozila'],[uprom,'g','U prometu'],[bus,'b','Autobusa u prometu'],[e6,'g','Euro VI'],[odj+rash,'','Odjavljeno / rashod'],[isteku,isteku?'y':'','Reg. ističe (45d)']];
+  document.getElementById('KPIS').innerHTML=k.map(s=>'<div class="kpi"><div class="kpi-n">'+(s[1]?'<span class="d '+s[1]+'"></span>':'')+s[0]+'</div><div class="kpi-l">'+s[2]+'</div></div>').join('');
+}
+
+function renderFstat(){
+  const counts={'':VOZILA.length};STATUSI.forEach(s=>counts[s[0]]=VOZILA.filter(v=>v.status===s[0]).length);
+  let h='<button class="fchip'+(fStatus===''?' on':'')+'" onclick="setStatusFilter(\'\')">Svi · '+counts['']+'</button>';
+  STATUSI.forEach(s=>{ h+='<button class="fchip'+(fStatus===s[0]?' on':'')+'" onclick="setStatusFilter(\''+s[0]+'\')">'+s[1]+' · '+counts[s[0]]+'</button>'; });
+  document.getElementById('FSTAT').innerHTML=h;
+}
+function setStatusFilter(s){ fStatus=s; renderFstat(); render(); }
+function setSort(k){ if(sortKey===k) sortDir*=-1; else { sortKey=k; sortDir=1; } render(); }
+
+/* ─── Kartica vozila ─── */
+function openCard(id){
+  editId=id;
+  const v = id ? VOZILA.find(x=>x._id===id) : { gbr:'', reg:'', vrsta:'', kat:'Autobus', marka:'', tip:'', model:'', sasija:'', god:'', prva_reg:'', reg_istek:'', sjedenje:'', stajanje:'', masa:'', snaga:'', motor:'', euro:'—', duzina:'', gume_p:'', gume_z:'', status:'u prometu' };
+  const sm=statusMeta(v.status);
+  const isNew=!id;
+  function fi(label,key,mono,ph){ return '<div class="fld"><label>'+label+'</label><input class="'+(mono?'mono':'')+'" id="f_'+key+'" value="'+esc(v[key]==null?'':v[key])+'" placeholder="'+(ph||'')+'"></div>'; }
+  let h='';
+  h+='<div class="card-hd">'
+   + '<span class="gbr">'+(isNew?'GBR':esc(v.gbr))+'</span>'
+   + '<div class="card-hd-main">'
+   +   '<div class="eyebrow" style="font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px">'+(isNew?'Novo vozilo':'Kartica vozila')+'</div>'
+   +   '<div class="card-hd-tit">'+(isNew?'Novo vozilo':esc(v.marka)+' '+esc(v.model||v.tip||''))+'<span class="pill '+sm[2]+'">'+sm[1]+'</span></div>'
+   +   '<div class="card-hd-sub">'+esc(v.reg||'—')+' · '+esc(v.kat)+' · '+(v.god||'—')+'</div>'
+   + '</div>'
+   + '<button class="card-x" onclick="closeCard()"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>'
+   + '</div>';
+  h+='<div class="card-bd">';
+  h+='<div class="sect-t">Identifikacija</div><div class="fgrid">'
+   + fi('Garažni broj (GBR)','gbr',true,'npr. 415')
+   + fi('Registracija','reg',true,'ZD 000 AA')
+   + fi('Marka','marka',false,'')
+   + fi('Tip','tip',false,'')
+   + fi('Model','model',false,'')
+   + fi('Šasija (VIN)','sasija',true,'')
+   + '<div class="fld"><label>Vrsta (homologacija)</label><input id="f_vrsta" value="'+esc(v.vrsta)+'" placeholder="M3 - AUTOBUS"></div>'
+   + '<div class="fld"><label>Status</label><select id="f_status">'+STATUSI.map(s=>'<option value="'+s[0]+'"'+(v.status===s[0]?' selected':'')+'>'+s[1]+'</option>').join('')+'</select></div>'
+   + fi('Godina proizvodnje','god',true,'')
+   + fi('Prva registracija','prva_reg',true,'GGGG-MM-DD')
+   + fi('Istek registracije','reg_istek',true,'GGGG-MM-DD / odjava')
+   + '</div>';
+  h+='<div class="sect-t">Tehnički podaci</div><div class="fgrid">'
+   + fi('Motor / norma','motor',false,'DIESEL - EURO VI')
+   + fi('Snaga (kW)','snaga',true,'')
+   + fi('Masa (kg)','masa',true,'')
+   + fi('Dužina (mm)','duzina',true,'')
+   + fi('Sjedećih mjesta','sjedenje',true,'')
+   + fi('Stajaćih mjesta','stajanje',true,'')
+   + fi('Gume prednje','gume_p',true,'')
+   + fi('Gume zadnje','gume_z',true,'')
+   + '</div>';
+  if(!isNew){
+    h+='<div class="sect-t">Servis i stanje</div>'
+     + '<div class="servis-link"><div class="si"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5 5L4 17v3h3l5.7-5.7a4 4 0 0 0 5-5l-2.8 2.8-2-2 2.8-2.8z"/></svg></div>'
+     + '<div class="st"><b>TP, servis, kvarovi, km, tahograf</b><div>Servisni podaci se vode u modulu Tehnička služba.</div></div>'
+     + '<button class="btn btn-ghost" onclick="otvoriServis(\''+esc(v.gbr)+'\')">Otvori u Servisu ↗</button></div>';
+  }
+  h+='</div>';
+  h+='<div class="card-ft">'
+   + (isNew?'':'<button class="btn btn-danger" onclick="deleteVoz(\''+v._id+'\')">Obriši</button>')
+   + '<div class="sp"></div>'
+   + '<button class="btn btn-ghost" onclick="closeCard()">Odustani</button>'
+   + '<button class="btn btn-acc" onclick="saveVoz()">'+(isNew?'Kreiraj vozilo':'Spremi')+'</button>'
+   + '</div>';
+  document.getElementById('cardEl').innerHTML=h;
+  document.getElementById('cardBg').classList.add('on');
+}
+function closeCard(){ document.getElementById('cardBg').classList.remove('on'); editId=null; }
+function val(k){ const e=document.getElementById('f_'+k); return e?e.value.trim():''; }
+function numOrNull(k){ const x=val(k); return x===''?null:(isNaN(+x)?x:+x); }
+function saveVoz(){
+  const gbr=val('gbr'); if(!gbr){ document.getElementById('f_gbr').focus(); return; }
+  let v = editId ? VOZILA.find(x=>x._id===editId) : null;
+  if(!v){ if(VOZILA.some(x=>x.gbr===gbr)){ alert('GBR '+gbr+' već postoji.'); return; } v={_id:'v'+Date.now()}; VOZILA.push(v); }
+  v.gbr=gbr; v.reg=val('reg'); v.marka=val('marka').toUpperCase(); v.tip=val('tip'); v.model=val('model');
+  v.sasija=val('sasija'); v.vrsta=val('vrsta'); v.kat=normVrsta(val('vrsta')); v.status=val('status');
+  v.god=numOrNull('god'); v.prva_reg=val('prva_reg')||null; v.reg_istek=val('reg_istek')||null;
+  v.motor=val('motor'); v.euro=euroOf(val('motor')); v.snaga=numOrNull('snaga'); v.masa=numOrNull('masa');
+  v.duzina=numOrNull('duzina'); v.sjedenje=numOrNull('sjedenje'); v.stajanje=numOrNull('stajanje');
+  v.gume_p=val('gume_p'); v.gume_z=val('gume_z');
+  closeCard(); renderFstat(); render();
+}
+function deleteVoz(id){ const v=VOZILA.find(x=>x._id===id); if(!v) return;
+  if(!confirm('Obrisati vozilo GBR '+v.gbr+' iz registra? Ovo je matični zapis.')) return;
+  VOZILA=VOZILA.filter(x=>x._id!==id); closeCard(); renderFstat(); render(); }
+function otvoriServis(gbr){ alert('Otvara Servis za GBR '+gbr+' (modul Tehnička služba).'); }
+
+function toggleTheme(){ const html=document.documentElement; const dark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',dark?'light':'dark');
+  document.getElementById('themeIc').innerHTML = dark
+    ? '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'
+    : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/>'; }
+
+document.getElementById('cardBg').addEventListener('click',function(e){ if(e.target===this) closeCard(); });
+renderFstat(); render();
+</script>
+</body>
+</html>
