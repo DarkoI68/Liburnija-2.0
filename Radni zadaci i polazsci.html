@@ -160,7 +160,36 @@ button{font-family:inherit;cursor:pointer}
 .mfld input:focus,.mfld select:focus{outline:none;border-color:var(--acc)}
 .modal-ft{display:flex;justify-content:flex-end;gap:9px;padding:0 19px 18px}
 
-@media (max-width:860px){ .rail{width:240px} .rzh-meta{flex-wrap:wrap;gap:12px} }
+@media (max-width:860px){ .rzh-meta{flex-wrap:wrap;gap:12px} }
+
+/* Pregled (overview) */
+.ov-crumb{font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.ov-crumb b{color:var(--acc)}
+.ov-title{font-size:22px;font-weight:800;letter-spacing:.2px;margin-bottom:14px}
+.kpi{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.kpic{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:11px;padding:12px 14px}
+.kpic-v{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.kpic-l{font-size:10px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+.ovbar{display:flex;align-items:center;gap:9px;margin-top:14px;flex-wrap:wrap}
+.search{position:relative;display:flex;align-items:center;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;padding:0 11px;height:38px;flex:1;min-width:220px}
+.search:focus-within{border-color:var(--acc)}
+.search svg{width:15px;height:15px;stroke:var(--ts);stroke-width:2;fill:none;margin-right:8px;flex-shrink:0}
+.search input{flex:1;background:transparent;border:0;outline:0;font-family:inherit;font-size:13px;font-weight:500;color:var(--tp)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:8px;font-size:11.5px;font-weight:700;color:var(--ts);padding:7px 11px}
+.chip:hover{border-color:var(--acc);color:var(--acc)}
+.chip.on{background:var(--accs);border-color:var(--acc);color:var(--acc)}
+.tag{display:inline-block;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.3px}
+.tag-gradski{background:rgba(59,130,246,.13);color:var(--blu)}
+.tag-prigradski{background:var(--accs);color:var(--acc)}
+.tag-otocni{background:rgba(34,197,94,.14);color:var(--grn)}
+.ovtbl td{padding:9px 9px;cursor:pointer}
+.ovtbl tbody tr:hover{background:var(--bg3)}
+.ovtbl .rbcol{width:46px;color:var(--ts);font-weight:700}
+.ovtbl .nmcol{font-weight:700;color:var(--tp)}
+.backbtn{margin-bottom:14px}
+.rzh-num{width:104px;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--tp);background:var(--bg3);border:1.5px solid var(--bdr);border-radius:7px;padding:6px 10px}
+.rzh-num:focus{outline:none;border-color:var(--acc)}
 </style>
 </head>
 <body>
@@ -175,12 +204,8 @@ button{font-family:inherit;cursor:pointer}
 </div>
 
 <div class="shell">
-  <aside class="rail">
-    <div class="rail-hd"><h2>Zadaci</h2><button class="btn btn-acc" onclick="openNew()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Novi</button></div>
-    <div class="rail-search"><input id="search" type="text" placeholder="Traži radni zadatak…" oninput="renderList()"></div>
-    <div class="rail-list" id="list"></div>
-  </aside>
-  <main class="detail" id="detail"></main>
+  <section class="detail" id="ovView"></section>
+  <main class="detail" id="detail" style="display:none"></main>
 </div>
 
 <div class="mbg" id="newBg">
@@ -188,7 +213,7 @@ button{font-family:inherit;cursor:pointer}
     <div class="modal-hd"><h3>Novi radni zadatak</h3><button class="del" onclick="closeNew()"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
     <div class="modal-bd">
       <div class="mfld"><label>Naziv zadatka</label><input id="newName" type="text" placeholder="npr. DIKLO - GAŽENICA"></div>
-      <div class="mfld"><label>Kategorija</label><select id="newKat"><option value="gradske">Gradske</option><option value="prigradske">Prigradske</option></select></div>
+      <div class="mfld"><label>Tip</label><select id="newKat"><option value="gradski">Gradski</option><option value="prigradski">Prigradski</option><option value="otocni">Otočni</option></select></div>
       <div class="mfld"><label>Broj smjena</label><select id="newSmj"><option>1</option><option selected>2</option><option>3</option></select></div>
     </div>
     <div class="modal-ft"><button class="btn btn-ghost" onclick="closeNew()">Odustani</button><button class="btn btn-acc" onclick="createRz()">Kreiraj zadatak</button></div>
@@ -268,15 +293,62 @@ function mkDracevac(){
   return m;
 }
 
-let RZ = [
-  { id:"crvene_supernova", naziv:"CRVENE KUĆE - SUPERNOVA", kategorija:"gradske", smjene:2, konteksti:mkCrvene() },
-  { id:"dracevac1", naziv:"DRAČEVAC P. PETRIĆA I", kategorija:"gradske", smjene:3, konteksti:mkDracevac() },
-  { id:"arbanasi", naziv:"ARBANASI", kategorija:"gradske", smjene:3, konteksti:praznaMatrica() },
-  { id:"bokanjac1", naziv:"BOKANJAC I", kategorija:"gradske", smjene:3, konteksti:praznaMatrica() },
-  { id:"vir", naziv:"VIR", kategorija:"prigradske", smjene:2, konteksti:mkVir() },
-  { id:"biograd1", naziv:"BIOGRAD I", kategorija:"prigradske", smjene:2, konteksti:praznaMatrica() },
-  { id:"nin", naziv:"NIN - ŽERAVA", kategorija:"prigradske", smjene:2, konteksti:praznaMatrica() }
-];
+let RZ = [];
+[ /* GRADSKI — [id, naziv, linije, smjene, konteksti] — RB 1..13 */
+  ["dracevac1","DRAČEVAC P. PETRIĆA I","1",3,mkDracevac()],
+  ["dracevac2","DRAČEVAC P. PETRIĆA II","1",2,null],
+  ["arbanasi","ARBANASI","2",3,null],
+  ["bilibrig1","BILI BRIG I","3",2,null],
+  ["bilibrig2","BILI BRIG II","3",2,null],
+  ["crno","CRNO","4",2,null],
+  ["puntamika","PUNTAMIKA","5",2,null],
+  ["bokanjac1","BOKANJAC I","7",3,null],
+  ["bokanjac2","BOKANJAC II","7",2,null],
+  ["diklo1","DIKLO I","8",2,null],
+  ["diklo2","DIKLO II","8",2,null],
+  ["gazenica","GAŽENICA","9",2,null],
+  ["crvene_supernova","CRVENE KUĆE","11/1",2,mkCrvene()]
+].forEach((a,i)=>RZ.push({id:a[0],naziv:a[1],tip:"gradski",kategorija:"gradske",linije:a[2],smjene:a[3],rb:i+1,konteksti:a[4]||praznaMatrica()}));
+[ /* PRIGRADSKI / OTOČNI — [id, naziv, tip, smjene, konteksti] — RB 1..38 */
+  ["vir","VIR","prigradski",2,mkVir()],
+  ["privlaka","PRIVLAKA","prigradski",2,null],
+  ["vrsi","VRSI","prigradski",2,null],
+  ["nin","NIN - ŽERAVA","prigradski",2,null],
+  ["petrcane","PETRČANE","prigradski",2,null],
+  ["miletici","MILETIĆI","prigradski",2,null],
+  ["visocane","VISOČANE","prigradski",2,null],
+  ["knezevici","KNEŽEVIĆI","prigradski",2,null],
+  ["radovin","RADOVIN","prigradski",2,null],
+  ["rupalj","RUPALJ","prigradski",2,null],
+  ["kruscica","KRUŠČICA","prigradski",2,null],
+  ["mandalina","MANDALINA","prigradski",2,null],
+  ["jasenice","JASENICE","prigradski",2,null],
+  ["novigrad","NOVIGRAD","prigradski",2,null],
+  ["pridraga","PRIDRAGA","prigradski",2,null],
+  ["obrovac","OBROVAC","prigradski",2,null],
+  ["skabrnja","ŠKABRNJA","prigradski",2,null],
+  ["nadin","NADIN","prigradski",2,null],
+  ["polaca","POLAČA","prigradski",2,null],
+  ["gorica","GORICA","prigradski",2,null],
+  ["sikovo","SIKOVO","prigradski",2,null],
+  ["tinj","TINJ","prigradski",2,null],
+  ["biograd_rastane","BIOGRAD - RAŠTANE","prigradski",2,null],
+  ["biograd1","BIOGRAD I","prigradski",2,null],
+  ["biograd2","BIOGRAD II","prigradski",2,null],
+  ["pakostane1","PAKOŠTANE I","prigradski",2,null],
+  ["pakostane2","PAKOŠTANE II","prigradski",2,null],
+  ["vrana","VRANA","prigradski",2,null],
+  ["skola_maslenica","ŠKOLA MASLENICA","prigradski",1,null],
+  ["skola_posedarje","ŠKOLA POSEDARJE","prigradski",1,null],
+  ["skola_razanac","ŠKOLA RAŽANAC","prigradski",1,null],
+  ["skola_radovin","ŠKOLA RADOVIN","prigradski",1,null],
+  ["skola_policnik","ŠKOLA POLIČNIK","prigradski",1,null],
+  ["skola_pridraga","ŠKOLA PRIDRAGA","prigradski",1,null],
+  ["skola_skabrnja","ŠKOLA ŠKABRNJA","prigradski",1,null],
+  ["brbinj","BRBINJ","otocni",1,null],
+  ["sali","SALI","otocni",1,null],
+  ["iz","IŽ","otocni",1,null]
+].forEach((a,i)=>RZ.push({id:a[0],naziv:a[1],tip:a[2],kategorija:"prigradske",linije:"",smjene:a[3],rb:i+1,konteksti:a[4]||praznaMatrica()}));
 
 /* ════════ STANJE + LOGIKA ════════ */
 let selId = "crvene_supernova";
@@ -319,7 +391,7 @@ function reklasificirajSve(rz, ctx){ ctx.polasci.forEach(pl=>reklasificiraj(rz, 
 
 // Odgođeni render — kad ga zovemo iz blur/change događaja, ne diramo DOM usred trenutnog događaja
 let _renderScheduled=false, _focusDolIdx=null, _rendering=false;
-function doRender(){ _rendering=true; renderList(); renderDetail(); _rendering=false; }
+function doRender(){ _rendering=true; renderDetail(); _rendering=false; }
 function scheduleRender(focusDolIdx){
   if(focusDolIdx!=null) _focusDolIdx=focusDolIdx;
   if(_renderScheduled) return;
@@ -334,23 +406,68 @@ function fmt(min){ const h=Math.floor(min/60), m=min%60; return String(h).padSta
 function satiSmjene(sati,smj){ let t=0; VRSTE_RADA.forEach(v=>{ t+=toMin((sati[smj]||{})[v]); }); return t; }
 function rzBrojPolazaka(rz){ let n=0; Object.keys(rz.konteksti).forEach(k=>{ const c=rz.konteksti[k]; if(!c.nevozi && !c.aliasOf && c.polasci) n+=c.polasci.length; }); return n; }
 
-/* ─── Lijeva lista ─── */
-function renderList(){
-  const q = (document.getElementById("search").value||"").toLowerCase().trim();
-  let h = "";
-  [["gradske","Gradske"],["prigradske","Prigradske"]].forEach(([kat,lbl])=>{
-    const items = RZ.filter(r=>r.kategorija===kat && r.naziv.toLowerCase().includes(q));
-    if(!items.length) return;
-    h += '<div class="grp-lbl">'+lbl+' · '+items.length+'</div>';
-    items.forEach(r=>{
-      h += '<div class="rz-item'+(r.id===selId?' on':'')+'" onclick="selectRz(\''+r.id+'\')">'
-        +   '<div class="rz-item-bd"><div class="rz-item-nm">'+r.naziv+'</div>'
-        +     '<div class="rz-item-mt">'+rzBrojPolazaka(r)+' polazaka · '+r.smjene+' smjene</div></div>'
-        +   '<span class="rz-item-sm">'+r.smjene+'×</span></div>';
+/* ─── Pregled (overview) ─── */
+let ovBuilt=false, ovQ='', ovTip='';
+const tipLabel = t => t==='gradski'?'Gradski':(t==='prigradski'?'Prigradski':'Otočni');
+function kpiCard(v,l){ return '<div class="kpic"><div class="kpic-v">'+v+'</div><div class="kpic-l">'+l+'</div></div>'; }
+function showOverview(){
+  document.getElementById('detail').style.display='none';
+  const ov=document.getElementById('ovView'); ov.style.display='block';
+  if(!ovBuilt){ buildOverviewShell(); ovBuilt=true; }
+  renderOverview();
+}
+function showDetail(id){
+  selId=id; const rz=getRz(); if(rz && !rz.konteksti[selCtx]) selCtx='bezskole_radni';
+  document.getElementById('ovView').style.display='none';
+  document.getElementById('detail').style.display='block';
+  renderDetail();
+}
+function buildOverviewShell(){
+  const cnt={gradski:0,prigradski:0,otocni:0}; RZ.forEach(r=>cnt[r.tip]++);
+  const chip=(t,l,n)=>'<button class="chip" data-tip="'+t+'" onclick="setOvTip(\''+t+'\')">'+l+' · '+n+'</button>';
+  document.getElementById('ovView').innerHTML =
+    '<div class="detail-in">'
+    + '<div class="ov-crumb">Upravljanje prometom › <b>Radni zadaci</b></div>'
+    + '<div class="ov-title">Radni zadaci</div>'
+    + '<div id="ovHead"></div>'
+    + '<div class="ovbar">'
+    +   '<div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg><input id="rzSearch" placeholder="Traži po broju, nazivu ili liniji…" oninput="setOvQ()"></div>'
+    +   '<div class="chips" id="ovChips">'+chip('','Svi',RZ.length)+chip('gradski','Gradski',cnt.gradski)+chip('prigradski','Prigradski',cnt.prigradski)+chip('otocni','Otočni',cnt.otocni)+'</div>'
+    +   '<div style="flex:1"></div>'
+    +   '<button class="btn btn-acc" onclick="openNew()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Novi</button>'
+    + '</div>'
+    + '<div id="ovBody"></div>'
+    + '</div>';
+}
+function setOvQ(){ ovQ=(document.getElementById('rzSearch').value||'').toLowerCase().trim(); renderOverview(); }
+function setOvTip(t){ ovTip=t; renderOverview(); }
+function renderOverview(){
+  document.querySelectorAll('#ovChips .chip').forEach(b=>b.classList.toggle('on',(b.getAttribute('data-tip')||'')===ovTip));
+  const cnt={gradski:0,prigradski:0,otocni:0}; let def=0;
+  RZ.forEach(r=>{ cnt[r.tip]++; if(rzBrojPolazaka(r)>0) def++; });
+  document.getElementById('ovHead').innerHTML = '<div class="kpi">'
+    + kpiCard(RZ.length,'ukupno zadataka') + kpiCard(cnt.gradski,'gradskih')
+    + kpiCard(cnt.prigradski,'prigradskih') + kpiCard(cnt.otocni,'otočnih')
+    + kpiCard(def,'s rasporedom') + '</div>';
+  const ORD={gradski:0,prigradski:1,otocni:2};
+  let rows=RZ.filter(r=> (!ovTip||r.tip===ovTip) && ( (''+r.rb).includes(ovQ) || r.naziv.toLowerCase().includes(ovQ) || (r.linije||'').toLowerCase().includes(ovQ) ));
+  rows.sort((a,b)=> ORD[a.tip]!==ORD[b.tip] ? ORD[a.tip]-ORD[b.tip] : a.rb-b.rb);
+  let body;
+  if(!rows.length){ body='<div class="pempty" style="padding:34px">Nema radnih zadataka za zadane filtere.</div>'; }
+  else {
+    let tr='';
+    rows.forEach(r=>{ const np=rzBrojPolazaka(r);
+      tr += '<tr onclick="showDetail(\''+r.id+'\')">'
+        + '<td class="num rbcol">'+r.rb+'</td>'
+        + '<td class="nmcol">'+esc(r.naziv)+'</td>'
+        + '<td><span class="tag tag-'+r.tip+'">'+tipLabel(r.tip)+'</span></td>'
+        + '<td class="num">'+(r.linije||'—')+'</td>'
+        + '<td class="num">'+(np||'—')+'</td>'
+        + '<td class="num">'+r.smjene+'</td></tr>';
     });
-  });
-  if(!h) h = '<div class="pempty" style="padding:30px 10px">Nema rezultata.</div>';
-  document.getElementById("list").innerHTML = h;
+    body='<table class="tbl ovtbl"><thead><tr><th class="num">RB</th><th>Radni zadatak</th><th>Tip</th><th class="num">Linije</th><th class="num">Polazaka</th><th class="num">Smjene</th></tr></thead><tbody>'+tr+'</tbody></table>';
+  }
+  document.getElementById('ovBody').innerHTML = '<div class="panel" style="margin-top:14px"><div class="panel-bd" style="padding:6px 10px">'+body+'</div></div>';
 }
 
 /* ─── Detail ─── */
@@ -366,13 +483,17 @@ function renderDetail(){
   const st = cellState(rz, selCtx);
 
   let h = '<div class="detail-in">';
+  h += '<button class="btn btn-ghost backbtn" onclick="showOverview()"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Svi zadaci</button>';
   h += '<div class="rzh"><div class="rzh-top"><div class="rzh-l">'
-    + '<div class="rzh-eyebrow">Radni zadatak</div>'
+    + '<div class="rzh-eyebrow">Radni zadatak · RB '+(rz.rb||'?')+' · '+tipLabel(rz.tip)+'</div>'
     + '<input class="rzh-name" value="'+esc(rz.naziv)+'" onchange="setNaziv(this.value)" spellcheck="false">'
     + '<div class="rzh-meta">'
-    +   '<div class="rzh-fld"><label>Kategorija</label><select onchange="setKat(this.value)">'
-    +     '<option value="gradske"'+(rz.kategorija==="gradske"?" selected":"")+'>Gradske</option>'
-    +     '<option value="prigradske"'+(rz.kategorija==="prigradske"?" selected":"")+'>Prigradske</option></select></div>'
+    +   '<div class="rzh-fld"><label>Broj u knjizi (RB)</label><input class="rzh-num" value="'+esc(rz.rb||'')+'" onchange="setRb(this.value)" placeholder="npr. 13"></div>'
+    +   '<div class="rzh-fld"><label>Tip</label><select onchange="setTip(this.value)">'
+    +     '<option value="gradski"'+(rz.tip==="gradski"?" selected":"")+'>Gradski</option>'
+    +     '<option value="prigradski"'+(rz.tip==="prigradski"?" selected":"")+'>Prigradski</option>'
+    +     '<option value="otocni"'+(rz.tip==="otocni"?" selected":"")+'>Otočni</option></select></div>'
+    +   (rz.tip==="gradski" ? '<div class="rzh-fld"><label>Linije</label><input class="rzh-num" value="'+esc(rz.linije||'')+'" onchange="setLinije(this.value)" placeholder="npr. 11/1"></div>' : '')
     +   '<div class="rzh-fld"><label>Broj smjena</label><select onchange="setSmjene(this.value)">'
     +     [1,2,3].map(n=>'<option value="'+n+'"'+(rz.smjene===n?" selected":"")+'>'+n+'</option>').join("")+'</select></div>'
     + '</div></div>'
@@ -506,9 +627,19 @@ function renderSati(rz){
 }
 
 /* ─── Akcije ─── */
-function selectRz(id){ selId=id; if(!getRz().konteksti[selCtx]) selCtx="bezskole_radni"; doRender(); }
+function selectRz(id){ showDetail(id); }
 function selectCtx(c){ selCtx=c; doRender(); }
-function setNaziv(v){ const rz=getRz(); rz.naziv=(v.trim()||rz.naziv); renderList(); }
+function setNaziv(v){ const rz=getRz(); rz.naziv=(v.trim()||rz.naziv); }
+function setRb(v){ const rz=getRz(); const n=parseInt(v,10); if(!isNaN(n)&&n>0) rz.rb=n; }
+function setLinije(v){ const rz=getRz(); rz.linije=v.trim(); }
+function setTip(v){
+  const rz=getRz(); if(v===rz.tip) return;
+  const newKat = v==="gradski" ? "gradske" : "prigradske";
+  if(newKat!==rz.kategorija && rzBrojPolazaka(rz)>0 && !confirm("Promjena tipa mijenja skup linija i briše postojeće polaske. Nastaviti?")){ doRender(); return; }
+  rz.tip=v;
+  if(newKat!==rz.kategorija){ rz.kategorija=newKat; rz.konteksti=praznaMatrica(); }
+  doRender();
+}
 function setKat(v){
   const rz=getRz(); if(v===rz.kategorija) return;
   if(rzBrojPolazaka(rz)>0 && !confirm("Promjena kategorije briše postojeće polaske (linije se ne podudaraju). Nastaviti?")){ doRender(); return; }
@@ -583,15 +714,18 @@ function closeNew(){ document.getElementById("newBg").classList.remove("on"); }
 function createRz(){
   const nm=(document.getElementById("newName").value||"").trim();
   if(!nm){ document.getElementById("newName").focus(); return; }
-  const kat=document.getElementById("newKat").value; const smj=parseInt(document.getElementById("newSmj").value,10);
+  const tip=document.getElementById("newKat").value; const smj=parseInt(document.getElementById("newSmj").value,10);
+  const kat = tip==="gradski" ? "gradske" : "prigradske";
+  const sameGroup = RZ.filter(r=> (r.tip==="gradski")===(tip==="gradski"));
+  const rb = sameGroup.reduce((m,r)=>Math.max(m,r.rb||0),0)+1;
   const id="rz_"+Date.now();
-  RZ.push({ id, naziv:nm.toUpperCase(), kategorija:kat, smjene:smj, konteksti:praznaMatrica() });
-  selId=id; selCtx="bezskole_radni"; closeNew(); doRender();
+  RZ.push({ id, naziv:nm.toUpperCase(), tip, kategorija:kat, linije:"", smjene:smj, rb, konteksti:praznaMatrica() });
+  selCtx="bezskole_radni"; closeNew(); ovBuilt=false; showDetail(id);
 }
 function deleteRz(){
   const rz=getRz(); if(!rz) return;
   if(!confirm('Obrisati radni zadatak „'+rz.naziv+'“? Brišu se i svi konteksti.')) return;
-  RZ=RZ.filter(r=>r.id!==rz.id); selId = RZ.length ? RZ[0].id : null; doRender();
+  RZ=RZ.filter(r=>r.id!==rz.id); ovBuilt=false; showOverview();
 }
 
 /* ─── Tema ─── */
@@ -603,7 +737,7 @@ function toggleTheme(){
     : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/>';
 }
 
-doRender();
+showOverview();
 </script>
 </body>
 </html>
