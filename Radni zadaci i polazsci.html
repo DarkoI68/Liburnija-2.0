@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="hr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liburnija — Radni zadaci</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+html[data-theme="dark"]{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2330;--bgh:#212936;--bdr:#2d3748;--tp:#f0f4f8;--ts:#8b95a1;--tm:#4b5563;--acc:#f97316;--accs:rgba(249,115,22,.14);--blu:#3b82f6;--grn:#22c55e;--red:#ef4444}
+html[data-theme="light"]{--bg:#f0f4f8;--bg2:#fff;--bg3:#f8fafc;--bgh:#f1f5f9;--bdr:#e2e8f0;--tp:#0f172a;--ts:#64748b;--tm:#94a3b8;--acc:#f97316;--accs:rgba(249,115,22,.09);--blu:#3b82f6;--grn:#16a34a;--red:#dc2626}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--tp);height:100vh;display:flex;flex-direction:column;font-size:13px;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:5px}
+::-webkit-scrollbar-track{background:transparent}
+
+.top{display:flex;align-items:center;gap:12px;padding:11px 18px;background:var(--bg2);border-bottom:1.5px solid var(--bdr);flex-shrink:0}
+.brand{display:flex;align-items:center;gap:9px}
+.brand-ic{width:30px;height:30px;border-radius:8px;background:var(--accs);display:flex;align-items:center;justify-content:center}
+.brand-ic svg{width:17px;height:17px;stroke:var(--acc);stroke-width:2.2;fill:none}
+.brand-tit{font-size:14px;font-weight:800;letter-spacing:.2px}
+.brand-sub{font-size:10px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px}
+.top-sp{flex:1}
+.tbtn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:8px;color:var(--ts)}
+.tbtn:hover{border-color:var(--acc);color:var(--acc)}
+.tbtn svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none}
+
+.shell{flex:1;display:flex;min-height:0}
+.rail{width:296px;flex-shrink:0;background:var(--bg2);border-right:1.5px solid var(--bdr);display:flex;flex-direction:column;min-height:0}
+.rail-hd{display:flex;align-items:center;justify-content:space-between;padding:15px 16px 10px}
+.rail-hd h2{font-size:13px;font-weight:800;letter-spacing:.2px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:8px;font-size:12px;font-weight:700;padding:7px 12px;transition:all .12s}
+.btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.4;fill:none}
+.btn-acc{background:var(--acc);color:#fff}
+.btn-acc:hover{filter:brightness(1.06)}
+.btn-ghost{background:var(--bg3);border:1.5px solid var(--bdr);color:var(--ts)}
+.btn-ghost:hover{border-color:var(--acc);color:var(--acc)}
+.btn-danger{background:transparent;border:1.5px solid var(--bdr);color:var(--red)}
+.btn-danger:hover{background:var(--red);border-color:var(--red);color:#fff}
+.rail-search{margin:0 16px 10px}
+.rail-search input{width:100%;padding:8px 12px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:8px;font-family:inherit;font-size:12.5px;color:var(--tp)}
+.rail-search input:focus{outline:none;border-color:var(--acc)}
+.rail-list{flex:1;overflow-y:auto;padding:0 12px 16px}
+.grp-lbl{font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.7px;padding:14px 6px 7px}
+.rz-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:9px;border:1.5px solid transparent;margin-bottom:3px;cursor:pointer;transition:all .1s}
+.rz-item:hover{background:var(--bg3)}
+.rz-item.on{background:var(--accs);border-color:var(--acc)}
+.rz-item-bd{flex:1;min-width:0}
+.rz-item-nm{font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rz-item.on .rz-item-nm{color:var(--acc)}
+.rz-item-mt{font-size:10px;color:var(--ts);font-weight:600;margin-top:1px}
+.rz-item-sm{font-size:9.5px;font-weight:800;color:var(--ts);background:var(--bg);border:1.5px solid var(--bdr);border-radius:6px;padding:2px 6px;flex-shrink:0;font-variant-numeric:tabular-nums}
+.rz-item.on .rz-item-sm{border-color:var(--acc);color:var(--acc)}
+
+.detail{flex:1;overflow-y:auto;min-height:0}
+.detail-in{max-width:1180px;margin:0 auto;padding:20px 26px 60px}
+.empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--ts);text-align:center}
+.empty svg{width:44px;height:44px;stroke:var(--tm);stroke-width:1.6;fill:none}
+
+.rzh{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:13px;padding:17px 19px;margin-bottom:18px}
+.rzh-top{display:flex;align-items:flex-start;gap:14px}
+.rzh-l{flex:1;min-width:0}
+.rzh-eyebrow{font-size:10px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.rzh-name{width:100%;font-family:inherit;font-size:21px;font-weight:800;color:var(--tp);background:transparent;border:1.5px solid transparent;border-radius:8px;padding:3px 7px;margin-left:-7px;letter-spacing:.2px}
+.rzh-name:hover{border-color:var(--bdr)}
+.rzh-name:focus{outline:none;border-color:var(--acc);background:var(--bg3)}
+.rzh-meta{display:flex;align-items:center;gap:18px;margin-top:11px}
+.rzh-fld{display:flex;flex-direction:column;gap:4px}
+.rzh-fld label{font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.5px}
+.rzh-fld select{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--tp);background:var(--bg3);border:1.5px solid var(--bdr);border-radius:7px;padding:6px 10px}
+.rzh-fld select:focus{outline:none;border-color:var(--acc)}
+
+/* Matrica konteksta */
+.mtx{margin-bottom:16px}
+.mtx-lbl{font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:9px}
+.mtx-grid{display:grid;gap:7px}
+.mtx-corner{font-size:9px;font-weight:800;color:var(--tm);text-transform:uppercase;letter-spacing:.3px;display:flex;align-items:flex-end;padding:4px 2px}
+.mtx-chd{font-size:10px;font-weight:800;color:var(--ts);text-align:center;padding:6px 4px;text-transform:uppercase;letter-spacing:.3px;display:flex;align-items:flex-end;justify-content:center}
+.mtx-rlbl{font-size:12px;font-weight:800;color:var(--tp);display:flex;align-items:center;padding:0 4px}
+.mcell{display:flex;flex-direction:column;gap:5px;align-items:flex-start;justify-content:center;min-height:60px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:10px;padding:10px 13px;text-align:left;transition:all .12s}
+.mcell:hover{border-color:var(--acc)}
+.mcell.on{border-color:var(--acc);background:var(--accs);box-shadow:0 0 0 1px var(--acc) inset}
+.mcell-st{font-size:11.5px;font-weight:800;display:flex;align-items:center;gap:7px}
+.mcell-sub{font-size:10px;color:var(--ts);font-weight:600}
+.mcell .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.st-def .dot{background:var(--grn)} .st-def .mcell-st{color:var(--tp)}
+.st-prazno .mcell-st{color:var(--tm)} .st-prazno .dot{background:var(--bdr)}
+.st-nevozi .mcell-st{color:var(--ts)} .st-nevozi .dot{background:var(--red);opacity:.65}
+.st-alias .mcell-st{color:var(--blu)} .st-alias .dot{background:var(--blu)}
+
+.ctb{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:11px;padding:11px 15px;margin-bottom:16px}
+.ctb-tit{font-size:13.5px;font-weight:800;line-height:1.15}
+.ctb-tit small{display:block;font-size:9.5px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
+.ctb-sp{flex:1}
+.seg{display:inline-flex;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:8px;padding:2px}
+.seg button{border:none;background:transparent;font-size:11.5px;font-weight:700;color:var(--ts);padding:5px 11px;border-radius:6px}
+.seg button.on{background:var(--bg2);color:var(--acc);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.ctb-sel{font-family:inherit;font-size:11.5px;font-weight:700;color:var(--tp);background:var(--bg3);border:1.5px solid var(--bdr);border-radius:8px;padding:6px 10px;max-width:170px}
+.ctb-sel:focus{outline:none;border-color:var(--acc)}
+
+.notice{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:13px;padding:30px 26px;text-align:center;color:var(--ts)}
+.notice-ic{width:42px;height:42px;margin:0 auto 13px;border-radius:11px;background:var(--bg3);display:flex;align-items:center;justify-content:center}
+.notice-ic svg{width:21px;height:21px;stroke:var(--ts);stroke-width:2;fill:none}
+.notice h4{font-size:14.5px;font-weight:800;color:var(--tp);margin-bottom:5px}
+.notice p{font-size:12.5px;margin-bottom:15px}
+.notice p b{color:var(--tp)}
+
+.panel{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:13px;margin-bottom:18px;overflow:hidden}
+.panel-hd{display:flex;align-items:center;gap:11px;padding:14px 18px;border-bottom:1.5px solid var(--bdr)}
+.panel-ic{width:30px;height:30px;border-radius:8px;background:var(--bg3);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.panel-ic svg{width:16px;height:16px;stroke:var(--acc);stroke-width:2;fill:none}
+.panel-hd h3{font-size:13.5px;font-weight:800;letter-spacing:.2px}
+.panel-hd .sub{font-size:11px;color:var(--ts);font-weight:600}
+.panel-sp{flex:1}
+.panel-bd{padding:14px 18px 18px}
+
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:7px 9px;border-bottom:1.5px solid var(--bdr);white-space:nowrap}
+.tbl td{padding:4px 9px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .num{text-align:center;font-variant-numeric:tabular-nums}
+.cell-in{width:100%;font-family:"DM Mono",monospace;font-size:12.5px;font-weight:500;color:var(--tp);background:transparent;border:1.5px solid transparent;border-radius:6px;padding:5px 7px;text-align:center;letter-spacing:.3px}
+.cell-in:hover{border-color:var(--bdr)}
+.cell-in:focus{outline:none;border-color:var(--acc);background:var(--bg3)}
+.cell-in.zero{color:var(--tm)}
+.cell-sel{font-family:inherit;font-size:12px;font-weight:600;color:var(--tp);background:transparent;border:1.5px solid transparent;border-radius:6px;padding:5px 6px;max-width:100%}
+.cell-sel:hover{border-color:var(--bdr)}
+.cell-sel:focus{outline:none;border-color:var(--acc);background:var(--bg3)}
+.cell-sel.lin{font-weight:700}
+.rownum{font-size:10.5px;font-weight:700;color:var(--ts);text-align:center;font-variant-numeric:tabular-nums;width:30px}
+.del{width:26px;height:26px;border:none;background:transparent;border-radius:6px;color:var(--tm);display:inline-flex;align-items:center;justify-content:center}
+.del:hover{background:var(--accs);color:var(--red)}
+.del svg{width:14px;height:14px;stroke:currentColor;stroke-width:2;fill:none}
+.smj-pill{display:inline-block;font-size:11px;font-weight:800;color:var(--tp);font-variant-numeric:tabular-nums}
+.smj-cell{display:flex;align-items:center;gap:11px;white-space:nowrap}
+.smj-do{font-size:10px;font-weight:700;color:var(--ts);display:flex;align-items:center;gap:5px;text-transform:lowercase}
+.smj-do-in{width:58px;font-family:"DM Mono",monospace;font-size:11.5px;font-weight:500;color:var(--tp);background:transparent;border:1.5px solid var(--bdr);border-radius:6px;padding:4px 6px;text-align:center;letter-spacing:.3px}
+.smj-do-in:hover{border-color:var(--ts)}
+.smj-do-in:focus{outline:none;border-color:var(--acc);background:var(--bg3)}
+.addrow{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:8px 14px;background:transparent;border:1.5px dashed var(--bdr);border-radius:8px;color:var(--ts);font-size:11.5px;font-weight:700;letter-spacing:.3px;transition:all .12s}
+.addrow:hover{border-color:var(--acc);color:var(--acc);border-style:solid}
+.addrow svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.4;fill:none}
+.pempty{padding:22px;text-align:center;color:var(--ts);font-size:12.5px;font-weight:600}
+.sati-foot{display:flex;flex-wrap:wrap;gap:5px 16px;margin-top:13px;padding-top:13px;border-top:1px solid var(--bdr)}
+.sati-tot{font-size:11px;color:var(--ts);font-weight:700}
+.sati-tot b{color:var(--tp);font-variant-numeric:tabular-nums;font-weight:800}
+
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
+.mbg.on{display:flex}
+.modal{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:14px;width:100%;max-width:420px;box-shadow:0 24px 60px rgba(0,0,0,.3);overflow:hidden}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 19px;border-bottom:1.5px solid var(--bdr)}
+.modal-hd h3{font-size:15px;font-weight:800}
+.modal-bd{padding:18px 19px}
+.mfld{margin-bottom:14px}
+.mfld label{display:block;font-size:10px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.mfld input,.mfld select{width:100%;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--tp);background:var(--bg3);border:1.5px solid var(--bdr);border-radius:8px;padding:9px 12px}
+.mfld input:focus,.mfld select:focus{outline:none;border-color:var(--acc)}
+.modal-ft{display:flex;justify-content:flex-end;gap:9px;padding:0 19px 18px}
+
+@media (max-width:860px){ .rail{width:240px} .rzh-meta{flex-wrap:wrap;gap:12px} }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">
+    <div class="brand-ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 18v2M16 18v2"/><circle cx="7.5" cy="13.5" r="1"/><circle cx="16.5" cy="13.5" r="1"/></svg></div>
+    <div><div class="brand-tit">Liburnija</div><div class="brand-sub">Radni zadaci</div></div>
+  </div>
+  <div class="top-sp"></div>
+  <button class="tbtn" id="themeBtn" title="Tema" onclick="toggleTheme()"><svg id="themeIc" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+</div>
+
+<div class="shell">
+  <aside class="rail">
+    <div class="rail-hd"><h2>Zadaci</h2><button class="btn btn-acc" onclick="openNew()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Novi</button></div>
+    <div class="rail-search"><input id="search" type="text" placeholder="Traži radni zadatak…" oninput="renderList()"></div>
+    <div class="rail-list" id="list"></div>
+  </aside>
+  <main class="detail" id="detail"></main>
+</div>
+
+<div class="mbg" id="newBg">
+  <div class="modal">
+    <div class="modal-hd"><h3>Novi radni zadatak</h3><button class="del" onclick="closeNew()"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="modal-bd">
+      <div class="mfld"><label>Naziv zadatka</label><input id="newName" type="text" placeholder="npr. DIKLO - GAŽENICA"></div>
+      <div class="mfld"><label>Kategorija</label><select id="newKat"><option value="gradske">Gradske</option><option value="prigradske">Prigradske</option></select></div>
+      <div class="mfld"><label>Broj smjena</label><select id="newSmj"><option>1</option><option selected>2</option><option>3</option></select></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-ghost" onclick="closeNew()">Odustani</button><button class="btn btn-acc" onclick="createRz()">Kreiraj zadatak</button></div>
+  </div>
+</div>
+
+<script>
+/* ════════ MOCK PODACI — jedina točka koju developer mijenja pravim izvorom ════════ */
+const LINIJE = {
+  gradske: [
+    { id:"g1",  broj:"1",  naziv:"Belafuža (Petrići)",      rute:["Kolodvor - Belafuža","Belafuža - Kolodvor"] },
+    { id:"g2",  broj:"2",  naziv:"Arbanasi",                rute:["Kolodvor - Arbanasi","Arbanasi - Kolodvor"] },
+    { id:"g3",  broj:"3",  naziv:"Bili Brig",               rute:["Kolodvor - Bili Brig","Bili Brig - Kolodvor"] },
+    { id:"g4",  broj:"4",  naziv:"Crno",                    rute:["Kolodvor - Crno","Crno - Kolodvor"] },
+    { id:"g5",  broj:"5",  naziv:"Puntamika",               rute:["Kolodvor - Puntamika","Puntamika - Kolodvor"] },
+    { id:"g7",  broj:"7",  naziv:"Bokanjac",                rute:["Kolodvor - Bokanjac","Bokanjac - Kolodvor"] },
+    { id:"g8",  broj:"8",  naziv:"Diklo",                   rute:["Kolodvor - Diklo","Diklo - Kolodvor"] },
+    { id:"g9",  broj:"9",  naziv:"Gaženica",                rute:["Kolodvor - Gaženica","Gaženica - Kolodvor"] },
+    { id:"g11", broj:"11", naziv:"Crvene kuće (Supernova)", rute:["Supernova - Kolodvor","Kolodvor - Supernova","Kolodvor - Crvene kuće - Supernova"] }
+  ],
+  prigradske: [
+    { id:"p_vir",      broj:"", naziv:"Vir",           rute:["Zadar - Vir","Vir - Zadar"] },
+    { id:"p_privlaka", broj:"", naziv:"Privlaka",      rute:["Zadar - Privlaka","Privlaka - Zadar"] },
+    { id:"p_nin",      broj:"", naziv:"Nin - Žerava",  rute:["Zadar - Nin - Žerava","Žerava - Nin - Zadar"] },
+    { id:"p_biograd1", broj:"", naziv:"Biograd I",     rute:["Zadar - Biograd","Biograd - Zadar"] },
+    { id:"p_biograd2", broj:"", naziv:"Biograd II",    rute:["Zadar - Biograd","Biograd - Zadar"] },
+    { id:"p_obrovac",  broj:"", naziv:"Obrovac",       rute:["Zadar - Obrovac","Obrovac - Zadar"] },
+    { id:"p_novigrad", broj:"", naziv:"Novigrad",      rute:["Zadar - Novigrad","Novigrad - Zadar"] }
+  ]
+};
+
+const VRSTE_RADA = ["Redovan","Smjenski","Dvokratni","D+S","Noćni","Prekovremeno"];
+
+/* Matrica konteksta: Režim (proširiv) × Tip dana (fiksno 3) */
+const REZIMI = [ { id:"skola", naziv:"Škola" }, { id:"bezskole", naziv:"Bez škole" } ];
+const DANI   = [ { id:"radni", naziv:"Radni dan" }, { id:"subota", naziv:"Subota" }, { id:"nedjelja", naziv:"Nedjelja i blagdan" } ];
+
+function prazanKtx(){ return { polasci:[], sati:{}, granice:{}, nevozi:false, aliasOf:null }; }
+function praznaMatrica(){ const o={}; REZIMI.forEach(r=>DANI.forEach(d=>{ o[r.id+"_"+d.id]=prazanKtx(); })); return o; }
+function p(linId,ruta,polazak,dolazak,smjena){ return {linId,ruta,polazak,dolazak:dolazak||"",smjena}; }
+function copyPol(arr){ return arr.map(x=>({...x})); }
+
+const CRVENE_RADNI = [
+  p("g11","Supernova - Kolodvor","07:20","",1),
+  p("g11","Kolodvor - Crvene kuće - Supernova","07:45","",1),
+  p("g11","Supernova - Kolodvor","08:00","",1),
+  p("g11","Kolodvor - Crvene kuće - Supernova","08:45","",1),
+  p("g11","Supernova - Kolodvor","09:00","",1),
+  p("g1","Kolodvor - Belafuža","09:15","",1),
+  p("g1","Belafuža - Kolodvor","09:30","",1),
+  p("g11","Kolodvor - Supernova","09:45","",2),
+  p("g11","Supernova - Kolodvor","10:00","",2),
+  p("g11","Kolodvor - Crvene kuće - Supernova","10:45","",2),
+  p("g11","Supernova - Kolodvor","11:00","",2),
+  p("g11","Kolodvor - Crvene kuće - Supernova","11:45","",2),
+  p("g11","Supernova - Kolodvor","12:00","",2)
+];
+
+function mkCrvene(){
+  const m = praznaMatrica();
+  m["skola_radni"]    = { polasci:CRVENE_RADNI.concat([p("g11","Kolodvor - Crvene kuće - Supernova","06:30","",1),p("g11","Supernova - Kolodvor","13:00","",2)]), sati:{1:{Redovan:"03:00",Dvokratni:"03:30"},2:{Smjenski:"03:00","D+S":"02:30"}}, granice:{1:"09:30"}, nevozi:false, aliasOf:null };
+  m["bezskole_radni"] = { polasci:copyPol(CRVENE_RADNI), sati:{1:{Redovan:"03:00",Dvokratni:"03:30"},2:{Smjenski:"03:00","D+S":"02:30"}}, granice:{1:"09:30"}, nevozi:false, aliasOf:null };
+  m["bezskole_subota"]= { polasci:[p("g11","Kolodvor - Crvene kuće - Supernova","08:00","",1),p("g11","Supernova - Kolodvor","08:45","",1),p("g11","Kolodvor - Supernova","10:00","",2),p("g11","Supernova - Kolodvor","10:45","",2)], sati:{1:{Redovan:"04:00"},2:{Smjenski:"02:00"}}, granice:{1:"09:00"}, nevozi:false, aliasOf:null };
+  m["skola_subota"]   = { polasci:[], sati:{}, nevozi:false, aliasOf:"bezskole_subota" };
+  m["bezskole_nedjelja"] = { polasci:[p("g11","Kolodvor - Crvene kuće - Supernova","09:00","",1),p("g11","Supernova - Kolodvor","10:00","",1)], sati:{1:{Redovan:"03:00"}}, nevozi:false, aliasOf:null };
+  m["skola_nedjelja"] = { polasci:[], sati:{}, nevozi:true, aliasOf:null };
+  return m;
+}
+function mkVir(){
+  const m = praznaMatrica();
+  m["bezskole_radni"] = { polasci:[p("p_vir","Zadar - Vir","05:30","",1),p("p_vir","Vir - Zadar","06:30","",1),p("p_vir","Zadar - Vir","13:30","",2),p("p_vir","Vir - Zadar","15:00","",2)], sati:{1:{Redovan:"07:00"},2:{Redovan:"07:00"}}, nevozi:false, aliasOf:null };
+  return m;
+}
+function mkDracevac(){
+  const m = praznaMatrica();
+  m["bezskole_radni"] = { polasci:[p("g4","Kolodvor - Crno","06:00","",1),p("g4","Crno - Kolodvor","06:45","",1),p("g4","Kolodvor - Crno","14:00","",2)], sati:{1:{Redovan:"08:00"},2:{Smjenski:"08:00"},3:{"Noćni":"08:00"}}, nevozi:false, aliasOf:null };
+  return m;
+}
+
+let RZ = [
+  { id:"crvene_supernova", naziv:"CRVENE KUĆE - SUPERNOVA", kategorija:"gradske", smjene:2, konteksti:mkCrvene() },
+  { id:"dracevac1", naziv:"DRAČEVAC P. PETRIĆA I", kategorija:"gradske", smjene:3, konteksti:mkDracevac() },
+  { id:"arbanasi", naziv:"ARBANASI", kategorija:"gradske", smjene:3, konteksti:praznaMatrica() },
+  { id:"bokanjac1", naziv:"BOKANJAC I", kategorija:"gradske", smjene:3, konteksti:praznaMatrica() },
+  { id:"vir", naziv:"VIR", kategorija:"prigradske", smjene:2, konteksti:mkVir() },
+  { id:"biograd1", naziv:"BIOGRAD I", kategorija:"prigradske", smjene:2, konteksti:praznaMatrica() },
+  { id:"nin", naziv:"NIN - ŽERAVA", kategorija:"prigradske", smjene:2, konteksti:praznaMatrica() }
+];
+
+/* ════════ STANJE + LOGIKA ════════ */
+let selId = "crvene_supernova";
+let selCtx = "bezskole_radni";
+let _uidc = 1;
+
+const rim = n => ["I","II","III","IV"][n-1] || n;
+const esc = s => (s==null?"":(""+s)).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const linById = (kat,id) => LINIJE[kat].find(l=>l.id===id);
+const linLabel = l => l.broj ? (l.broj+" — "+l.naziv) : l.naziv;
+const getRz = () => RZ.find(r=>r.id===selId);
+function rezNaziv(id){ const r=REZIMI.find(x=>x.id===id); return r?r.naziv:id; }
+function danNaziv(id){ const d=DANI.find(x=>x.id===id); return d?d.naziv:id; }
+function splitKey(k){ const i=k.indexOf("_"); return [k.slice(0,i), k.slice(i+1)]; }
+function cellLabel(k){ const [r,d]=splitKey(k); return rezNaziv(r)+" · "+danNaziv(d); }
+function getCell(rz,k){ if(!rz.konteksti[k]) rz.konteksti[k]=prazanKtx(); const c=rz.konteksti[k]; if(!c.sati)c.sati={}; if(!c.polasci)c.polasci=[]; if(!c.granice)c.granice={}; return c; }
+function cellState(rz,k){ const c=rz.konteksti[k]; if(!c) return "prazno"; if(c.nevozi) return "nevozi"; if(c.aliasOf) return "alias"; if(c.polasci&&c.polasci.length) return "def"; return "prazno"; }
+function effCell(rz,k){ let c=getCell(rz,k), guard=0; while(c.aliasOf && guard++<8){ c=getCell(rz,c.aliasOf); } return c; }
+
+function toMin(t){ if(!t||!/^\d{1,2}:\d{2}$/.test(t)) return 0; const [h,m]=t.split(":").map(Number); return h*60+m; }
+// "1235" -> "12:35", "835" -> "08:35", normalizira HH:MM; nevaljano vraća original
+function normVrijeme(raw){
+  if(raw==null) return ""; raw=(""+raw).trim(); if(raw==="") return "";
+  let h, mi, m=raw.match(/^(\d{1,2}):(\d{2})$/);
+  if(m){ h=+m[1]; mi=+m[2]; }
+  else { let d=raw.replace(/\D/g,""); if(d==="") return raw;
+    if(d.length<=2){ h=+d; mi=0; } else if(d.length===3){ h=+d.slice(0,1); mi=+d.slice(1); } else { d=d.slice(-4); h=+d.slice(0,2); mi=+d.slice(2); } }
+  if(isNaN(h)||isNaN(mi)||h>23||mi>59) return raw;
+  return String(h).padStart(2,"0")+":"+String(mi).padStart(2,"0");
+}
+function sortPolasci(ctx){ ctx.polasci.sort((a,b)=>{ const ta=toMin(a.polazak), tb=toMin(b.polazak); const ea=a.polazak?0:1, eb=b.polazak?0:1; if(ea!==eb) return ea-eb; return ta-tb; }); }
+// smjena iz granica (do-kad po smjeni); null = ne diraj ručni odabir
+function smjenaZaVrijeme(rz, ctx, t){
+  if(!t) return null; const tm=toMin(t); const g=ctx.granice||{}; let anySet=false;
+  for(let s=1;s<rz.smjene;s++){ if(g[s]){ anySet=true; if(tm<=toMin(g[s])) return s; } }
+  if(!anySet) return null; return rz.smjene;
+}
+function reklasificiraj(rz, ctx, pl){ const s=smjenaZaVrijeme(rz, ctx, pl.polazak); if(s!=null) pl.smjena=s; }
+function reklasificirajSve(rz, ctx){ ctx.polasci.forEach(pl=>reklasificiraj(rz, ctx, pl)); }
+
+// Odgođeni render — kad ga zovemo iz blur/change događaja, ne diramo DOM usred trenutnog događaja
+let _renderScheduled=false, _focusDolIdx=null, _rendering=false;
+function doRender(){ _rendering=true; renderList(); renderDetail(); _rendering=false; }
+function scheduleRender(focusDolIdx){
+  if(focusDolIdx!=null) _focusDolIdx=focusDolIdx;
+  if(_renderScheduled) return;
+  _renderScheduled=true;
+  setTimeout(function(){
+    _renderScheduled=false;
+    doRender();
+    if(_focusDolIdx!=null){ const dols=document.querySelectorAll('.vr-dol'); if(dols[_focusDolIdx]) dols[_focusDolIdx].focus(); _focusDolIdx=null; }
+  },0);
+}
+function fmt(min){ const h=Math.floor(min/60), m=min%60; return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0"); }
+function satiSmjene(sati,smj){ let t=0; VRSTE_RADA.forEach(v=>{ t+=toMin((sati[smj]||{})[v]); }); return t; }
+function rzBrojPolazaka(rz){ let n=0; Object.keys(rz.konteksti).forEach(k=>{ const c=rz.konteksti[k]; if(!c.nevozi && !c.aliasOf && c.polasci) n+=c.polasci.length; }); return n; }
+
+/* ─── Lijeva lista ─── */
+function renderList(){
+  const q = (document.getElementById("search").value||"").toLowerCase().trim();
+  let h = "";
+  [["gradske","Gradske"],["prigradske","Prigradske"]].forEach(([kat,lbl])=>{
+    const items = RZ.filter(r=>r.kategorija===kat && r.naziv.toLowerCase().includes(q));
+    if(!items.length) return;
+    h += '<div class="grp-lbl">'+lbl+' · '+items.length+'</div>';
+    items.forEach(r=>{
+      h += '<div class="rz-item'+(r.id===selId?' on':'')+'" onclick="selectRz(\''+r.id+'\')">'
+        +   '<div class="rz-item-bd"><div class="rz-item-nm">'+r.naziv+'</div>'
+        +     '<div class="rz-item-mt">'+rzBrojPolazaka(r)+' polazaka · '+r.smjene+' smjene</div></div>'
+        +   '<span class="rz-item-sm">'+r.smjene+'×</span></div>';
+    });
+  });
+  if(!h) h = '<div class="pempty" style="padding:30px 10px">Nema rezultata.</div>';
+  document.getElementById("list").innerHTML = h;
+}
+
+/* ─── Detail ─── */
+function renderDetail(){
+  const rz = getRz();
+  const d = document.getElementById("detail");
+  if(!rz){
+    d.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>'
+      + '<div><div style="font-weight:700;color:var(--tp);font-size:14px">Odaberi radni zadatak</div><div style="margin-top:4px">ili kreiraj novi gumbom „Novi“.</div></div></div>';
+    return;
+  }
+  getCell(rz, selCtx);
+  const st = cellState(rz, selCtx);
+
+  let h = '<div class="detail-in">';
+  h += '<div class="rzh"><div class="rzh-top"><div class="rzh-l">'
+    + '<div class="rzh-eyebrow">Radni zadatak</div>'
+    + '<input class="rzh-name" value="'+esc(rz.naziv)+'" onchange="setNaziv(this.value)" spellcheck="false">'
+    + '<div class="rzh-meta">'
+    +   '<div class="rzh-fld"><label>Kategorija</label><select onchange="setKat(this.value)">'
+    +     '<option value="gradske"'+(rz.kategorija==="gradske"?" selected":"")+'>Gradske</option>'
+    +     '<option value="prigradske"'+(rz.kategorija==="prigradske"?" selected":"")+'>Prigradske</option></select></div>'
+    +   '<div class="rzh-fld"><label>Broj smjena</label><select onchange="setSmjene(this.value)">'
+    +     [1,2,3].map(n=>'<option value="'+n+'"'+(rz.smjene===n?" selected":"")+'>'+n+'</option>').join("")+'</select></div>'
+    + '</div></div>'
+    + '<button class="btn btn-danger" onclick="deleteRz()"><svg viewBox="0 0 24 24" style="stroke:currentColor;stroke-width:2;fill:none"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>Obriši</button>'
+    + '</div></div>';
+
+  h += renderMatrix(rz);
+  h += renderToolbar(rz, st);
+
+  if(st==="nevozi"){
+    h += '<div class="notice"><div class="notice-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></div>'
+      + '<h4>Na ovaj kontekst se ne vozi</h4><p>Za <b>'+cellLabel(selCtx)+'</b> nije predviđen promet.</p>'
+      + '<button class="btn btn-ghost" onclick="cellMode(\'uredi\')">Ipak vozi — uredi raspored</button></div>';
+  } else if(st==="alias"){
+    const c = rz.konteksti[selCtx]; const eff = effCell(rz, selCtx);
+    h += '<div class="notice"><div class="notice-ic"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></div>'
+      + '<h4>Nasljeđuje raspored</h4><p>Isto kao <b>'+cellLabel(c.aliasOf)+'</b> — '+eff.polasci.length+' polazaka.</p>'
+      + '<button class="btn btn-ghost" onclick="detachAlias()">Odvoji i uredi zasebno</button></div>';
+  } else {
+    h += renderVozniRed(rz);
+    h += renderSati(rz);
+  }
+  h += '</div>';
+  d.innerHTML = h;
+}
+
+/* ─── Matrica ─── */
+function renderMatrix(rz){
+  const cols = 'minmax(108px,134px) repeat('+DANI.length+',1fr)';
+  let h = '<div class="mtx"><div class="mtx-lbl">Kontekst — režim × tip dana</div>';
+  h += '<div class="mtx-grid" style="grid-template-columns:'+cols+'">';
+  h += '<div class="mtx-corner">Režim \\ Dan</div>';
+  DANI.forEach(d=>{ h += '<div class="mtx-chd">'+d.naziv+'</div>'; });
+  REZIMI.forEach(r=>{
+    h += '<div class="mtx-rlbl">'+r.naziv+'</div>';
+    DANI.forEach(d=>{
+      const key = r.id+"_"+d.id; const st = cellState(rz,key); const c = rz.konteksti[key];
+      let label, sub;
+      if(st==="def"){ label="Definirano"; sub=c.polasci.length+" polazaka"; }
+      else if(st==="nevozi"){ label="Ne vozi se"; sub="—"; }
+      else if(st==="alias"){ label="Isto kao…"; sub=cellLabel(c.aliasOf); }
+      else { label="Prazno"; sub="dodaj raspored"; }
+      h += '<button class="mcell st-'+st+(key===selCtx?' on':'')+'" onclick="selectCtx(\''+key+'\')">'
+        + '<span class="mcell-st"><span class="dot"></span>'+label+'</span>'
+        + '<span class="mcell-sub">'+sub+'</span></button>';
+    });
+  });
+  h += '</div></div>';
+  return h;
+}
+
+/* ─── Toolbar konteksta ─── */
+function renderToolbar(rz, st){
+  const [rid,did] = splitKey(selCtx); const c = rz.konteksti[selCtx];
+  let opts = '<option value="">Isto kao…</option>';
+  REZIMI.forEach(r=>DANI.forEach(d=>{
+    const k = r.id+"_"+d.id; if(k===selCtx) return;
+    if(cellState(rz,k)==="alias") return;
+    opts += '<option value="'+k+'"'+(c.aliasOf===k?" selected":"")+'>'+cellLabel(k)+'</option>';
+  }));
+  return '<div class="ctb"><div class="ctb-tit">'+rezNaziv(rid)+'<small>'+danNaziv(did)+'</small></div>'
+    + '<div class="ctb-sp"></div>'
+    + '<div class="seg">'
+    +   '<button class="'+((st==="def"||st==="prazno")?"on":"")+'" onclick="cellMode(\'uredi\')">Uredi</button>'
+    +   '<button class="'+(st==="nevozi"?"on":"")+'" onclick="cellMode(\'nevozi\')">Ne vozi se</button>'
+    + '</div>'
+    + '<select class="ctb-sel" onchange="cellAlias(this.value)">'+opts+'</select>'
+    + '</div>';
+}
+
+/* ─── Vozni red ─── */
+function renderVozniRed(rz){
+  const ctx = rz.konteksti[selCtx]; const lines = LINIJE[rz.kategorija];
+  let body;
+  if(!ctx.polasci.length){
+    body = '<div class="pempty">Nema definiranih polazaka za ovaj kontekst.</div>';
+  } else {
+    let rows = "";
+    ctx.polasci.forEach((pl,i)=>{
+      if(!pl._id) pl._id = "p"+(_uidc++);
+      const id = pl._id;
+      const lin = linById(rz.kategorija, pl.linId) || lines[0];
+      const linOpts = lines.map(l=>'<option value="'+l.id+'"'+(l.id===pl.linId?" selected":"")+'>'+linLabel(l)+'</option>').join("");
+      const rutaOpts = lin.rute.map(rt=>'<option'+(rt===pl.ruta?" selected":"")+'>'+rt+'</option>').join("");
+      const smjOpts = Array.from({length:rz.smjene},(_,k)=>k+1).map(s=>'<option value="'+s+'"'+(s===pl.smjena?" selected":"")+'>'+rim(s)+'</option>').join("");
+      rows += '<tr>'
+        + '<td class="rownum">'+(i+1)+'</td>'
+        + '<td><select class="cell-sel lin" onchange="setPol(\''+id+'\',\'linId\',this.value)">'+linOpts+'</select></td>'
+        + '<td><select class="cell-sel" onchange="setPol(\''+id+'\',\'ruta\',this.value)">'+rutaOpts+'</select></td>'
+        + '<td class="num" style="width:78px"><input class="cell-in vr-pol" value="'+esc(pl.polazak)+'" placeholder="--:--" onkeydown="polKey(event,\''+id+'\')" onblur="commitPol(\''+id+'\',this,false)"></td>'
+        + '<td class="num" style="width:78px"><input class="cell-in vr-dol'+(pl.dolazak?"":" zero")+'" value="'+esc(pl.dolazak)+'" placeholder="--:--" onblur="commitDol(\''+id+'\',this)"></td>'
+        + '<td class="num" style="width:64px"><select class="cell-sel" style="text-align:center" onchange="setPol(\''+id+'\',\'smjena\',this.value)">'+smjOpts+'</select></td>'
+        + '<td style="width:36px"><button class="del" title="Ukloni" onclick="delPol(\''+id+'\')"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></td>'
+        + '</tr>';
+    });
+    body = '<table class="tbl"><thead><tr><th></th><th>Linija</th><th>Ruta</th><th class="num">Polazak</th><th class="num">Dolazak</th><th class="num">Smjena</th><th></th></tr></thead><tbody>'+rows+'</tbody></table>';
+  }
+  return '<div class="panel"><div class="panel-hd">'
+    + '<div class="panel-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>'
+    + '<div><h3>Vozni red</h3><div class="sub">Polasci za ovaj kontekst</div></div>'
+    + '<div class="panel-sp"></div><span class="rz-item-sm">'+ctx.polasci.length+' polazaka</span>'
+    + '</div><div class="panel-bd">'+body
+    + '<button class="addrow" onclick="addPol()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Dodaj polazak</button>'
+    + '</div></div>';
+}
+
+/* ─── Sati po smjeni ─── */
+function renderSati(rz){
+  const ctx = rz.konteksti[selCtx];
+  let head = '<tr><th>Smjena</th>'+VRSTE_RADA.map(v=>'<th class="num">'+v+'</th>').join("")+'<th class="num">Ukupno</th></tr>';
+  let rows = "", grand = 0;
+  for(let s=1;s<=rz.smjene;s++){
+    const sat = ctx.sati[s] || {}; const tot = satiSmjene(ctx.sati, s); grand += tot;
+    let cells = VRSTE_RADA.map(v=>{
+      const val = sat[v] || "00:00"; const zero = (toMin(val)===0);
+      return '<td class="num" style="width:88px"><input class="cell-in'+(zero?" zero":"")+'" value="'+val+'" placeholder="00:00" onchange="setSat('+s+',\''+v+'\',this.value)"></td>';
+    }).join("");
+    const gv = (ctx.granice[s]||"");
+    const smjCell = '<div class="smj-cell"><span class="smj-pill">Smjena '+rim(s)+'</span>'
+      + '<span class="smj-do">do <input class="smj-do-in" value="'+esc(gv)+'" placeholder="--:--" onblur="commitGranica('+s+',this)"></span></div>';
+    rows += '<tr><td>'+smjCell+'</td>'+cells
+      + '<td class="num" style="width:74px"><b style="font-variant-numeric:tabular-nums;font-weight:800">'+fmt(tot)+'</b></td></tr>';
+  }
+  return '<div class="panel"><div class="panel-hd">'
+    + '<div class="panel-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>'
+    + '<div><h3>Sati po smjeni</h3><div class="sub">Ručni unos po vrstama rada (HH:MM)</div></div>'
+    + '</div><div class="panel-bd">'
+    + '<table class="tbl"><thead>'+head+'</thead><tbody>'+rows+'</tbody></table>'
+    + '<div class="sati-foot"><span class="sati-tot">Ukupno zadatka u ovom kontekstu: <b>'+fmt(grand)+'</b> sati</span></div>'
+    + '</div></div>';
+}
+
+/* ─── Akcije ─── */
+function selectRz(id){ selId=id; if(!getRz().konteksti[selCtx]) selCtx="bezskole_radni"; doRender(); }
+function selectCtx(c){ selCtx=c; doRender(); }
+function setNaziv(v){ const rz=getRz(); rz.naziv=(v.trim()||rz.naziv); renderList(); }
+function setKat(v){
+  const rz=getRz(); if(v===rz.kategorija) return;
+  if(rzBrojPolazaka(rz)>0 && !confirm("Promjena kategorije briše postojeće polaske (linije se ne podudaraju). Nastaviti?")){ doRender(); return; }
+  rz.kategorija=v; rz.konteksti=praznaMatrica(); doRender();
+}
+function setSmjene(v){
+  const rz=getRz(); rz.smjene=parseInt(v,10);
+  Object.values(rz.konteksti).forEach(c=>{ (c.polasci||[]).forEach(pl=>{ if(pl.smjena>rz.smjene) pl.smjena=rz.smjene; }); });
+  doRender();
+}
+function polById(id){ const ctx=getRz().konteksti[selCtx]; return ctx.polasci.find(x=>x._id===id); }
+function setPol(id,fld,val){
+  const pl=polById(id); if(!pl) return;
+  if(fld==="smjena"){ pl.smjena=parseInt(val,10); return; }
+  if(fld==="ruta"){ pl.ruta=val; return; }
+  if(fld==="linId"){ pl.linId=val; const lin=linById(getRz().kategorija,val); pl.ruta=lin.rute[0]; doRender(); return; }
+}
+// Polazak: formatiraj -> reklasificiraj smjenu -> sortiraj -> (Tab) fokus na dolazak
+function commitPol(id, input, focusNext){
+  if(_rendering) return; if(input && !document.body.contains(input)) return;
+  const rz=getRz(); const ctx=rz.konteksti[selCtx]; const pl=polById(id); if(!pl) return;
+  pl.polazak = normVrijeme(input ? input.value : pl.polazak);
+  reklasificiraj(rz, ctx, pl);
+  sortPolasci(ctx);
+  scheduleRender(focusNext ? ctx.polasci.indexOf(pl) : null);
+}
+function polKey(e, id){
+  if((e.key==="Tab" && !e.shiftKey) || e.key==="Enter"){ e.preventDefault(); commitPol(id, e.target, true); }
+}
+function commitDol(id, input){
+  if(_rendering) return; const pl=polById(id); if(!pl) return;
+  const v=normVrijeme(input.value); pl.dolazak=v; input.value=v; input.classList.toggle('zero', !v);
+}
+function commitGranica(s, input){
+  if(_rendering) return; if(input && !document.body.contains(input)) return;
+  const rz=getRz(); const ctx=rz.konteksti[selCtx];
+  ctx.granice[s]=normVrijeme(input.value);
+  reklasificirajSve(rz, ctx); sortPolasci(ctx);
+  scheduleRender(null);
+}
+function addPol(){
+  const rz=getRz(); const ctx=rz.konteksti[selCtx]; const lin=LINIJE[rz.kategorija][0];
+  ctx.polasci.push(p(lin.id,lin.rute[0],"","",1)); doRender();
+}
+function delPol(id){ const ctx=getRz().konteksti[selCtx]; const k=ctx.polasci.findIndex(x=>x._id===id); if(k>=0) ctx.polasci.splice(k,1); doRender(); }
+function setSat(s,v,val){
+  if(_rendering) return; const ctx=getRz().konteksti[selCtx]; if(!ctx.sati[s]) ctx.sati[s]={};
+  ctx.sati[s][v]=normVrijeme(val)||"00:00"; scheduleRender(null);
+}
+
+/* ─── Stanja ćelije ─── */
+function cellMode(mode){
+  const c=getCell(getRz(),selCtx);
+  if(mode==="uredi"){ c.nevozi=false; c.aliasOf=null; }
+  else if(mode==="nevozi"){ c.nevozi=true; c.aliasOf=null; }
+  doRender();
+}
+function cellAlias(src){
+  const c=getCell(getRz(),selCtx);
+  if(!src){ c.aliasOf=null; } else { c.aliasOf=src; c.nevozi=false; }
+  doRender();
+}
+function detachAlias(){
+  const rz=getRz(); const c=getCell(rz,selCtx); const eff=effCell(rz,selCtx);
+  c.polasci=copyPol(eff.polasci); c.sati=JSON.parse(JSON.stringify(eff.sati||{})); c.aliasOf=null; c.nevozi=false;
+  doRender();
+}
+
+/* ─── Novi / brisanje ─── */
+function openNew(){ document.getElementById("newName").value=""; document.getElementById("newKat").value="gradske"; document.getElementById("newSmj").value="2"; document.getElementById("newBg").classList.add("on"); setTimeout(()=>document.getElementById("newName").focus(),40); }
+function closeNew(){ document.getElementById("newBg").classList.remove("on"); }
+function createRz(){
+  const nm=(document.getElementById("newName").value||"").trim();
+  if(!nm){ document.getElementById("newName").focus(); return; }
+  const kat=document.getElementById("newKat").value; const smj=parseInt(document.getElementById("newSmj").value,10);
+  const id="rz_"+Date.now();
+  RZ.push({ id, naziv:nm.toUpperCase(), kategorija:kat, smjene:smj, konteksti:praznaMatrica() });
+  selId=id; selCtx="bezskole_radni"; closeNew(); doRender();
+}
+function deleteRz(){
+  const rz=getRz(); if(!rz) return;
+  if(!confirm('Obrisati radni zadatak „'+rz.naziv+'“? Brišu se i svi konteksti.')) return;
+  RZ=RZ.filter(r=>r.id!==rz.id); selId = RZ.length ? RZ[0].id : null; doRender();
+}
+
+/* ─── Tema ─── */
+function toggleTheme(){
+  const html=document.documentElement; const dark=html.getAttribute("data-theme")==="dark";
+  html.setAttribute("data-theme",dark?"light":"dark");
+  document.getElementById("themeIc").innerHTML = dark
+    ? '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'
+    : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/>';
+}
+
+doRender();
+</script>
+</body>
+</html>
