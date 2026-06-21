@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="hr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liburnija — Planiranje rute (GPS)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<style>
+html[data-theme="dark"]{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2330;--bgh:#212936;--bdr:#2d3748;--tp:#f0f4f8;--ts:#8b95a1;--tm:#4b5563;--acc:#f97316;--accs:rgba(249,115,22,.14);--blu:#3b82f6;--blus:rgba(59,130,246,.16);--grn:#22c55e;--grns:rgba(34,197,94,.16);--red:#ef4444;--reds:rgba(239,68,68,.14);--yel:#eab308;--yels:rgba(234,179,8,.16)}
+html[data-theme="light"]{--bg:#f0f4f8;--bg2:#fff;--bg3:#f8fafc;--bgh:#f1f5f9;--bdr:#e2e8f0;--tp:#0f172a;--ts:#64748b;--tm:#94a3b8;--acc:#f97316;--accs:rgba(249,115,22,.1);--blu:#3b82f6;--blus:rgba(59,130,246,.11);--grn:#16a34a;--grns:rgba(22,163,74,.11);--red:#dc2626;--reds:rgba(220,38,38,.09);--yel:#ca8a04;--yels:rgba(202,138,4,.13)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--tp);height:100vh;display:flex;flex-direction:column;font-size:13px;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:5px}::-webkit-scrollbar-track{background:transparent}
+
+.top{display:flex;align-items:center;gap:12px;padding:11px 18px;background:var(--bg2);border-bottom:1.5px solid var(--bdr);flex-shrink:0}
+.brand{display:flex;align-items:center;gap:9px}
+.brand-ic{width:30px;height:30px;border-radius:8px;background:var(--accs);display:flex;align-items:center;justify-content:center}
+.brand-ic svg{width:17px;height:17px;stroke:var(--acc);stroke-width:2.2;fill:none}
+.brand-tit{font-size:14px;font-weight:800;letter-spacing:.2px}
+.brand-sub{font-size:10px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px}
+.crumb{font-size:11px;color:var(--ts);font-weight:600;margin-left:6px}.crumb b{color:var(--acc)}
+.top-sp{flex:1}
+.tbtn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:8px;color:var(--ts)}
+.tbtn:hover{border-color:var(--acc);color:var(--acc)}.tbtn svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none}
+
+.layout{flex:1;display:flex;min-height:0}
+.side{width:380px;flex-shrink:0;background:var(--bg2);border-right:1.5px solid var(--bdr);display:flex;flex-direction:column;min-height:0}
+.side-hd{padding:14px 16px;border-bottom:1.5px solid var(--bdr)}
+.side-hd .eyebrow{font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.row2{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{font-size:9px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.4px}
+.fld input,.fld select{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--tp);background:var(--bg3);border:1.5px solid var(--bdr);border-radius:7px;padding:7px 9px;width:100%}
+.fld input.mono{font-family:"DM Mono",monospace;font-weight:500}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--acc);background:var(--bg2)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:8px;font-size:12px;font-weight:700;padding:8px 12px;transition:all .12s;white-space:nowrap}
+.btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.4;fill:none}
+.btn-acc{background:var(--acc);color:#fff}.btn-acc:hover{filter:brightness(1.06)}
+.btn-ghost{background:var(--bg2);border:1.5px solid var(--bdr);color:var(--ts)}.btn-ghost:hover{border-color:var(--acc);color:var(--acc)}
+.btn-danger{background:transparent;border:1.5px solid var(--bdr);color:var(--red)}.btn-danger:hover{background:var(--red);border-color:var(--red);color:#fff}
+.btn-sm{padding:6px 10px;font-size:11px}
+
+.meta{padding:12px 16px;border-bottom:1.5px solid var(--bdr);display:none}
+.meta.on{display:block}
+.meta .grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:2px}
+.priv{display:none;margin-top:9px;padding-top:9px;border-top:1px dashed var(--bdr)}
+.priv.on{display:block}
+.priv-warn{margin-top:9px;font-size:11px;font-weight:700;color:var(--red);background:var(--reds);border:1px solid var(--red);border-radius:7px;padding:7px 9px;line-height:1.4}
+
+.seqwrap{flex:1;overflow-y:auto;min-height:0;padding:10px 12px}
+.seq-empty{padding:24px 10px;text-align:center;color:var(--ts);font-weight:600;font-size:12px}
+.stoprow{background:var(--bg3);border:1.5px solid var(--bdr);border-radius:9px;padding:8px 10px;margin-bottom:5px}
+.stoprow.sel{border-color:var(--acc)}
+.sr-top{display:flex;align-items:center;gap:9px}
+.sr-num{width:22px;height:22px;border-radius:50%;background:var(--acc);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sr-nm{flex:1;font-weight:700;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sr-acts{display:flex;gap:2px}
+.sr-acts button{width:24px;height:24px;border:none;background:transparent;border-radius:6px;color:var(--tm);display:flex;align-items:center;justify-content:center}
+.sr-acts button:hover{background:var(--bgh);color:var(--acc)}
+.sr-acts button.del:hover{background:var(--reds);color:var(--red)}
+.sr-acts svg{width:13px;height:13px;stroke:currentColor;stroke-width:2.2;fill:none}
+.seg{display:flex;align-items:center;gap:8px;padding:3px 0 3px 31px;font-size:10.5px;color:var(--ts);font-weight:600}
+.seg .line{flex:1;height:0;border-top:1.5px dashed var(--bdr)}
+.seg .v{font-family:"DM Mono",monospace}
+.seg .wp{color:var(--acc)}
+.seg button{border:none;background:transparent;color:var(--ts);font-size:10px;font-weight:700;cursor:pointer;padding:2px 5px;border-radius:5px}
+.seg button:hover{background:var(--accs);color:var(--acc)}
+.insert-bar{padding:5px 0 6px 31px}
+.insert-bar button{border:1.5px dashed var(--bdr);background:transparent;color:var(--ts);font-size:10px;font-weight:700;border-radius:6px;padding:3px 8px;cursor:pointer}
+.insert-bar button:hover,.insert-bar button.on{border-color:var(--acc);color:var(--acc);background:var(--accs);border-style:solid}
+
+.totbar{padding:11px 16px;border-top:1.5px solid var(--bdr);background:var(--bg3);display:flex;gap:16px;flex-wrap:wrap}
+.tot{display:flex;flex-direction:column;gap:1px}
+.tot .n{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
+.tot .l{font-size:9px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.3px}
+.side-ft{padding:11px 16px;border-top:1.5px solid var(--bdr);display:flex;gap:8px}
+
+.mapwrap{flex:1;position:relative;min-width:0}
+#map{position:absolute;inset:0;background:var(--bg3)}
+.map-off{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--ts);font-size:13px;font-weight:600;padding:30px;z-index:5}
+.maptools{position:absolute;top:12px;left:12px;z-index:500;display:flex;gap:8px;flex-wrap:wrap;max-width:calc(100% - 24px)}
+.maplayers{display:flex;border-radius:7px;overflow:hidden;box-shadow:0 1px 5px rgba(0,0,0,.22);border:1px solid rgba(0,0,0,.15)}
+.mlbtn{font-family:"DM Sans",sans-serif;font-size:11px;font-weight:700;padding:6px 12px;border:none;background:#fff;color:#475569;cursor:pointer}
+.mlbtn.on{background:var(--acc);color:#fff}.mlbtn+.mlbtn{border-left:1px solid rgba(0,0,0,.12)}
+.mappill{background:#fff;border-radius:7px;box-shadow:0 1px 5px rgba(0,0,0,.22);border:1px solid rgba(0,0,0,.15);font-size:11px;font-weight:700;color:#334155;padding:6px 11px;display:flex;align-items:center;gap:7px}
+.mappill .dot{width:8px;height:8px;border-radius:50%;background:var(--acc)}
+.mode-banner{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:500;background:var(--acc);color:#fff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:20px;box-shadow:0 4px 14px rgba(0,0,0,.25);display:none;align-items:center;gap:10px}
+.mode-banner.on{display:flex}
+.mode-banner button{background:rgba(255,255,255,.25);border:none;color:#fff;border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;cursor:pointer}
+.mapwrap.picking .leaflet-container{cursor:crosshair!important}
+.ov{flex:1;overflow-y:auto;min-height:0}
+.ov-inner{max-width:1100px;margin:0 auto;padding:20px 24px 50px}
+.ov-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.ov-hd h1{font-size:22px;font-weight:800}
+.eyebrow{font-size:10px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:11px;padding:12px 14px}
+.kpi-n{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:7px;line-height:1}
+.kpi-n .d{width:8px;height:8px;border-radius:50%;background:var(--tm)}.kpi-n .d.g{background:var(--grn)}.kpi-n .d.r{background:var(--red)}
+.kpi-l{font-size:10px;color:var(--ts);font-weight:600;margin-top:6px;text-transform:uppercase;letter-spacing:.3px}
+.ov-toolbar{display:flex;align-items:center;gap:9px;margin-bottom:13px;flex-wrap:wrap}
+.search{position:relative;display:flex;align-items:center;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;padding:0 11px;height:38px;flex:1;min-width:220px}
+.search:focus-within{border-color:var(--acc)}
+.search svg{width:15px;height:15px;stroke:var(--ts);stroke-width:2;fill:none;flex-shrink:0;margin-right:8px}
+.search input{flex:1;background:transparent;border:0;outline:0;font-family:inherit;font-size:13px;font-weight:500;color:var(--tp)}
+.fchips{display:flex;gap:6px;flex-wrap:wrap}
+.fchip{padding:8px 13px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;font-size:11.5px;font-weight:700;color:var(--ts)}
+.fchip:hover{border-color:var(--acc);color:var(--tp)}.fchip.on{background:var(--accs);border-color:var(--acc);color:var(--acc)}
+.fsel{height:38px;font-family:inherit;font-size:12px;font-weight:700;color:var(--tp);background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;padding:0 10px}.fsel:focus{outline:none;border-color:var(--acc)}
+.tblwrap{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:13px;overflow:hidden}
+table.rt{width:100%;border-collapse:collapse;font-size:12.5px}
+table.rt th{font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:11px 12px;border-bottom:1.5px solid var(--bdr);background:var(--bg3);white-space:nowrap}
+table.rt td{padding:9px 12px;border-bottom:1px solid var(--bdr);vertical-align:middle;white-space:nowrap}
+table.rt td.mono{font-family:"DM Mono",monospace;font-size:11.5px}
+table.rt tr:last-child td{border-bottom:none}
+table.rt tbody tr{cursor:pointer}table.rt tbody tr:hover{background:var(--bgh)}
+.ozn{display:inline-block;font-weight:800;font-size:11px;padding:2px 9px;border-radius:7px;background:var(--bg3);border:1px solid var(--bdr)}
+.rt-nm{font-weight:700}.rt-area{color:var(--ts);font-size:11px;font-weight:600}
+.pill{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:20px;display:inline-block}
+.pill.aktivna{background:var(--grns);color:var(--grn)}.pill.privremena{background:var(--reds);color:var(--red)}.pill.arhivirana{background:var(--bg3);color:var(--tm);border:1px solid var(--bdr)}
+.rowdel{width:28px;height:28px;border:none;background:transparent;border-radius:7px;color:var(--tm);display:flex;align-items:center;justify-content:center}
+.rowdel:hover{background:var(--reds);color:var(--red)}.rowdel svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none}
+.ov-empty{padding:36px;text-align:center;color:var(--ts);font-weight:600}
+.seg button.on{background:var(--accs);color:var(--acc)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--tp);color:var(--bg);font-size:12.5px;font-weight:700;padding:9px 16px;border-radius:9px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:900}
+.toast.show{opacity:.95}
+.numicon{margin:0;position:absolute;left:0;top:0;transform:translate(-50%,-50%);background:var(--acc);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;line-height:1;font-size:11px;font-weight:800;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.numicon.priv{background:var(--red)}
+@media(max-width:820px){.side{width:320px}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">
+    <div class="brand-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="3"/><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/></svg></div>
+    <div><div class="brand-tit">Liburnija</div><div class="brand-sub">Planiranje rute (GPS)</div></div>
+  </div>
+  <div class="crumb"><b>Upravljanje prometom</b> › Planiranje rute</div>
+  <div class="top-sp"></div>
+  <button class="tbtn" title="Tema" onclick="toggleTheme()"><svg id="themeIc" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+</div>
+
+<div id="overviewView" class="ov">
+  <div class="ov-inner">
+    <div class="ov-hd">
+      <div><div class="eyebrow">Upravljanje prometom · Planiranje rute</div><h1>Pregled ruta</h1></div>
+      <button class="btn btn-acc" onclick="newRoute()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Nova ruta</button>
+    </div>
+    <div class="kpis" id="OVKPI"></div>
+    <div class="ov-toolbar">
+      <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg><input id="ovQ" type="text" placeholder="Traži po broju/nazivu linije ili nazivu rute…" oninput="setOvQ()"></div>
+      <select class="fsel" id="ovStatus" onchange="setOvStat()"><option value="">Svi statusi</option><option value="aktivna">Aktivne</option><option value="privremena">Privremene</option><option value="arhivirana">Arhivirane</option></select>
+      <div class="fchips" id="OVCH"></div>
+    </div>
+    <div class="tblwrap"><table class="rt">
+      <thead><tr><th>Linija</th><th>Ruta</th><th>Smjer</th><th>Status</th><th>Stajališta</th><th>Duljina</th><th>Plansko vrijeme</th><th></th></tr></thead>
+      <tbody id="OVBODY"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<div class="layout" id="editorView" style="display:none">
+  <div class="side">
+    <div class="side-hd">
+      <button class="btn btn-ghost btn-sm" onclick="showOverview()" style="margin-bottom:10px"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Sve rute</button>
+      <div id="routeTitle" style="font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap"></div>
+    </div>
+
+    <div class="meta" id="META">
+      <div class="grid">
+        <div class="fld" style="grid-column:1/-1"><label>Linija</label><select id="m_lin" onchange="onMeta()"></select></div>
+        <div class="fld" style="grid-column:1/-1"><label>Naziv rute</label><input id="m_naziv" oninput="onMeta()" placeholder="npr. Kolodvor – Supernova"></div>
+        <div class="fld"><label>Smjer</label><select id="m_smjer" onchange="onMeta()"><option value="">—</option><option>A</option><option>B</option></select></div>
+        <div class="fld"><label>Status</label><select id="m_status" onchange="onMeta()"><option value="aktivna">Aktivna</option><option value="privremena">Privremena</option><option value="arhivirana">Arhivirana</option></select></div>
+      </div>
+      <div class="priv" id="PRIV">
+        <div class="grid">
+          <div class="fld"><label>Vrijedi od</label><input type="date" class="mono" id="m_od" onchange="onMeta()"></div>
+          <div class="fld"><label>Vrijedi do</label><input type="date" class="mono" id="m_do" onchange="onMeta()"></div>
+          <div class="fld" style="grid-column:1/-1"><label>Osnovna ruta (obilaznica za)</label><select id="m_base" onchange="onMeta()"></select></div>
+          <div class="fld" style="grid-column:1/-1"><label>Korekcija vremena (min) — prazno = ista vremena</label><input class="mono" id="m_voffset" oninput="onMeta()" placeholder="npr. +5"></div>
+        </div>
+        <div id="privWarn" class="priv-warn" style="display:none"></div>
+      </div>
+    </div>
+
+    <div class="seqwrap" id="SEQ"></div>
+
+    <div class="totbar" id="TOT" style="display:none"></div>
+    <div class="side-ft" id="FT" style="display:none">
+      <button class="btn btn-ghost btn-sm" onclick="snapAll()" title="Povuci sve segmente po cestama (OSRM)"><svg viewBox="0 0 24 24"><path d="M4 17h6a4 4 0 0 0 0-8H7M14 7h3a4 4 0 0 1 0 8h-1"/></svg>Povuci po cestama</button>
+      <div style="flex:1"></div>
+      <button class="btn btn-danger btn-sm" onclick="delRuta()">Obriši</button>
+      <button class="btn btn-acc btn-sm" onclick="saveRuta()">Spremi</button>
+    </div>
+  </div>
+
+  <div class="mapwrap">
+    <div id="map"></div>
+    <div class="maptools" id="MAPTOOLS" style="display:none">
+      <div class="maplayers"><button class="mlbtn on" id="mlK" onclick="setMapMode('karta')">Karta</button><button class="mlbtn" id="mlS" onclick="setMapMode('sat')">Satelit</button></div>
+      <div class="mappill"><span class="dot"></span>Klikni stajalište za dodavanje u rutu</div>
+    </div>
+    <div class="mode-banner" id="BANNER"><span id="bannerTxt"></span><button id="bannerBtn" onclick="finishMode()">Gotovo</button></div>
+  </div>
+</div>
+<div class="toast" id="TOAST"></div>
+
+<script>
+const esc=s=>(s==null?'':(''+s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function hav(a,b){const R=6371000,dLat=(b[0]-a[0])*Math.PI/180,dLon=(b[1]-a[1])*Math.PI/180,la1=a[0]*Math.PI/180,la2=b[0]*Math.PI/180;const x=Math.sin(dLat/2)**2+Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)**2;return 2*R*Math.asin(Math.sqrt(x));}
+function fmtKm(m){return (m/1000).toFixed(2)+' km';}
+function fmtMin(s){const m=Math.round(s/60);return m+' min';}
+
+// ── CORE stajališta (iz registra Stajališta) ──
+const STOPS=[
+ ['ZD-0100','Autobusni kolodvor',44.10564,15.241876],['ZD-0101','Franje Tuđmana',44.109535,15.240007],
+ ['ZD-0001','Mala Pošta',44.116695,15.232669],['ZD-0005','Trgovački sud',44.119675,15.234926],
+ ['ZD-0008','Zagrebačka ulica 1',44.114487,15.255487],['ZD-0009','Zagrebačka ulica 3 (Supernova)',44.117626,15.269131],
+ ['ZD-0012','Benkovačka 3',44.104237,15.268081],['ZD-0011','Benkovačka 4',44.103687,15.271194],
+ ['ZD-0010','Benkovačka 5 (B)',44.10173,15.282464],['ZD-0014','Benkovačka 5 (A)',44.101715,15.282458],
+ ['ZD-0006','Jadranska magistrala 1',44.103111,15.264141],['ZD-0007','Jadranska magistrala 2',44.098808,15.270144],
+ ['ZD-0002','Biogradska 1',44.102619,15.247534],['ZD-0003','Gradsko groblje',44.10321,15.261486],
+ ['ZD-0004','Melada',44.124424,15.233029],['ZD-0013','Put Nina 1',44.130711,15.230902],
+ ['ZD-0018','Put Nina 2',44.142559,15.226562],['ZD-0102','Žmirići',44.13966,15.228439],
+ ['KZ-0001','Kožino Magistrala',44.170967,15.194309],['PE-0001','Petrčane Magistrala',44.193405,15.178621],
+ ['ZA-0001','Zaton',44.218311,15.177453],
+ ['UG-0001','Preko (luka)',44.0808,15.1869],['UG-0002','Kali (centar)',44.0586,15.19],
+ ['DO-0001','Sali (luka)',43.9389,15.1631],['DO-0002','Žman',43.9686,15.1442],
+ ['IZ-0001','Veli Iž (luka)',44.0436,15.1119],['IZ-0002','Mali Iž',44.0289,15.1228]
+];
+const STOPBY={}; STOPS.forEach(s=>STOPBY[s[0]]={id:s[0],naziv:s[1],lat:s[2],lon:s[3]});
+function st(id){return STOPBY[id];}
+
+// ── Linije (iz registra Linija) ──
+const LINIJE=[
+ ['l11','11','Crvene kuće (Supernova)','#ef4444','grad'],['l1a','1A','Dračevac I','#f97316','grad'],['l2','2','Poluotok – Arbanasi','#eab308','grad'],
+ ['l3','3','Bili Brig I','#3b82f6','grad'],['l4','4','Crno','#22c55e','grad'],['l5','5','Puntamika','#06b6d4','grad'],
+ ['l8','8','Diklo','#84cc16','grad'],['l9','9','Gaženica','#6366f1','grad'],
+ ['lvir','','Vir','#a855f7','prigrad'],['lbio','','Biograd','#ec4899','prigrad'],
+ ['lugl','','Preko – Kali','#14b8a6','ugljan'],['ldug','','Sali – Žman','#f59e0b','dugi'],['liz','','Veli Iž – Mali Iž','#0ea5e9','iz']
+];
+const LINBY={}; LINIJE.forEach(l=>LINBY[l[0]]={id:l[0],broj:l[1],naziv:l[2],boja:l[3],podrucje:l[4]});
+
+// ── Rute (varijante) — niz stajališta + segmenti ──
+let RUTE=[
+ { id:'r1', linijaId:'l11', naziv:'Kolodvor – Supernova', smjer:'A', status:'aktivna', od:'', do:'', baseId:'', stops:['ZD-0100','ZD-0001','ZD-0008','ZD-0009','ZD-0012','ZD-0011','ZD-0010'], segs:[], wp:[] },
+ { id:'r2', linijaId:'l11', naziv:'Supernova – Kolodvor', smjer:'B', status:'aktivna', od:'', do:'', baseId:'', stops:['ZD-0010','ZD-0011','ZD-0012','ZD-0009','ZD-0008','ZD-0001','ZD-0100'], segs:[], wp:[] },
+ { id:'r3', linijaId:'l3', naziv:'Kolodvor – Bili Brig', smjer:'A', status:'aktivna', od:'', do:'', baseId:'', stops:['ZD-0100','ZD-0101','ZD-0005','ZD-0004','ZD-0013'], segs:[], wp:[] },
+ { id:'r4', linijaId:'lvir', naziv:'Kolodvor – Vir', smjer:'A', status:'aktivna', od:'', do:'', baseId:'', stops:['ZD-0100','ZD-0102','KZ-0001','PE-0001','ZA-0001'], segs:[], wp:[] },
+ { id:'r5', linijaId:'lugl', naziv:'Preko – Kali', smjer:'A', status:'aktivna', od:'', do:'', baseId:'', stops:['UG-0001','UG-0002'], segs:[], wp:[] },
+ { id:'r6', linijaId:'ldug', naziv:'Sali – Žman', smjer:'A', status:'aktivna', od:'', do:'', baseId:'', stops:['DO-0001','DO-0002'], segs:[], wp:[] },
+ { id:'r7', linijaId:'liz', naziv:'Veli Iž – Mali Iž', smjer:'A', status:'aktivna', od:'', do:'', baseId:'', stops:['IZ-0001','IZ-0002'], segs:[], wp:[] },
+ { id:'r8', linijaId:'l11', naziv:'Privremena – obilazak (radovi)', smjer:'A', status:'privremena', od:'2026-06-15', do:'2026-07-15', baseId:'r1', stops:['ZD-0100','ZD-0001','ZD-0008','ZD-0006','ZD-0007'], segs:[], wp:[] }
+];
+
+let selLinId=null, sel=null, map=null, baseLayer=null, satLayer=null, mapMode='karta';
+let allLayer=null, routeLayer=null, mode=null, modeSeg=null, insertAfter=null, FIT=true;
+
+function toast(m){const e=document.getElementById('TOAST');e.textContent=m;e.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(()=>e.classList.remove('show'),1700);}
+
+/* ── Pregled ruta (tablica) ── */
+const PODR=[['grad','Grad'],['prigrad','Prigrad'],['ugljan','Otok Ugljan'],['dugi','Dugi otok'],['iz','Otok Iž']];
+function podrNaziv(id){const p=PODR.find(x=>x[0]===id);return p?p[1]:'—';}
+function lineOf(r){return LINBY[r.linijaId]||{broj:'',naziv:'?',boja:'#94a3b8',podrucje:''};}
+function ruteOf(linId){return RUTE.filter(r=>r.linijaId===linId);}
+function metrics(r){ let dist=0,time=0; const ok=r.segs&&r.segs.length===Math.max(0,r.stops.length-1)&&r.segs.every(s=>s);
+  if(ok){ dist=r.segs.reduce((a,s)=>a+(s.dist||0),0); time=r.segs.reduce((a,s)=>a+(s.time||0),0); }
+  else { for(let i=0;i<r.stops.length-1;i++){ const a=st(r.stops[i]),b=st(r.stops[i+1]); if(!a||!b)continue; const wp=(r.wp&&r.wp[i])||[]; const pts=[[a.lat,a.lon]].concat(wp).concat([[b.lat,b.lon]]); for(let j=0;j<pts.length-1;j++) dist+=hav(pts[j],pts[j+1]); } time=dist/8.3; }
+  return {stops:r.stops.length,dist,time};
+}
+let ovPod='', ovStat='', ovQ='';
+function setOvPod(p){ ovPod=p; renderOverview(); }
+function setOvStat(){ ovStat=document.getElementById('ovStatus').value; renderOverview(); }
+function setOvQ(){ ovQ=(document.getElementById('ovQ').value||'').toLowerCase().trim(); renderOverview(); }
+function showOverview(){ cancelMode(); document.getElementById('overviewView').style.display='block'; document.getElementById('editorView').style.display='none'; renderOverview(); }
+function renderOverview(){
+  const STAT={aktivna:'Aktivna',privremena:'Privremena',arhivirana:'Arhivirana'};
+  let rows=RUTE.filter(r=>{ const L=lineOf(r); if(ovPod&&L.podrucje!==ovPod)return false; if(ovStat&&r.status!==ovStat)return false;
+    if(ovQ){ const hay=((L.broj||'')+' '+(L.naziv||'')+' '+(r.naziv||'')+' '+podrNaziv(L.podrucje)).toLowerCase(); if(!hay.includes(ovQ))return false; }
+    return true; });
+  const tot=RUTE.length, akt=RUTE.filter(r=>r.status==='aktivna').length, priv=RUTE.filter(r=>r.status==='privremena').length;
+  let km=0; RUTE.forEach(r=>km+=metrics(r).dist);
+  document.getElementById('OVKPI').innerHTML=[[tot,'','Ukupno ruta'],[akt,'g','Aktivnih'],[priv,priv?'r':'','Privremenih'],[fmtKm(km),'','Ukupno km']].map(k=>'<div class="kpi"><div class="kpi-n">'+(k[1]?'<span class="d '+k[1]+'"></span>':'')+k[0]+'</div><div class="kpi-l">'+k[2]+'</div></div>').join('');
+  const cnt={'':RUTE.length}; PODR.forEach(P=>cnt[P[0]]=RUTE.filter(r=>lineOf(r).podrucje===P[0]).length);
+  let ch='<button class="fchip'+(ovPod===''?' on':'')+'" onclick="setOvPod(\'\')">Sve · '+cnt['']+'</button>';
+  PODR.forEach(P=>{ ch+='<button class="fchip'+(ovPod===P[0]?' on':'')+'" onclick="setOvPod(\''+P[0]+'\')">'+P[1]+' · '+(cnt[P[0]]||0)+'</button>'; });
+  document.getElementById('OVCH').innerHTML=ch;
+  if(!rows.length){ document.getElementById('OVBODY').innerHTML='<tr><td colspan="8" class="ov-empty">Nema ruta za zadane filtere.</td></tr>'; return; }
+  rows.sort((a,b)=>{const la=lineOf(a),lb=lineOf(b);return (la.broj||la.naziv).localeCompare(lb.broj||lb.naziv,'hr',{numeric:true});});
+  document.getElementById('OVBODY').innerHTML=rows.map(function(r){ const L=lineOf(r),m=metrics(r);
+    return '<tr onclick="showEditor(\''+r.id+'\')">'
+     +'<td><span class="ozn" style="background:'+L.boja+';color:#fff;border-color:transparent">'+esc(L.broj||L.naziv||'—')+'</span></td>'
+     +'<td><span class="rt-nm">'+esc(r.naziv)+'</span> · <span class="rt-area">'+podrNaziv(L.podrucje)+'</span></td>'
+     +'<td>'+(r.smjer||'—')+'</td>'
+     +'<td><span class="pill '+r.status+'">'+(STAT[r.status]||r.status)+'</span></td>'
+     +'<td>'+m.stops+'</td><td class="mono">'+fmtKm(m.dist)+'</td><td class="mono">'+fmtMin(m.time)+'</td>'
+     +'<td><button class="rowdel" title="Obriši rutu" onclick="event.stopPropagation();delRoute(\''+r.id+'\')"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></td></tr>';
+  }).join('');
+}
+function delRoute(id){ const r=RUTE.find(x=>x.id===id); if(!r)return; if(!confirm('Obrisati rutu „'+r.naziv+'"?'))return; RUTE=RUTE.filter(x=>x.id!==id); if(sel&&sel.id===id)sel=null; renderOverview(); toast('Ruta obrisana'); }
+function newRoute(){ const r={id:'r'+Date.now(),linijaId:LINIJE[0][0],naziv:'Nova ruta',smjer:'',status:'aktivna',od:'',do:'',baseId:'',stops:[],segs:[],wp:[]}; RUTE.push(r); showEditor(r.id); toast('Nova ruta — odaberi liniju i klikaj stajališta'); }
+
+/* ── Uređivač ── */
+function showEditor(rid){ const r=RUTE.find(x=>x.id===rid); if(!r)return;
+  document.getElementById('overviewView').style.display='none';
+  document.getElementById('editorView').style.display='flex';
+  if(!map){ setupMap(); }
+  selectRoute(rid);
+  setTimeout(()=>{ if(map) map.invalidateSize(); },90);
+}
+function selectRoute(rid){ sel=RUTE.find(r=>r.id===rid)||null; cancelMode(); FIT=true; ensureSegs(sel).then(renderAll); }
+function delRuta(){ if(!sel)return; if(!confirm('Obrisati rutu „'+sel.naziv+'"?'))return; RUTE=RUTE.filter(r=>r.id!==sel.id); sel=null; showOverview(); }
+function saveRuta(){ if(!sel)return; const c=overlapsWith(sel); if(c){ toast('⚠ Preklapanje datuma s „'+c.naziv+'" — ispravi raspon prije spremanja'); return; } toast('Ruta spremljena (geometrija + niz)'); }
+function renderRouteTitle(){ const el=document.getElementById('routeTitle'); if(!el||!sel)return; const L=lineOf(sel); el.innerHTML='<span class="ozn" style="background:'+L.boja+';color:#fff;border-color:transparent">'+esc(L.broj||L.naziv||'—')+'</span> <span>'+esc(sel.naziv||'(bez naziva)')+'</span>'; }
+
+/* ── Meta ── */
+function onMeta(){ if(!sel)return;
+  const newLin=document.getElementById('m_lin').value;
+  const lineChanged=(newLin!==sel.linijaId);
+  sel.linijaId=newLin;
+  sel.naziv=document.getElementById('m_naziv').value;
+  sel.smjer=document.getElementById('m_smjer').value;
+  sel.status=document.getElementById('m_status').value;
+  sel.od=document.getElementById('m_od').value; sel.do=document.getElementById('m_do').value;
+  sel.voffset=document.getElementById('m_voffset').value;
+  if(lineChanged) renderBaseOptions();
+  sel.baseId=document.getElementById('m_base').value;
+  document.getElementById('PRIV').classList.toggle('on',sel.status==='privremena');
+  checkOverlap();
+  renderRouteTitle(); drawMap();
+}
+function renderMeta(){
+  const M=document.getElementById('META'); if(!sel){M.classList.remove('on');return;} M.classList.add('on');
+  document.getElementById('m_lin').innerHTML=LINIJE.map(l=>'<option value="'+l[0]+'"'+(sel.linijaId===l[0]?' selected':'')+'>'+(l[1]?l[1]+' · ':'')+esc(l[2])+'</option>').join('');
+  document.getElementById('m_naziv').value=sel.naziv||'';
+  document.getElementById('m_smjer').value=sel.smjer||'';
+  document.getElementById('m_status').value=sel.status||'aktivna';
+  document.getElementById('m_od').value=sel.od||''; document.getElementById('m_do').value=sel.do||'';
+  document.getElementById('PRIV').classList.toggle('on',sel.status==='privremena');
+  renderBaseOptions();
+  document.getElementById('m_voffset').value=sel.voffset||'';
+  checkOverlap();
+  renderRouteTitle();
+}
+function renderBaseOptions(){
+  const base=document.getElementById('m_base'); if(!base||!sel)return;
+  const list=ruteOf(sel.linijaId).filter(r=>r.id!==sel.id&&r.status!=='privremena');
+  if(sel.baseId && !list.some(r=>r.id===sel.baseId)) sel.baseId='';
+  base.innerHTML='<option value="">—</option>'+list.map(r=>'<option value="'+r.id+'"'+(sel.baseId===r.id?' selected':'')+'>'+esc(r.naziv)+'</option>').join('');
+  base.value=sel.baseId||'';
+}
+function overlapsWith(r){
+  if(!r||r.status!=='privremena'||!r.baseId||!r.od||!r.do) return null;
+  for(const o of RUTE){ if(o.id===r.id) continue; if(o.status!=='privremena'||o.baseId!==r.baseId||!o.od||!o.do) continue;
+    if(r.od<=o.do && o.od<=r.do) return o; }
+  return null;
+}
+function checkOverlap(){ const el=document.getElementById('privWarn'); if(!el)return;
+  const c=(sel&&sel.status==='privremena')?overlapsWith(sel):null;
+  if(c){ el.style.display='block'; el.textContent='⚠ Preklapanje datuma s privremenom rutom „'+c.naziv+'". Rasponi se ne smiju preklapati na istoj osnovnoj ruti.'; }
+  else el.style.display='none';
+}
+
+/* ── Segmenti (OSRM + fallback) ── */
+async function buildSeg(a,b,wps){
+  const pts=[a].concat(wps||[]).concat([b]);
+  try{
+    const cs=pts.map(p=>p[1]+','+p[0]).join(';');
+    const u='https://router.project-osrm.org/route/v1/driving/'+cs+'?overview=full&geometries=geojson';
+    const r=await fetch(u); if(!r.ok) throw 0; const d=await r.json();
+    if(!d.routes||!d.routes[0]) throw 0;
+    return {coords:d.routes[0].geometry.coordinates.map(c=>[c[1],c[0]]),dist:d.routes[0].distance,time:d.routes[0].duration,snapped:true};
+  }catch(e){
+    let dist=0; for(let i=0;i<pts.length-1;i++) dist+=hav(pts[i],pts[i+1]);
+    return {coords:pts.slice(),dist:dist,time:dist/8.3,snapped:false};
+  }
+}
+async function ensureSegs(r){ if(!r) return; if(!r.wp) r.wp=[];
+  while(r.wp.length<Math.max(0,r.stops.length-1)) r.wp.push([]);
+  r.segs=[];
+  for(let i=0;i<r.stops.length-1;i++){ const a=st(r.stops[i]),b=st(r.stops[i+1]); r.segs.push(await buildSeg([a.lat,a.lon],[b.lat,b.lon],r.wp[i])); }
+}
+async function rebuildSeg(r,i){ if(i<0||i>=r.stops.length-1)return; const a=st(r.stops[i]),b=st(r.stops[i+1]); r.segs[i]=await buildSeg([a.lat,a.lon],[b.lat,b.lon],r.wp[i]||[]); }
+
+/* ── Operacije nad nizom ── */
+async function addStop(id){
+  if(!sel) return; FIT=true;
+  if(insertAfter!=null){
+    const k=insertAfter+1; sel.stops.splice(k,0,id); sel.wp.splice(k,0,[]); if(sel.wp[k-1]) sel.wp[k-1]=[];
+    insertAfter=null; cancelMode(); await ensureSegs(sel);
+  } else {
+    sel.stops.push(id); sel.wp.push([]); await ensureSegs(sel);
+  }
+  renderAll();
+}
+async function delStop(k){ FIT=true; sel.stops.splice(k,1); sel.wp.splice(Math.min(k,sel.wp.length-1),1); await ensureSegs(sel); renderAll(); }
+async function moveStop(k,d){ const j=k+d; if(j<0||j>=sel.stops.length)return; FIT=true; const t=sel.stops[k];sel.stops[k]=sel.stops[j];sel.stops[j]=t; await ensureSegs(sel); renderAll(); }
+function startInsert(k){ insertAfter=k; setMode('insert','Umetanje iza #'+(k+1)+' — klikni stajalište na karti.','Odustani'); renderSeq(); }
+function startWaypoint(i){ modeSeg=i; setMode('wp','Preusmjeravanje segmenta '+(i+1)+' — klikni na kartu, možeš dodati više točaka.','Gotovo'); renderSeq(); drawMap(); }
+async function addWaypoint(latlng){ if(modeSeg==null)return; if(!sel.wp[modeSeg])sel.wp[modeSeg]=[]; sel.wp[modeSeg].push([latlng.lat,latlng.lng]); await rebuildSeg(sel,modeSeg); renderSeq(); renderTotals(); drawMap(); const n=sel.wp[modeSeg].length; document.getElementById('bannerTxt').textContent='Preusmjeravanje segmenta '+(modeSeg+1)+' — '+n+' '+(n===1?'točka':'točke')+'. Klikni još ili Gotovo.'; }
+async function clearWaypoints(i){ sel.wp[i]=[]; await rebuildSeg(sel,i); renderAll(); }
+async function snapAll(){ if(!sel)return; toast('Povlačim po cestama…'); await ensureSegs(sel); renderAll(); toast(sel.segs.some(s=>s&&s.snapped)?'Trasa povučena po cestama':'OSRM nedostupan — ravne linije'); }
+
+function setMode(m,txt,btn){ mode=m; document.getElementById('BANNER').classList.add('on'); document.getElementById('bannerTxt').textContent=txt; document.getElementById('bannerBtn').textContent=btn||'Odustani'; const mw=document.querySelector('.mapwrap'); if(mw) mw.classList.add('picking'); }
+function cancelMode(){ mode=null; modeSeg=null; insertAfter=null; document.getElementById('BANNER').classList.remove('on'); const mw=document.querySelector('.mapwrap'); if(mw) mw.classList.remove('picking'); }
+function finishMode(){ cancelMode(); renderSeq(); drawMap(); }
+
+/* ── Render niza ── */
+function renderAll(){ renderMeta(); renderSeq(); renderTotals(); drawMap(); }
+function renderSeq(){
+  const C=document.getElementById('SEQ');
+  document.getElementById('TOT').style.display=sel?'flex':'none';
+  document.getElementById('FT').style.display=sel?'flex':'none';
+  if(!sel){ C.innerHTML='<div class="seq-empty">Odaberi ili kreiraj rutu, pa klikaj stajališta na karti.</div>'; return; }
+  if(!sel.stops.length){ C.innerHTML='<div class="seq-empty">Klikni stajališta na karti da posložiš rutu.</div>'; return; }
+  let h='';
+  sel.stops.forEach(function(id,k){
+    const s=st(id);
+    h+='<div class="stoprow"><div class="sr-top"><div class="sr-num">'+(k+1)+'</div><div class="sr-nm" title="'+esc(s.naziv)+'">'+esc(s.naziv)+'</div>'
+      +'<div class="sr-acts">'
+      +'<button title="Gore" onclick="moveStop('+k+',-1)"><svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg></button>'
+      +'<button title="Dolje" onclick="moveStop('+k+',1)"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>'
+      +'<button class="del" title="Obriši" onclick="delStop('+k+')"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>'
+      +'</div></div></div>';
+    if(k<sel.stops.length-1){
+      const sg=sel.segs[k]||{}; const nwp=(sel.wp[k]||[]).length;
+      h+='<div class="seg"><span class="v">'+(sg.dist!=null?fmtKm(sg.dist):'—')+'</span><span class="line"></span><span class="v">'+(sg.time!=null?fmtMin(sg.time):'—')+'</span>'
+        +'<button class="'+(mode==='wp'&&modeSeg===k?'on':'')+'" onclick="startWaypoint('+k+')">＋ preusmjeri</button>'
+        +(nwp?'<span class="wp">'+nwp+' tč.</span> <button onclick="clearWaypoints('+k+')">×</button>':'')
+        +(sg.snapped===false?'<span title="ravna linija (OSRM nedostupan)">~</span>':'')+'</div>';
+    }
+    h+='<div class="insert-bar"><button class="'+(insertAfter===k?'on':'')+'" onclick="startInsert('+k+')">＋ umetni stajalište ovdje</button></div>';
+  });
+  C.innerHTML=h;
+}
+function renderTotals(){
+  if(!sel)return;
+  const dist=sel.segs.reduce((a,s)=>a+(s&&s.dist||0),0);
+  const time=sel.segs.reduce((a,s)=>a+(s&&s.time||0),0);
+  document.getElementById('TOT').innerHTML=
+    '<div class="tot"><span class="n">'+sel.stops.length+'</span><span class="l">Stajališta</span></div>'
+   +'<div class="tot"><span class="n">'+fmtKm(dist)+'</span><span class="l">Duljina</span></div>'
+   +'<div class="tot"><span class="n">'+fmtMin(time)+'</span><span class="l">Baseline vrijeme</span></div>';
+}
+
+/* ── Karta ── */
+function setupMap(){
+  const el=document.getElementById('map');
+  if(typeof L==='undefined'){ el.innerHTML='<div class="map-off">Karta se učitava online (Leaflet + pločice).<br>Klikanje stajališta i OSRM rade u pregledniku.</div>'; return; }
+  try{
+    map=L.map(el,{attributionControl:true,zoomControl:true}).setView([44.115,15.245],13);
+    baseLayer=L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:20,subdomains:'abcd',attribution:'© OpenStreetMap, © CARTO'});
+    satLayer=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:20,attribution:'Snimke © Esri'});
+    baseLayer.addTo(map);
+    document.getElementById('MAPTOOLS').style.display='flex';
+    allLayer=L.layerGroup().addTo(map); routeLayer=L.layerGroup().addTo(map);
+    map.on('click',function(e){ if(mode==='wp') addWaypoint(e.latlng); });
+    drawAllStops(); drawMap();
+  }catch(err){ el.innerHTML='<div class="map-off">Karta nije dostupna.</div>'; }
+}
+function setMapMode(m){ mapMode=m; if(!map)return; if(m==='sat'){map.removeLayer(baseLayer);satLayer.addTo(map);}else{map.removeLayer(satLayer);baseLayer.addTo(map);} document.getElementById('mlK').classList.toggle('on',m==='karta'); document.getElementById('mlS').classList.toggle('on',m==='sat'); }
+function drawAllStops(){
+  if(!allLayer)return; allLayer.clearLayers();
+  STOPS.forEach(function(s){
+    const mk=L.circleMarker([s[2],s[3]],{radius:5,color:'#fff',weight:2,fillColor:'#64748b',fillOpacity:1});
+    mk.bindTooltip(s[1],{direction:'top'});
+    mk.on('click',function(e){ if(mode==='wp'){ addWaypoint(e.latlng); return; } if(sel) addStop(s[0]); else toast('Prvo odaberi/kreiraj rutu'); });
+    mk.addTo(allLayer);
+  });
+}
+function drawMap(){
+  if(!routeLayer)return; routeLayer.clearLayers(); if(!sel||!sel.stops.length) return;
+  const col = sel.status==='privremena'?'#ef4444':(LINBY[sel.linijaId]?LINBY[sel.linijaId].boja:'#f97316');
+  // segmenti
+  (sel.segs||[]).forEach(function(sg,i){
+    if(!sg||!sg.coords)return;
+    var act=(mode==='wp'&&modeSeg===i);
+    L.polyline(sg.coords,{color:act?'#f97316':col,weight:act?8:5,opacity:act?1:.85,dashArray:sel.status==='privremena'?'8 7':null}).addTo(routeLayer);
+    (sel.wp[i]||[]).forEach(function(w){ L.circleMarker(w,{radius:4,color:col,weight:2,fillColor:'#fff',fillOpacity:1}).addTo(routeLayer); });
+  });
+  // numerirani markeri
+  sel.stops.forEach(function(id,k){ const s=st(id);
+    L.marker([s.lat,s.lon],{icon:L.divIcon({className:'',iconSize:[0,0],iconAnchor:[0,0],html:'<div class="numicon'+(sel.status==='privremena'?' priv':'')+'">'+(k+1)+'</div>'})}).addTo(routeLayer);
+  });
+  if(FIT){ try{ const pts=[]; sel.stops.forEach(id=>{const s=st(id);pts.push([s.lat,s.lon]);}); if(pts.length>1) map.fitBounds(L.latLngBounds(pts).pad(0.25)); }catch(e){} FIT=false; }
+}
+function toggleTheme(){ const h=document.documentElement,dk=h.getAttribute('data-theme')==='dark'; h.setAttribute('data-theme',dk?'light':'dark');
+  document.getElementById('themeIc').innerHTML=dk?'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>':'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/>';
+  if(map) setTimeout(()=>map.invalidateSize(),60); }
+
+/* ── Init ── */
+renderOverview();
+</script>
+</body>
+</html>
