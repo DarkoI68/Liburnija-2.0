@@ -36,13 +36,13 @@
             },
             {
               "name": "Linije",
-              "file": "",
-              "locked": false
+              "file": "Linije.html",
+              "locked": true
             },
             {
               "name": "Stajališta",
-              "file": "",
-              "locked": false
+              "file": "Stajalis%CC%8Cta.html",
+              "locked": true
             },
             {
               "name": "Zone",
@@ -174,14 +174,14 @@
                   "locked": false
                 },
                 {
-                  "name": "Radni zadaci",
-                  "file": "",
-                  "locked": false
+                  "name": "Planiranje rute (GPS)",
+                  "file": "Planiranje%20rute.html",
+                  "locked": true
                 },
                 {
-                  "name": "Planiranje rute (GPS)",
-                  "file": "",
-                  "locked": false
+                  "name": "Radni zadaci i polasci",
+                  "file": "Radni%20zadaci%20i%20polazsci.html",
+                  "locked": true
                 },
                 {
                   "name": "Režimi prometovanja",
