@@ -198,12 +198,17 @@ add('grad','9','Gaženica','Kolodvor','Gaženica',dvosmjer('Kolodvor','Gaženica
 
 const PALETA=['#ef4444','#f97316','#eab308','#22c55e','#14b8a6','#3b82f6','#6366f1','#a855f7','#ec4899','#06b6d4','#84cc16','#f59e0b'];
 function contrastText(hex){ hex=(hex||'').replace('#',''); if(hex.length===3) hex=hex.split('').map(c=>c+c).join(''); const r=parseInt(hex.slice(0,2),16)||0,g=parseInt(hex.slice(2,4),16)||0,b=parseInt(hex.slice(4,6),16)||0; return ((0.299*r+0.587*g+0.114*b)/255)>0.6?'#111827':'#ffffff'; }
+const AREAPFX={grad:'GRA',prigrad:'PRI',ugljan:'UGL',dugi:'DUG',iz:'IZ'};
+const _areaSeq={};
 let LINIJE = RAW.map(function(r,i){
   const g=geom(r.naziv,r.podr);
   const tip = r.podr==='grad'?'gradski':(r.podr==='prigrad'?'prigradski':'minibus');
   const sez = (r.status==='sezonska')?'ljetna':'cijelogodišnja';
   const boja = PALETA[seedFrom(r.naziv)%PALETA.length];
-  return { id:'l'+(i+1), broj:r.broj||'', naziv:r.naziv, podrucje:r.podr, status:r.status||'aktivna',
+  let sifra;
+  if(r.broj){ sifra=r.broj; }
+  else { const pfx=AREAPFX[r.podr]||'LIN'; _areaSeq[pfx]=(_areaSeq[pfx]||0)+1; sifra=pfx+'-'+String(_areaSeq[pfx]).padStart(3,'0'); }
+  return { id:'l'+(i+1), sifra:sifra, broj:r.broj||'', naziv:r.naziv, podrucje:r.podr, status:r.status||'aktivna',
     polaziste:r.polaz, odrediste:r.odred, duljina:g.duljina, brStajalista:g.brStajalista, trajanje:g.trajanje,
     rute:(r.rute||[]).slice(), vrsta:r.vrsta||'redovna', sezonalnost:sez, tipVozila:tip,
     boja:boja, bojaTeksta:contrastText(boja), sortOrder:i+1, opis:'', url:'' };
@@ -275,6 +280,7 @@ function openLine(id){
    +'<button class="card-x" onclick="closeCard()"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>';
   h+='<div class="card-bd">';
   h+='<div class="sect-t">Identitet</div><div class="fgrid">'
+   + fi('Šifra (route_id)','sifra',true,'npr. 11 / PRI-001')
    + fi('Oznaka / broj','broj',true,'npr. 11')
    + '<div class="fld"><label>Naziv linije</label><input id="f_naziv" value="'+esc(l.naziv)+'" placeholder="npr. Crvene kuće"></div>'
    + '<div class="fld"><label>Područje prometovanja</label><select id="f_podrucje">'+PODRUCJA.map(P=>'<option value="'+P[0]+'"'+(l.podrucje===P[0]?' selected':'')+'>'+P[1]+'</option>').join('')+'</select></div>'
@@ -331,8 +337,12 @@ function val(k){ const e=document.getElementById('f_'+k); return e?e.value.trim(
 function numOr(k){ const x=val(k); return x===''?null:(isNaN(+x)?x:+x); }
 function saveLine(){
   const naziv=val('naziv'); if(!naziv){ document.getElementById('f_naziv').focus(); return; }
+  const sifra=val('sifra'); if(!sifra){ alert('Šifra (route_id) je obavezna.'); document.getElementById('f_sifra').focus(); return; }
+  const dup=LINIJE.find(x=>x.id!==editId && (x.sifra||'').toLowerCase()===sifra.toLowerCase());
+  if(dup){ alert('Šifra „'+sifra+'" već postoji (linija „'+dup.naziv+'"). route_id mora biti jedinstven.'); document.getElementById('f_sifra').focus(); return; }
   let l = editId ? LINIJE.find(x=>x.id===editId) : null;
   if(!l){ l={id:'l'+Date.now()}; LINIJE.push(l); }
+  l.sifra=sifra;
   l.broj=val('broj'); l.naziv=naziv; l.podrucje=val('podrucje'); l.status=val('status');
   l.polaziste=val('polaziste'); l.odrediste=val('odrediste');
   l.duljina=numOr('duljina'); l.brStajalista=numOr('brStajalista'); l.trajanje=numOr('trajanje');
