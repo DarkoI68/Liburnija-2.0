@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="hr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liburnija — Tarife</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+html[data-theme="dark"]{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2330;--bgh:#212936;--bdr:#2d3748;--tp:#f0f4f8;--ts:#8b95a1;--tm:#4b5563;--acc:#f97316;--accs:rgba(249,115,22,.14);--blu:#3b82f6;--blus:rgba(59,130,246,.15);--grn:#22c55e;--grns:rgba(34,197,94,.15);--red:#ef4444;--reds:rgba(239,68,68,.14);--yel:#eab308;--yels:rgba(234,179,8,.16)}
+html[data-theme="light"]{--bg:#f0f4f8;--bg2:#fff;--bg3:#f8fafc;--bgh:#f1f5f9;--bdr:#e2e8f0;--tp:#0f172a;--ts:#64748b;--tm:#94a3b8;--acc:#f97316;--accs:rgba(249,115,22,.09);--blu:#3b82f6;--blus:rgba(59,130,246,.1);--grn:#16a34a;--grns:rgba(22,163,74,.1);--red:#dc2626;--reds:rgba(220,38,38,.09);--yel:#ca8a04;--yels:rgba(202,138,4,.13)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--tp);height:100vh;display:flex;flex-direction:column;font-size:13px;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:5px}::-webkit-scrollbar-track{background:transparent}
+
+.top{display:flex;align-items:center;gap:12px;padding:11px 18px;background:var(--bg2);border-bottom:1.5px solid var(--bdr);flex-shrink:0}
+.brand{display:flex;align-items:center;gap:9px}
+.brand-ic{width:30px;height:30px;border-radius:8px;background:var(--accs);display:flex;align-items:center;justify-content:center}
+.brand-ic svg{width:17px;height:17px;stroke:var(--acc);stroke-width:2.2;fill:none}
+.brand-tit{font-size:14px;font-weight:800;letter-spacing:.2px}
+.brand-sub{font-size:10px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px}
+.crumb{font-size:11px;color:var(--ts);font-weight:600;margin-left:6px}.crumb b{color:var(--acc)}
+.top-sp{flex:1}
+.tbtn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:8px;color:var(--ts)}
+.tbtn:hover{border-color:var(--acc);color:var(--acc)}.tbtn svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none}
+
+.wrap{flex:1;overflow-y:auto;min-height:0}
+.inner{max-width:1180px;margin:0 auto;padding:20px 24px 60px}
+.hd{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+.hd h1{font-size:22px;font-weight:800;letter-spacing:.2px}
+.hd .eyebrow{font-size:10px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:8px;font-size:12px;font-weight:700;padding:8px 13px;transition:all .12s}
+.btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.4;fill:none}
+.btn-acc{background:var(--acc);color:#fff}.btn-acc:hover{filter:brightness(1.06)}
+.btn-ghost{background:var(--bg2);border:1.5px solid var(--bdr);color:var(--ts)}.btn-ghost:hover{border-color:var(--acc);color:var(--acc)}
+
+.switch{display:inline-flex;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:9px;padding:3px}
+.switch button{border:none;background:transparent;font-size:12px;font-weight:700;color:var(--ts);padding:8px 15px;border-radius:7px}
+.switch button.on{background:var(--bg2);color:var(--acc);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+.note{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:11px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--ts);font-weight:600}
+.note svg{width:16px;height:16px;stroke:var(--acc);stroke-width:2;fill:none;flex-shrink:0}
+.note b{color:var(--tp)}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:11px;padding:12px 14px}
+.kpi-n{font-size:21px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.kpi-l{font-size:10px;color:var(--ts);font-weight:600;margin-top:6px;text-transform:uppercase;letter-spacing:.3px}
+
+.toolbar{display:flex;align-items:center;gap:9px;margin-bottom:13px;flex-wrap:wrap}
+.search{position:relative;display:flex;align-items:center;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;padding:0 11px;height:38px;flex:1;min-width:200px}
+.search:focus-within{border-color:var(--acc)}
+.search svg{width:15px;height:15px;stroke:var(--ts);stroke-width:2;fill:none;flex-shrink:0;margin-right:8px}
+.search input{flex:1;background:transparent;border:0;outline:0;font-family:inherit;font-size:13px;font-weight:500;color:var(--tp)}
+.fchips{display:flex;gap:6px;flex-wrap:wrap}
+.fchip{padding:8px 13px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;font-size:11.5px;font-weight:700;color:var(--ts);transition:all .12s}
+.fchip:hover{border-color:var(--acc);color:var(--tp)}
+.fchip.on{background:var(--accs);border-color:var(--acc);color:var(--acc)}
+
+.tblwrap{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:13px;overflow:hidden}
+table.ln{width:100%;border-collapse:collapse;font-size:12.5px}
+table.ln th{font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:11px 12px;border-bottom:1.5px solid var(--bdr);white-space:nowrap;background:var(--bg3)}
+table.ln td{padding:9px 12px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+table.ln tbody tr.row{cursor:pointer;transition:background .1s}
+table.ln tbody tr.row:hover{background:var(--bgh)}
+table.ln tr:last-child td{border-bottom:none}
+.ozn{font-family:"DM Mono",monospace;font-weight:600;font-size:12px;background:var(--bg3);border:1px solid var(--bdr);border-radius:6px;padding:2px 8px;display:inline-block;min-width:34px;text-align:center}
+.ln-nm{font-weight:700}
+.sub2{font-size:10.5px;color:var(--ts);font-weight:600;margin-top:2px}
+.num{text-align:center;font-variant-numeric:tabular-nums}
+.mono{font-family:"DM Mono",monospace;font-variant-numeric:tabular-nums}
+.pill{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:20px;display:inline-block;white-space:nowrap}
+.pill.full{background:var(--grns);color:var(--grn)}
+.pill.partial{background:var(--yels);color:var(--yel)}
+.pill.empty{background:var(--bg3);color:var(--tm);border:1px solid var(--bdr)}
+.empty-tbl{padding:40px;text-align:center;color:var(--ts);font-weight:600}
+
+.zb{font-family:"DM Mono",monospace;font-weight:700;font-size:12px;width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.22)}
+.zchips{display:inline-flex;gap:4px;flex-wrap:wrap;align-items:center}
+.zchip{font-family:"DM Mono",monospace;font-size:10px;font-weight:700;color:#fff;border-radius:6px;padding:3px 8px;white-space:nowrap}
+.zh{display:flex;flex-direction:column;align-items:center;gap:5px;max-width:120px;margin:0 auto;padding:2px}
+.zh.row{flex-direction:row;gap:8px;max-width:none;justify-content:flex-start}
+.zdot{width:14px;height:14px;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 2px var(--bg2),0 1px 3px rgba(0,0,0,.25)}
+.zhn{font-size:11px;font-weight:700;color:var(--tp);line-height:1.2;text-align:center}
+.zh.row .zhn{text-align:left;white-space:nowrap}
+table.mx th.rowh{text-align:left;padding-right:12px;vertical-align:middle}
+table.mx th.hl{background:var(--accs);border-radius:9px;box-shadow:0 0 0 1.5px var(--acc) inset}
+table.mx th.hl .zhn{color:var(--acc)}
+
+.ed-hd{display:flex;align-items:center;gap:13px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:13px;padding:15px 18px;margin-bottom:16px}
+.ed-hd .ozn{font-size:15px;padding:5px 12px}
+.ed-hd-main{flex:1;min-width:0}
+.ed-hd-tit{font-size:18px;font-weight:800}
+.ed-hd-sub{font-size:11.5px;color:var(--ts);font-weight:600;margin-top:2px}
+.panel{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:13px;margin-bottom:16px;overflow:hidden}
+.panel-hd{display:flex;align-items:center;gap:11px;padding:13px 18px;border-bottom:1.5px solid var(--bdr)}
+.panel-hd h3{font-size:13px;font-weight:800;letter-spacing:.2px}
+.panel-hd .sub{font-size:11px;color:var(--ts);font-weight:600}
+.panel-bd{padding:16px 18px}
+.rutarow{display:flex;align-items:center;gap:12px;padding:7px 0;border-bottom:1px solid var(--bdr)}
+.rutarow:last-child{border-bottom:none}
+.rutarow .rnm{font-size:12px;font-weight:600;flex:1}
+
+.mxwrap{overflow-x:auto;padding:4px}
+table.mx{border-collapse:separate;border-spacing:7px}
+table.mx th{font-weight:700;padding:2px;text-align:center}
+table.mx th.corner{font-family:"DM Mono",monospace;color:var(--ts);font-size:13px;font-weight:700}
+td.cell{background:var(--bg3);border:1.5px solid var(--bdr);border-radius:9px;width:104px;height:48px;text-align:center;position:relative;padding:0}
+td.cell .eur{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ts);font-size:13px;font-weight:700;pointer-events:none}
+td.cell .mxin{width:100%;height:100%;border:none;background:transparent;text-align:center;padding-left:16px;font-family:"DM Mono",monospace;font-size:15px;font-weight:600;color:var(--tp);border-radius:9px}
+td.cell .mxin:focus{outline:none;background:var(--bg2);box-shadow:0 0 0 2px var(--acc) inset}
+td.cell.diag{border-style:dashed;background:var(--accs)}
+td.cell.empty{border-color:var(--yel)}
+td.cell.mirror{background:transparent;border:1.5px dashed var(--bdr)}
+td.cell.inh .mxin{color:var(--tm)}
+td.cell.ovr{border-color:var(--acc)}
+td.cell.ovr .mxin{color:var(--acc)}
+td.cell.ovr::after{content:"";position:absolute;top:5px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--acc)}
+.lg.inh{background:var(--bg3)}
+.lg.ovr{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}
+.pill.ovrp{background:var(--accs);color:var(--acc)}
+td.cell.mirror .mv{font-family:"DM Mono",monospace;font-size:14px;font-weight:600;color:var(--ts)}
+td.cell.mirror .md{color:var(--tm);font-size:14px}
+.mxlegend{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-size:11px;color:var(--ts);font-weight:600}
+.mxlegend span{display:inline-flex;align-items:center;gap:6px}
+.lg{width:14px;height:14px;border-radius:4px;border:1.5px solid var(--bdr)}
+.lg.diag{border-style:dashed;background:var(--accs)}
+.lg.empty{border-color:var(--yel)}
+
+/* iznimke */
+.exsel{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--tp);background:var(--bg3);border:1.5px solid var(--bdr);border-radius:7px;padding:7px 9px;width:100%}
+.exsel:focus{outline:none;border-color:var(--acc)}
+.exprice{position:relative;display:flex;align-items:center}
+.exprice .eur{position:absolute;left:10px;color:var(--ts);font-size:12px;font-weight:700;pointer-events:none}
+.exprice input{font-family:"DM Mono",monospace;font-size:13.5px;font-weight:600;color:var(--tp);background:var(--bg3);border:1.5px solid var(--bdr);border-radius:7px;padding:7px 9px 7px 22px;width:120px}
+.exprice input:focus{outline:none;border-color:var(--acc)}
+.arrow{color:var(--tm);font-weight:800}
+.del{width:30px;height:30px;border:none;background:transparent;border-radius:7px;color:var(--tm);display:inline-flex;align-items:center;justify-content:center}
+.del:hover{background:var(--reds);color:var(--red)}.del svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none}
+.addrow{display:inline-flex;align-items:center;gap:7px;margin:14px 0 2px;padding:9px 14px;background:transparent;border:1.5px dashed var(--bdr);border-radius:8px;color:var(--ts);font-size:12px;font-weight:700;transition:all .12s}
+.addrow:hover{border-color:var(--acc);color:var(--acc);border-style:solid}.addrow svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.4;fill:none}
+@media(max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">
+    <div class="brand-ic"><svg viewBox="0 0 24 24"><path d="M3 10h18M7 15h2m4 0h4M5 5h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg></div>
+    <div><div class="brand-tit">Liburnija</div><div class="brand-sub">Tarife</div></div>
+  </div>
+  <span class="crumb">Postavke › <b>Tarife</b></span>
+  <div class="top-sp"></div>
+  <button class="tbtn" id="themeBtn" title="Tema" onclick="toggleTheme()"><svg id="themeIc" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+</div>
+
+<div class="wrap"><div class="inner">
+  <div class="hd">
+    <div><div class="eyebrow">Cjenik · pojedinačna karta (€)</div><h1>Tarife</h1></div>
+    <div class="switch">
+      <button id="sw-grupa" onclick="setMode('grupa')">Grupa linija</button>
+      <button id="sw-linija" onclick="setMode('linija')">Linija</button>
+      <button id="sw-iznimka" onclick="setMode('iznimka')">Iznimke</button>
+    </div>
+  </div>
+
+  <div id="noteBox"></div>
+  <div id="view"></div>
+</div></div>
+
+<script>
+/* ════════ MOCK PODACI — jedina točka koju developer mijenja pravim izvorom ════════ */
+
+/* Zone (iz CORE Zone) — u stvarnosti ~60; ovdje uzorak. */
+const ZONE = [
+  { sifra:"Z1", broj:1, naziv:"Grad Zadar",         boja:"#3b82f6" },
+  { sifra:"Z2", broj:2, naziv:"Zadarski prsten",    boja:"#14b8a6" },
+  { sifra:"Z3", broj:3, naziv:"Sjever (Nin – Vir)", boja:"#22c55e" },
+  { sifra:"Z4", broj:4, naziv:"Istok (Benkovac)",   boja:"#eab308" },
+  { sifra:"Z5", broj:5, naziv:"Jug (Biograd)",      boja:"#f97316" },
+  { sifra:"Z6", broj:6, naziv:"Otoci",              boja:"#a855f7" }
+];
+
+/* Grupe linija (iz modula Grupe linija) — koridor/smjer; zone = unija zona svih linija grupe */
+const GRUPE = [
+  { id:"g_grad",   naziv:"Gradski koridor",     linije:["1","2","3","4","5","11"], zone:["Z1"] },
+  { id:"g_sjever", naziv:"Sjever (Nin – Vir)",  linije:["Zadar – Vir","Zadar – Vrsi","Zadar – Nin","Zadar – Privlaka"], zone:["Z1","Z2","Z3"] },
+  { id:"g_istok",  naziv:"Istok (Benkovac)",    linije:["Zadar – Obrovac","Zadar – Benkovac"], zone:["Z1","Z4"] },
+  { id:"g_jug",    naziv:"Jug (Biograd)",       linije:["Zadar – Biograd","Zadar – Pakoštane"], zone:["Z1","Z2","Z5"] },
+  { id:"g_otoci",  naziv:"Otoci",               linije:["Preko – Kali","Sali","Iž"], zone:["Z6"] }
+];
+
+/* Linije (za način „Linija") */
+const LINIJE = [
+  { id:"l1",  broj:"1",  naziv:"Belafuža (Petrići)", podrucje:"grad",    grupa:"g_grad", zone:["Z1"] },
+  { id:"l2",  broj:"2",  naziv:"Arbanasi",           podrucje:"grad",    grupa:"g_grad", zone:["Z1"] },
+  { id:"l3",  broj:"3",  naziv:"Bili Brig",          podrucje:"grad",    grupa:"g_grad", zone:["Z1"] },
+  { id:"l11", broj:"11", naziv:"Crvene kuće (Supernova)", podrucje:"grad", grupa:"g_grad", zone:["Z1"] },
+  { id:"vir", broj:"",   naziv:"Zadar – Vir",        podrucje:"prigrad", grupa:"g_sjever", zone:["Z1","Z2","Z3"],
+      rute:[ {naziv:"Zadar – Vir (magistrala)", zone:["Z1","Z2","Z3"]}, {naziv:"Zadar – Vir (preko Petrčana)", zone:["Z1","Z2","Z3"]} ] },
+  { id:"vrsi", broj:"",  naziv:"Zadar – Vrsi",       podrucje:"prigrad", grupa:"g_sjever", zone:["Z1","Z2","Z3"],
+      rute:[ {naziv:"Zadar – Vrsi (preko Petrčana)", zone:["Z1","Z2","Z3"]}, {naziv:"Zadar – Vrsi (preko Nina)", zone:["Z1","Z3"]} ] },
+  { id:"obrovac", broj:"", naziv:"Zadar – Obrovac",  podrucje:"prigrad", grupa:"g_istok", zone:["Z1","Z4"] },
+  { id:"biograd", broj:"", naziv:"Zadar – Biograd",  podrucje:"prigrad", grupa:"g_jug", zone:["Z1","Z2","Z5"] },
+  { id:"preko", broj:"", naziv:"Preko – Kali (Ugljan)", podrucje:"otok", grupa:"g_otoci", zone:["Z6"] }
+];
+
+/* Cijene (€) — ključ = simetrični par "Za|Zb" (sortirano). Pojedinačna karta. */
+const GROUPPRICES = {
+  g_sjever: { "Z1|Z1":0.80,"Z1|Z2":1.20,"Z1|Z3":1.80,"Z2|Z2":0.80,"Z2|Z3":1.20,"Z3|Z3":1.00 },
+  g_grad:   { "Z1|Z1":0.80 }
+};
+const LINEPRICES = {
+  vir: { "Z1|Z3":2.00 }
+};
+/* Iznimke — parovi zona koji NISU u istoj grupi (npr. A na liniji 1 → B na liniji 2). Imaju prednost. */
+let IZNIMKE = [
+  { od:"Z3", do:"Z5", cijena:2.80 },
+  { od:"Z4", do:"Z6", cijena:3.20 }
+];
+
+/* ════════ LOGIKA ════════ */
+const esc = s => (s==null?"":(""+s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function contrastText(hex){ hex=(hex||'').replace('#',''); if(hex.length===3) hex=hex.split('').map(c=>c+c).join(''); const r=parseInt(hex.slice(0,2),16)||0,g=parseInt(hex.slice(2,4),16)||0,b=parseInt(hex.slice(4,6),16)||0; return ((0.299*r+0.587*g+0.114*b)/255)>0.6?'#111827':'#ffffff'; }
+const zById = s => ZONE.find(z=>z.sifra===s);
+const grpById = id => GRUPE.find(g=>g.id===id);
+const lineById = id => LINIJE.find(l=>l.id===id);
+const pairKey = (a,b) => [a,b].sort().join("|");
+const podrLbl = p => p==="grad"?"Grad":(p==="prigrad"?"Prigrad":"Otok");
+
+function parseCtx(ctx){ const i=ctx.indexOf(":"); return { type:ctx.slice(0,i), id:ctx.slice(i+1) }; }
+function entOf(ctx){ const {type,id}=parseCtx(ctx); return type==="g"?grpById(id):lineById(id); }
+function priceStore(ctx){ const {type,id}=parseCtx(ctx); return type==="g" ? (GROUPPRICES[id]||(GROUPPRICES[id]={})) : (LINEPRICES[id]||(LINEPRICES[id]={})); }
+function lineGroupId(lineId){ const l=lineById(lineId); return l?l.grupa:null; }
+function getEff(ctx,a,b){
+  const k=pairKey(a,b); const pc=parseCtx(ctx);
+  if(pc.type==="g"){ const st=GROUPPRICES[pc.id]; const v=st?st[k]:undefined; return {price:(v==null?null:v),src:(v==null?null:"group")}; }
+  const lst=LINEPRICES[pc.id]; const ov=lst?lst[k]:undefined;
+  if(ov!=null) return {price:ov,src:"override"};
+  const g=lineGroupId(pc.id); const gst=g?GROUPPRICES[g]:null; const gv=gst?gst[k]:undefined;
+  if(gv!=null) return {price:gv,src:"group"};
+  return {price:null,src:null};
+}
+function zonesOf(ctx){ const e=entOf(ctx); return ZONE.filter(z=>(e.zone||[]).includes(z.sifra)).sort((a,b)=>a.broj-b.broj); }
+function pairsOf(zs){ const out=[]; for(let i=0;i<zs.length;i++) for(let j=i;j<zs.length;j++) out.push(pairKey(zs[i].sifra,zs[j].sifra)); return out; }
+function getPrice(ctx,a,b){ const v=priceStore(ctx)[pairKey(a,b)]; return v==null?null:v; }
+function setPrice(ctx,a,b,raw){
+  const store=priceStore(ctx); const k=pairKey(a,b);
+  const s=(""+raw).replace(",",".").replace(/[^0-9.]/g,"").trim();
+  if(s===""){ delete store[k]; } else { const n=Math.round(parseFloat(s)*100)/100; if(!isNaN(n)) store[k]=n; }
+  renderEditor(ctx);
+}
+function fillStat(ctx){ const zs=zonesOf(ctx); let total=0,filled=0,vals=[];
+  for(let i=0;i<zs.length;i++) for(let j=i;j<zs.length;j++){ total++; const e=getEff(ctx,zs[i].sifra,zs[j].sifra); if(e.price!=null){ filled++; vals.push(e.price);} }
+  return { total, filled, min:vals.length?Math.min(...vals):null, max:vals.length?Math.max(...vals):null }; }
+function statusOf(s){ return s.filled===0?"empty":(s.filled<s.total?"partial":"full"); }
+function statusLbl(x){ return x==="full"?"Popunjeno":(x==="partial"?"Djelomično":"Prazno"); }
+
+function zb(z){ return '<span class="zb" style="background:'+z.boja+';color:'+contrastText(z.boja)+'" title="'+esc(z.naziv)+'">'+z.broj+'</span>'; }
+function zheadTop(z){ return '<div class="zh"><span class="zhn">'+esc(z.naziv)+'</span></div>'; }
+function zheadRow(z){ return '<div class="zh row"><span class="zhn">'+esc(z.naziv)+'</span></div>'; }
+function zchip(sifra){ const z=zById(sifra); if(!z) return ''; return '<span class="zchip" style="background:'+z.boja+';color:'+contrastText(z.boja)+'">'+z.sifra+'</span>'; }
+
+/* ─── Matrica ─── */
+function matrixHtml(ctx){
+  const zs=zonesOf(ctx);
+  if(!zs.length) return '<div class="empty-tbl">Nema zona.</div>';
+  let h='<div class="mxwrap"><table class="mx"><thead><tr><th class="corner">€</th>';
+  zs.forEach(z=>h+='<th id="thtop_'+z.sifra+'">'+zheadTop(z)+'</th>'); h+='</tr></thead><tbody>';
+  zs.forEach((zr,i)=>{
+    h+='<tr><th class="rowh" id="throw_'+zr.sifra+'">'+zheadRow(zr)+'</th>';
+    zs.forEach((zc,j)=>{
+      const e=getEff(ctx,zr.sifra,zc.sifra); const price=e.price;
+      if(j>=i){
+        let cls='cell'+(i===j?' diag':'');
+        if(price==null) cls+=' empty'; else if(e.src==='group') cls+=' inh'; else if(e.src==='override') cls+=' ovr';
+        const title=(e.src==='group')?' title="Naslijeđeno iz grupe — upiši za iznimku na liniji"':'';
+        h+='<td class="'+cls+'"'+title+'><span class="eur">€</span><input class="mxin" inputmode="decimal" value="'+(price==null?'':price.toFixed(2))+'" placeholder="0.00" onfocus="cellFocus(\''+zr.sifra+'\',\''+zc.sifra+'\')" onblur="cellBlur()" onchange="setPrice(\''+ctx+'\',\''+zr.sifra+'\',\''+zc.sifra+'\',this.value)"></td>';
+      } else {
+        h+='<td class="cell mirror">'+(price==null?'<span class="md">—</span>':'<span class="mv">€'+price.toFixed(2)+'</span>')+'</td>';
+      }
+    });
+    h+='</tr>';
+  });
+  h+='</tbody></table></div>';
+  let lg='<div class="mxlegend"><span><i class="lg diag"></i> dijagonala = unutar iste zone</span><span><i class="lg empty"></i> nepopunjeno</span><span><i class="lg"></i> donji trokut = zrcalo</span>';
+  if(parseCtx(ctx).type==="l") lg+='<span><i class="lg inh"></i> iz grupe (naslijeđeno)</span><span><i class="lg ovr"></i> iznimka na liniji</span>';
+  return h+lg+'</div>';
+}
+function cellBlur(){ document.querySelectorAll('table.mx th.hl').forEach(t=>t.classList.remove('hl')); }
+function cellFocus(rowZ,colZ){
+  cellBlur();
+  const r=document.getElementById('throw_'+rowZ); if(r) r.classList.add('hl');
+  const c=document.getElementById('thtop_'+colZ); if(c) c.classList.add('hl');
+}
+
+/* ─── Editor (grupa ili linija) ─── */
+function renderEditor(ctx){
+  const {type}=parseCtx(ctx); const e=entOf(ctx); if(!e) return backToList();
+  const zs=zonesOf(ctx);
+  let bd;
+  if(type==="g"){
+    bd = '<div class="rutarow"><span class="rnm" style="color:var(--ts)">Linije u grupi ('+e.linije.length+')</span><span style="font-size:12px;font-weight:600">'+e.linije.map(esc).join(" · ")+'</span></div>'
+       + '<div class="rutarow"><span class="rnm" style="color:var(--ts)">Zone grupe (unija)</span><span class="zchips">'+e.zone.map(zchip).join("")+'</span></div>';
+  } else if(e.rute && e.rute.length){
+    bd = e.rute.map(r=>'<div class="rutarow"><span class="rnm">'+esc(r.naziv)+'</span><span class="zchips">'+r.zone.map(zchip).join("")+'</span></div>').join("");
+  } else {
+    bd = '<div class="rutarow"><span class="rnm" style="color:var(--ts)">Zone linije (iz stajališta svih ruta)</span><span class="zchips">'+e.zone.map(zchip).join("")+'</span></div>';
+  }
+  const badge = type==="g" ? '<span class="ozn">GR</span>' : '<span class="ozn">'+(e.broj||'–')+'</span>';
+  const tit = type==="g" ? esc(e.naziv) : esc(e.naziv);
+  const subt = type==="g" ? ("Grupa linija · dira "+zs.length+" "+(zs.length===1?"zonu":"zone")) : (podrLbl(e.podrucje)+" · dira "+zs.length+" "+(zs.length===1?"zonu":"zone"));
+  let matSub="Cijena pojedinačne karte (€), simetrično";
+  if(type==="l"){ const g=grpById(lineGroupId(e.id)); matSub = g ? ("Naslijeđeno iz grupe „"+esc(g.naziv)+"” · upiši samo za iznimku na liniji") : "Linija nema grupu · cijene se upisuju ručno"; }
+  document.getElementById("view").innerHTML =
+    '<button class="btn btn-ghost" style="margin-bottom:14px" onclick="backToList()"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>'+(type==="g"?"Sve grupe":"Sve linije")+'</button>'
+    + '<div class="ed-hd">'+badge+'<div class="ed-hd-main"><div class="ed-hd-tit">'+tit+'</div><div class="ed-hd-sub">'+subt+'</div></div></div>'
+    + '<div class="panel"><div class="panel-hd"><div><h3>'+(type==="g"?"Sastav grupe":"Zone iz ruta linije")+'</h3><div class="sub">Matrica ispod ima samo zone koje '+(type==="g"?"grupa":"linija")+' dira</div></div></div><div class="panel-bd">'+bd+'</div></div>'
+    + '<div class="panel"><div class="panel-hd"><div><h3>Matrica zona — '+tit+'</h3><div class="sub">'+matSub+'</div></div></div><div class="panel-bd">'+matrixHtml(ctx)+'</div></div>';
+}
+
+/* ─── Liste ─── */
+let MODE="grupa", curEditor=null, lq="", fPod="";
+function openGroup(id){ curEditor="g:"+id; render(); }
+function openLine(id){ curEditor="l:"+id; render(); }
+function backToList(){ curEditor=null; render(); }
+
+function renderGroupList(){
+  const k=(n,l)=>'<div class="kpi"><div class="kpi-n">'+n+'</div><div class="kpi-l">'+l+'</div></div>';
+  let full=0,part=0; GRUPE.forEach(g=>{ const x=statusOf(fillStat("g:"+g.id)); if(x==="full")full++; else if(x==="partial")part++; });
+  const rows=GRUPE.map(g=>{
+    const st=fillStat("g:"+g.id); const x=statusOf(st);
+    const raspon=st.min==null?'—':'€'+st.min.toFixed(2)+'–'+st.max.toFixed(2);
+    return '<tr class="row" onclick="openGroup(\''+g.id+'\')">'
+      + '<td class="ln-nm">'+esc(g.naziv)+'<div class="sub2">'+g.linije.map(esc).join(" · ")+'</div></td>'
+      + '<td class="num">'+g.linije.length+'</td>'
+      + '<td><span class="zchips">'+g.zone.map(zchip).join("")+'</span></td>'
+      + '<td><span class="pill '+x+'">'+statusLbl(x)+'</span> <span class="mono" style="color:var(--ts);font-size:11px">'+st.filled+'/'+st.total+'</span></td>'
+      + '<td class="mono">'+raspon+'</td></tr>';
+  }).join("");
+  document.getElementById("view").innerHTML =
+    '<div class="kpis">'+k(GRUPE.length,"grupa linija")+k(full,"popunjenih")+k(part,"djelomičnih")+k(ZONE.length,"ukupno zona")+'</div>'
+    + '<div class="tblwrap"><table class="ln"><thead><tr><th>Grupa linija</th><th class="num">Linija</th><th>Zone</th><th>Cjenik</th><th>Raspon</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+
+function setPod(p){ fPod=p; render(); }
+function setLq(){ lq=(document.getElementById("lq").value||"").toLowerCase().trim(); render(); }
+function renderLineList(){
+  const cntAll=LINIJE.length, cg=LINIJE.filter(l=>l.podrucje==="grad").length, cp=LINIJE.filter(l=>l.podrucje==="prigrad").length, co=LINIJE.filter(l=>l.podrucje==="otok").length;
+  const chip=(p,l,n)=>'<button class="fchip'+(fPod===p?' on':'')+'" onclick="setPod(\''+p+'\')">'+l+' · '+n+'</button>';
+  let rows=LINIJE.filter(l=> (!fPod||l.podrucje===fPod) && ((l.broj+" "+l.naziv).toLowerCase().includes(lq)) );
+  let body;
+  if(!rows.length){ body='<tr><td colspan="6" class="empty-tbl">Nema linija za zadane uvjete.</td></tr>'; }
+  else body=rows.map(l=>{
+    const st=fillStat("l:"+l.id); const x=statusOf(st);
+    const raspon=st.min==null?'—':'€'+st.min.toFixed(2)+'–'+st.max.toFixed(2);
+    const ovr=Object.keys(LINEPRICES[l.id]||{}).length;
+    return '<tr class="row" onclick="openLine(\''+l.id+'\')">'
+      + '<td><span class="ozn">'+(l.broj||'–')+'</span></td>'
+      + '<td class="ln-nm">'+esc(l.naziv)+'</td>'
+      + '<td>'+podrLbl(l.podrucje)+'</td>'
+      + '<td><span class="zchips">'+l.zone.map(zchip).join("")+'</span></td>'
+      + '<td><span class="pill '+x+'">'+statusLbl(x)+'</span> '+(ovr>0?'<span class="pill ovrp">'+ovr+' iznimk'+(ovr===1?'a':'e')+'</span>':'<span class="mono" style="color:var(--ts);font-size:11px">'+st.filled+'/'+st.total+'</span>')+'</td>'
+      + '<td class="mono">'+raspon+'</td></tr>';
+  }).join("");
+  document.getElementById("view").innerHTML =
+    '<div class="toolbar"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg><input id="lq" placeholder="Traži liniju…" oninput="setLq()" value="'+esc(lq)+'"></div>'
+    + '<div class="fchips">'+chip("","Sve",cntAll)+chip("grad","Grad",cg)+chip("prigrad","Prigrad",cp)+chip("otok","Otok",co)+'</div></div>'
+    + '<div class="tblwrap"><table class="ln"><thead><tr><th>Linija</th><th>Naziv</th><th>Područje</th><th>Zone</th><th>Cjenik</th><th>Raspon</th></tr></thead><tbody>'+body+'</tbody></table></div>';
+  if(lq){ const el=document.getElementById("lq"); el.focus(); el.setSelectionRange(el.value.length,el.value.length); }
+}
+
+/* ─── Iznimke ─── */
+function zoneOptions(sel){ return '<option value="">—</option>'+ZONE.slice().sort((a,b)=>a.broj-b.broj).map(z=>'<option value="'+z.sifra+'"'+(z.sifra===sel?" selected":"")+'>'+z.sifra+' · '+esc(z.naziv)+'</option>').join(""); }
+function renderExceptions(){
+  const k=(n,l)=>'<div class="kpi"><div class="kpi-n">'+n+'</div><div class="kpi-l">'+l+'</div></div>';
+  const valid=IZNIMKE.filter(e=>e.od&&e.do&&e.cijena!=null).length;
+  let rows = IZNIMKE.map((e,i)=>{
+    const dup = e.od&&e.do&&IZNIMKE.some((o,j)=>j<i && pairKey(o.od,o.do)===pairKey(e.od,e.do));
+    return '<tr>'
+      + '<td style="width:230px"><select class="exsel" onchange="setExc('+i+',\'od\',this.value)">'+zoneOptions(e.od)+'</select></td>'
+      + '<td style="width:30px;text-align:center"><span class="arrow">→</span></td>'
+      + '<td style="width:230px"><select class="exsel" onchange="setExc('+i+',\'do\',this.value)">'+zoneOptions(e.do)+'</select></td>'
+      + '<td style="width:150px"><div class="exprice"><span class="eur">€</span><input inputmode="decimal" value="'+(e.cijena==null?'':(+e.cijena).toFixed(2))+'" placeholder="0.00" onchange="setExc('+i+',\'cijena\',this.value)"></div></td>'
+      + '<td>'+(dup?'<span class="pill partial">duplikat para</span>':(e.od&&e.od===e.do?'<span class="pill partial">ista zona</span>':''))+'</td>'
+      + '<td style="width:40px"><button class="del" title="Ukloni" onclick="delExc('+i+')"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></td>'
+      + '</tr>';
+  }).join("");
+  if(!IZNIMKE.length) rows='<tr><td colspan="6" class="empty-tbl">Nema iznimaka. Dodaj prvu dolje.</td></tr>';
+  document.getElementById("view").innerHTML =
+    '<div class="kpis">'+k(IZNIMKE.length,"iznimaka")+k(valid,"popunjenih")+k(ZONE.length,"ukupno zona")+k("✓","prednost u obračunu")+'</div>'
+    + '<div class="panel"><div class="panel-hd"><div><h3>Iznimke — cijene zona izvan iste grupe</h3><div class="sub">Par OD → DO zona koji nije pokriven jednom grupom (npr. zona na liniji 1 → zona na liniji 2)</div></div></div>'
+    + '<div class="panel-bd"><div class="tblwrap" style="border:none"><table class="ln"><thead><tr><th>OD zone</th><th></th><th>DO zone</th><th>Cijena</th><th></th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+    + '<button class="addrow" onclick="addExc()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Dodaj iznimku</button></div></div>';
+}
+function setExc(i,f,v){
+  if(f==="cijena"){ const s=(""+v).replace(",",".").replace(/[^0-9.]/g,"").trim(); IZNIMKE[i].cijena = s===""?null:(Math.round(parseFloat(s)*100)/100); }
+  else IZNIMKE[i][f]=v;
+  renderExceptions();
+}
+function addExc(){ IZNIMKE.push({od:"",do:"",cijena:null}); renderExceptions(); const ss=document.querySelectorAll('.exsel'); if(ss.length) ss[ss.length-2].focus(); }
+function delExc(i){ IZNIMKE.splice(i,1); renderExceptions(); }
+
+/* ─── Render dispatch ─── */
+function noteFor(){
+  if(MODE==="iznimka") return 'Iznimke vrijede za parove zona koji <b>nisu u istoj grupi</b> i <b>imaju prednost</b> pri obračunu cijene A→B (prije matrice grupe). Simetrične su (OD↔DO).';
+  if(MODE==="grupa") return 'Cijena se upisuje <b>po grupi linija</b> (koridor) — mala matrica samo zona koje grupa dira. Simetrično; dijagonala = unutar iste zone.';
+  return 'Cijena <b>po pojedinoj liniji</b> (kad linija odstupa od svoje grupe). Inače koristi grupe. Simetrično; dijagonala = unutar iste zone.';
+}
+function render(){
+  document.getElementById("noteBox").innerHTML = '<div class="note"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg><span>'+noteFor()+'</span></div>';
+  if(MODE==="iznimka"){ renderExceptions(); return; }
+  if(curEditor){ renderEditor(curEditor); return; }
+  if(MODE==="grupa") renderGroupList(); else renderLineList();
+}
+function setMode(m){
+  MODE=m; curEditor=null;
+  ["grupa","linija","iznimka"].forEach(x=>document.getElementById("sw-"+x).classList.toggle("on",x===m));
+  render();
+}
+
+/* ─── Tema ─── */
+function toggleTheme(){
+  const html=document.documentElement; const dark=html.getAttribute("data-theme")==="dark";
+  html.setAttribute("data-theme",dark?"light":"dark");
+  document.getElementById("themeIc").innerHTML = dark
+    ? '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'
+    : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/>';
+}
+
+setMode("grupa");
+</script>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="hr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liburnija — Zone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+html[data-theme="dark"]{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2330;--bgh:#212936;--bdr:#2d3748;--tp:#f0f4f8;--ts:#8b95a1;--tm:#4b5563;--acc:#f97316;--accs:rgba(249,115,22,.14);--blu:#3b82f6;--blus:rgba(59,130,246,.15);--grn:#22c55e;--grns:rgba(34,197,94,.15);--red:#ef4444;--reds:rgba(239,68,68,.14);--yel:#eab308;--yels:rgba(234,179,8,.16)}
+html[data-theme="light"]{--bg:#f0f4f8;--bg2:#fff;--bg3:#f8fafc;--bgh:#f1f5f9;--bdr:#e2e8f0;--tp:#0f172a;--ts:#64748b;--tm:#94a3b8;--acc:#f97316;--accs:rgba(249,115,22,.09);--blu:#3b82f6;--blus:rgba(59,130,246,.1);--grn:#16a34a;--grns:rgba(22,163,74,.1);--red:#dc2626;--reds:rgba(220,38,38,.09);--yel:#ca8a04;--yels:rgba(202,138,4,.13)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--tp);height:100vh;display:flex;flex-direction:column;font-size:13px;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:5px}::-webkit-scrollbar-track{background:transparent}
+
+.top{display:flex;align-items:center;gap:12px;padding:11px 18px;background:var(--bg2);border-bottom:1.5px solid var(--bdr);flex-shrink:0}
+.brand{display:flex;align-items:center;gap:9px}
+.brand-ic{width:30px;height:30px;border-radius:8px;background:var(--accs);display:flex;align-items:center;justify-content:center}
+.brand-ic svg{width:17px;height:17px;stroke:var(--acc);stroke-width:2.2;fill:none}
+.brand-tit{font-size:14px;font-weight:800;letter-spacing:.2px}
+.brand-sub{font-size:10px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px}
+.crumb{font-size:11px;color:var(--ts);font-weight:600;margin-left:6px}.crumb b{color:var(--acc)}
+.top-sp{flex:1}
+.tbtn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:8px;color:var(--ts)}
+.tbtn:hover{border-color:var(--acc);color:var(--acc)}.tbtn svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none}
+
+.wrap{flex:1;overflow-y:auto;min-height:0}
+.inner{max-width:1180px;margin:0 auto;padding:20px 24px 60px}
+.hd{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.hd h1{font-size:22px;font-weight:800;letter-spacing:.2px}
+.hd .eyebrow{font-size:10px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:8px;font-size:12px;font-weight:700;padding:8px 13px;transition:all .12s}
+.btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.4;fill:none}
+.btn-acc{background:var(--acc);color:#fff}.btn-acc:hover{filter:brightness(1.06)}
+.btn-ghost{background:var(--bg2);border:1.5px solid var(--bdr);color:var(--ts)}.btn-ghost:hover{border-color:var(--acc);color:var(--acc)}
+.btn-danger{background:transparent;border:1.5px solid var(--bdr);color:var(--red)}.btn-danger:hover{background:var(--red);border-color:var(--red);color:#fff}
+
+.note{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:11px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--ts);font-weight:600}
+.note svg{width:16px;height:16px;stroke:var(--acc);stroke-width:2;fill:none;flex-shrink:0}
+.note b{color:var(--tp)}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:11px;padding:12px 14px}
+.kpi-n{font-size:21px;font-weight:800;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:7px;line-height:1}
+.kpi-l{font-size:10px;color:var(--ts);font-weight:600;margin-top:6px;text-transform:uppercase;letter-spacing:.3px}
+
+.toolbar{display:flex;align-items:center;gap:9px;margin-bottom:13px;flex-wrap:wrap}
+.search{position:relative;display:flex;align-items:center;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;padding:0 11px;height:38px;flex:1;min-width:200px}
+.search:focus-within{border-color:var(--acc)}
+.search svg{width:15px;height:15px;stroke:var(--ts);stroke-width:2;fill:none;flex-shrink:0;margin-right:8px}
+.search input{flex:1;background:transparent;border:0;outline:0;font-family:inherit;font-size:13px;font-weight:500;color:var(--tp)}
+
+.tblwrap{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:13px;overflow:hidden}
+table.zn{width:100%;border-collapse:collapse;font-size:12.5px}
+table.zn th{font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:11px 12px;border-bottom:1.5px solid var(--bdr);white-space:nowrap;background:var(--bg3)}
+table.zn td{padding:9px 12px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+table.zn tbody tr.row{cursor:pointer;transition:background .1s}
+table.zn tbody tr.row:hover{background:var(--bgh)}
+table.zn tr:last-child td{border-bottom:none}
+.num{text-align:center;font-variant-numeric:tabular-nums}
+.mono{font-family:"DM Mono",monospace;font-variant-numeric:tabular-nums}
+.zbadge{font-family:"DM Mono",monospace;font-weight:700;font-size:13px;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.zn-nm{font-weight:700}
+.swatch{display:inline-flex;align-items:center;gap:7px;font-family:"DM Mono",monospace;font-size:11px;color:var(--ts)}
+.swatch i{width:14px;height:14px;border-radius:4px;border:1px solid rgba(0,0,0,.15)}
+.cnt{font-family:"DM Mono",monospace;font-weight:600}
+.cnt.zero{color:var(--tm)}
+.pill{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:20px;display:inline-block;white-space:nowrap}
+.pill.aktivna{background:var(--grns);color:var(--grn)}
+.pill.neaktivna{background:var(--bg3);color:var(--tm);border:1px solid var(--bdr)}
+.empty-tbl{padding:40px;text-align:center;color:var(--ts);font-weight:600}
+
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-start;justify-content:center;z-index:200;padding:30px 20px;overflow-y:auto}
+.mbg.on{display:flex}
+.card{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:15px;width:100%;max-width:660px;box-shadow:0 24px 70px rgba(0,0,0,.32);overflow:hidden}
+.card-hd{display:flex;align-items:flex-start;gap:14px;padding:18px 22px;border-bottom:1.5px solid var(--bdr);background:var(--bg3)}
+.card-hd-main{flex:1;min-width:0}
+.card-hd-tit{font-size:18px;font-weight:800;margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.card-hd-sub{font-size:11.5px;color:var(--ts);font-weight:600;margin-top:3px}
+.card-x{width:30px;height:30px;border:none;background:transparent;border-radius:7px;color:var(--ts);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-x:hover{background:var(--bgh);color:var(--tp)}.card-x svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none}
+.card-bd{padding:18px 22px;max-height:66vh;overflow-y:auto}
+.sect-t{font-size:10px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin:6px 0 11px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px 22px;margin-bottom:20px}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld.full{grid-column:1/-1}
+.fld label{font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.4px}
+.fld input,.fld select,.fld textarea{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--tp);background:var(--bg3);border:1.5px solid var(--bdr);border-radius:7px;padding:7px 10px;width:100%}
+.fld input.mono{font-family:"DM Mono",monospace;font-weight:500}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--acc);background:var(--bg2)}
+.colorbox{display:flex;gap:8px;align-items:center}
+.colorbox input[type=color]{width:42px;height:36px;padding:2px;border:1.5px solid var(--bdr);border-radius:7px;background:var(--bg3);cursor:pointer}
+.members{background:var(--bg3);border:1.5px solid var(--bdr);border-radius:10px;padding:4px 0;max-height:220px;overflow-y:auto}
+.member{display:flex;align-items:center;gap:10px;padding:7px 13px;border-bottom:1px solid var(--bdr);font-size:12px}
+.member:last-child{border-bottom:none}
+.member .sf{font-family:"DM Mono",monospace;font-size:11px;color:var(--ts);min-width:64px}
+.member .nm{font-weight:600;flex:1}
+.member .ar{font-size:10px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.3px}
+.members-empty{padding:18px;text-align:center;color:var(--tm);font-size:12px;font-weight:600}
+.member-hint{font-size:11px;color:var(--ts);font-weight:600;margin-top:8px}
+.card-ft{display:flex;align-items:center;gap:9px;padding:14px 22px;border-top:1.5px solid var(--bdr);background:var(--bg3)}
+.card-ft .sp{flex:1}
+@media(max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}.fgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">
+    <div class="brand-ic"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6z"/><circle cx="12" cy="11" r="3"/></svg></div>
+    <div><div class="brand-tit">Liburnija</div><div class="brand-sub">Zone</div></div>
+  </div>
+  <span class="crumb">CORE › <b>Zone</b></span>
+  <div class="top-sp"></div>
+  <button class="tbtn" id="themeBtn" title="Tema" onclick="toggleTheme()"><svg id="themeIc" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+</div>
+
+<div class="wrap"><div class="inner">
+  <div class="hd">
+    <div><div class="eyebrow">CORE registar</div><h1>Zone</h1></div>
+    <button class="btn btn-acc" onclick="openZone(null)"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Nova zona</button>
+  </div>
+
+  <div class="note"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+    <span>Pripadnost stajališta zoni uređuje se u modulu <b>Stajališta</b>. Ovdje se zone definiraju; tarifni model (cijene <b>zona → zona</b>) dolazi u zasebnom modulu i koristi <b>zone_id</b>.</span></div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="toolbar">
+    <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg><input id="q" type="text" placeholder="Traži po broju, nazivu ili šifri…" oninput="renderTable()"></div>
+  </div>
+
+  <div class="tblwrap"><table class="zn">
+    <thead><tr><th class="num">#</th><th>Naziv zone</th><th>Šifra (zone_id)</th><th>Boja</th><th class="num">Stajališta</th><th>Status</th></tr></thead>
+    <tbody id="tb"></tbody>
+  </table></div>
+</div></div>
+
+<div class="mbg" id="cardBg"><div class="card" id="cardEl"></div></div>
+
+<script>
+/* ════════ MOCK PODACI — jedina točka koju developer mijenja pravim izvorom ════════ */
+
+/* Zone (CORE). zone_id = stabilna šifra; broj = redoslijed / za tarifnu matricu; boja = za kartu */
+let ZONE = [
+  { id:"z1", broj:1, sifra:"Z1", naziv:"Grad Zadar",            boja:"#3b82f6", opis:"Gradske linije — uže gradsko područje", status:"aktivna" },
+  { id:"z2", broj:2, sifra:"Z2", naziv:"Zadarski prsten",       boja:"#14b8a6", opis:"Kožino, Petrčane, Zaton, Diklo, bliža prigradska naselja", status:"aktivna" },
+  { id:"z3", broj:3, sifra:"Z3", naziv:"Sjever (Nin – Vir)",    boja:"#22c55e", opis:"Nin, Privlaka, Vir, Vrsi, Ražanac", status:"aktivna" },
+  { id:"z4", broj:4, sifra:"Z4", naziv:"Istok (Benkovac)",      boja:"#eab308", opis:"Škabrnja, Nadin, Obrovac, Benkovac, Polača", status:"aktivna" },
+  { id:"z5", broj:5, sifra:"Z5", naziv:"Jug (Biograd)",         boja:"#f97316", opis:"Sukošan, Biograd, Pakoštane, Vrana", status:"aktivna" },
+  { id:"z6", broj:6, sifra:"Z6", naziv:"Otoci",                 boja:"#a855f7", opis:"Ugljan, Dugi otok, Iž", status:"aktivna" }
+];
+
+/* Stajališta (izvod iz CORE Stajališta) — svako nosi zonu (zone_id). Pripadnost = ovo polje. */
+const STAJ = [
+  { sifra:"ZD-0001", ime:"Mala Pošta", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0002", ime:"Biogradska 1", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0003", ime:"Gradsko groblje (Biogradska)", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0004", ime:"Melada", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0005", ime:"Trgovački sud", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0006", ime:"Jadranska magistrala 1", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0007", ime:"Jadranska magistrala 2", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0008", ime:"Zagrebačka ulica 1", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0009", ime:"Zagrebačka ulica 3", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0010", ime:"Benkovačka 5 (B)", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0011", ime:"Benkovačka 4 (B)", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0012", ime:"Benkovačka 3 (B)", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0013", ime:"Put Nina 1 (B)", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0014", ime:"Benkovačka 5 (A)", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0015", ime:"Put Nina 1 (A)", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0016", ime:"Gradsko groblje jug", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0017", ime:"Jadranska magistrala 2 (B)", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0018", ime:"Put Nina 2 (A)", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0100", ime:"Autobusni kolodvor - Zadar", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0101", ime:"Franje Tuđmana (A)", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"ZD-0102", ime:"Žmirići (A)", mjesto:"Zadar", zona:"Z1" },
+  { sifra:"KZ-0001", ime:"Kožino Magistrala (A)", mjesto:"Kožino", zona:"Z2" },
+  { sifra:"PE-0001", ime:"Petrčane Magistrala (A)", mjesto:"Petrčane", zona:"Z2" },
+  { sifra:"ZA-0001", ime:"Zaton (A)", mjesto:"Zaton", zona:"Z2" },
+  { sifra:"VI-0005", ime:"Vir 5 (A)", mjesto:"Vir", zona:"Z3" }
+];
+
+/* ════════ LOGIKA ════════ */
+const esc = s => (s==null?"":(""+s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
+function contrastText(hex){ hex=(hex||'').replace('#',''); if(hex.length===3) hex=hex.split('').map(c=>c+c).join(''); const r=parseInt(hex.slice(0,2),16)||0,g=parseInt(hex.slice(2,4),16)||0,b=parseInt(hex.slice(4,6),16)||0; return ((0.299*r+0.587*g+0.114*b)/255)>0.6?'#111827':'#ffffff'; }
+function stopsInZone(sif){ return STAJ.filter(s=>s.zona===sif); }
+function zoneById(id){ return ZONE.find(z=>z.id===id); }
+
+let editId=null;
+
+/* ─── KPI + tablica ─── */
+function renderKpis(){
+  const aktiv = ZONE.filter(z=>z.status==="aktivna").length;
+  const pokr = STAJ.filter(s=>ZONE.some(z=>z.sifra===s.zona)).length;
+  const bez = STAJ.filter(s=>!s.zona || !ZONE.some(z=>z.sifra===s.zona)).length;
+  const k=(n,l)=>'<div class="kpi"><div class="kpi-n">'+n+'</div><div class="kpi-l">'+l+'</div></div>';
+  document.getElementById("kpis").innerHTML = k(ZONE.length,"ukupno zona")+k(aktiv,"aktivnih")+k(pokr,"stajališta u zonama")+k(bez,"stajališta bez zone");
+}
+function renderTable(){
+  renderKpis();
+  const q=(document.getElementById("q").value||"").toLowerCase().trim();
+  const rows = ZONE.slice().sort((a,b)=>a.broj-b.broj).filter(z=>{
+    if(!q) return true;
+    return ((""+z.broj)+" "+z.naziv+" "+z.sifra).toLowerCase().includes(q);
+  });
+  const tb=document.getElementById("tb");
+  if(!rows.length){ tb.innerHTML='<tr><td colspan="6" class="empty-tbl">Nema zona za zadane uvjete.</td></tr>'; return; }
+  tb.innerHTML = rows.map(z=>{
+    const n = stopsInZone(z.sifra).length;
+    const txt = contrastText(z.boja);
+    return '<tr class="row" onclick="openZone(\''+z.id+'\')">'
+      + '<td class="num"><span class="zbadge" style="background:'+z.boja+';color:'+txt+'">'+z.broj+'</span></td>'
+      + '<td class="zn-nm">'+esc(z.naziv)+'</td>'
+      + '<td class="mono">'+esc(z.sifra)+'</td>'
+      + '<td><span class="swatch"><i style="background:'+z.boja+'"></i>'+esc(z.boja)+'</span></td>'
+      + '<td class="num"><span class="cnt'+(n?'':' zero')+'">'+(n||'—')+'</span></td>'
+      + '<td><span class="pill '+z.status+'">'+cap(z.status)+'</span></td>'
+      + '</tr>';
+  }).join("");
+}
+
+/* ─── Kartica ─── */
+function openZone(id){
+  editId=id;
+  const isNew=!id;
+  const z = id ? zoneById(id) : { broj:(Math.max(0,...ZONE.map(x=>x.broj))+1), sifra:"Z"+(Math.max(0,...ZONE.map(x=>x.broj))+1), naziv:"", boja:"#3b82f6", opis:"", status:"aktivna" };
+  const members = id ? stopsInZone(z.sifra) : [];
+  const txt = contrastText(z.boja);
+  function fi(label,key,mono,ph,full){ return '<div class="fld'+(full?' full':'')+'"><label>'+label+'</label><input class="'+(mono?'mono':'')+'" id="f_'+key+'" value="'+esc(z[key]==null?'':z[key])+'" placeholder="'+(ph||'')+'"></div>'; }
+
+  let h = '<div class="card-hd"><span class="zbadge" style="background:'+z.boja+';color:'+txt+'">'+(isNew?'?':z.broj)+'</span>'
+    + '<div class="card-hd-main"><div style="font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px">'+(isNew?'Nova zona':'Zona '+z.broj)+'</div>'
+    + '<div class="card-hd-tit">'+(isNew?'Nova zona':esc(z.naziv))+'<span class="pill '+z.status+'">'+cap(z.status)+'</span></div>'
+    + '<div class="card-hd-sub">zone_id: '+esc(z.sifra)+(id?' · '+members.length+' stajališta':'')+'</div></div>'
+    + '<button class="card-x" onclick="closeCard()"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>';
+
+  h += '<div class="card-bd">';
+  h += '<div class="sect-t">Identitet</div><div class="fgrid">'
+    + fi("Broj (redoslijed / matrica)","broj",true,"npr. 1")
+    + fi("Šifra (zone_id)","sifra",true,"npr. Z1")
+    + '<div class="fld full"><label>Naziv zone</label><input id="f_naziv" value="'+esc(z.naziv)+'" placeholder="npr. Grad Zadar"></div>'
+    + '<div class="fld"><label>Status</label><select id="f_status"><option value="aktivna"'+(z.status==="aktivna"?" selected":"")+'>Aktivna</option><option value="neaktivna"'+(z.status==="neaktivna"?" selected":"")+'>Neaktivna</option></select></div>'
+    + '</div>';
+
+  h += '<div class="sect-t">Prikaz</div><div class="fgrid">'
+    + '<div class="fld"><label>Boja zone</label><div class="colorbox"><input type="color" id="f_boja" value="'+(z.boja||'#3b82f6')+'" oninput="zPreview()"><span id="zPrev" class="zbadge"></span></div></div>'
+    + '<div class="fld"><label>&nbsp;</label><div style="font-size:11px;color:var(--ts);font-weight:600;line-height:1.4">Tekst u oznaci automatski crn/bijel prema kontrastu. Boja se koristi za kartu i tarifu.</div></div>'
+    + '<div class="fld full"><label>Opis</label><textarea id="f_opis" rows="2" placeholder="Kratko područje pokrivanja…">'+esc(z.opis||'')+'</textarea></div>'
+    + '</div>';
+
+  h += '<div class="sect-t">Članstvo — stajališta u zoni'+(id?' ('+members.length+')':'')+'</div>';
+  if(!id){
+    h += '<div class="members-empty">Spremi zonu, zatim u modulu Stajališta dodijeli stajališta ovoj zoni.</div>';
+  } else if(!members.length){
+    h += '<div class="members-empty">Nijedno stajalište još nije dodijeljeno ovoj zoni.</div>';
+  } else {
+    h += '<div class="members">'+members.map(s=>'<div class="member"><span class="sf">'+esc(s.sifra)+'</span><span class="nm">'+esc(s.ime)+'</span><span class="ar">'+esc(s.mjesto||'')+'</span></div>').join("")+'</div>';
+  }
+  h += '<div class="member-hint">Pripadnost se uređuje u modulu <b>Stajališta</b> (polje Zona). Ovdje je prikaz samo za uvid.</div>';
+  h += '</div>';
+
+  h += '<div class="card-ft">'
+    + (isNew?'':'<button class="btn btn-danger" onclick="deleteZone()"><svg viewBox="0 0 24 24" style="stroke:currentColor;stroke-width:2;fill:none"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>Obriši</button>')
+    + '<div class="sp"></div>'
+    + '<button class="btn btn-ghost" onclick="closeCard()">Odustani</button>'
+    + '<button class="btn btn-acc" onclick="saveZone()">Spremi</button>'
+    + '</div>';
+
+  document.getElementById("cardEl").innerHTML = h;
+  zPreview();
+  document.getElementById("cardBg").classList.add("on");
+}
+function zPreview(){ const p=document.getElementById("zPrev"); if(!p) return; const b=document.getElementById("f_boja").value; const n=document.getElementById("f_broj"); p.style.background=b; p.style.color=contrastText(b); p.textContent=(n&&n.value)?n.value:'?'; }
+function closeCard(){ document.getElementById("cardBg").classList.remove("on"); editId=null; }
+function val(k){ const e=document.getElementById("f_"+k); return e?e.value.trim():""; }
+
+function saveZone(){
+  const naziv=val("naziv"); if(!naziv){ document.getElementById("f_naziv").focus(); return; }
+  const sifra=val("sifra"); if(!sifra){ alert("Šifra (zone_id) je obavezna."); document.getElementById("f_sifra").focus(); return; }
+  const broj=parseInt(val("broj"),10); if(isNaN(broj)||broj<1){ alert("Broj zone mora biti pozitivan cijeli broj."); document.getElementById("f_broj").focus(); return; }
+  const dupS=ZONE.find(z=>z.id!==editId && z.sifra.toLowerCase()===sifra.toLowerCase());
+  if(dupS){ alert('Šifra „'+sifra+'" već postoji (zona „'+dupS.naziv+'"). zone_id mora biti jedinstven.'); document.getElementById("f_sifra").focus(); return; }
+  const dupB=ZONE.find(z=>z.id!==editId && z.broj===broj);
+  if(dupB && !confirm('Broj '+broj+' već koristi zona „'+dupB.naziv+'". Svejedno spremiti?')) { document.getElementById("f_broj").focus(); return; }
+  let z = editId ? zoneById(editId) : null;
+  if(!z){ z={ id:"z"+Date.now() }; ZONE.push(z); }
+  z.broj=broj; z.sifra=sifra; z.naziv=naziv; z.boja=val("boja")||"#3b82f6"; z.opis=val("opis"); z.status=val("status");
+  closeCard(); renderTable();
+}
+function deleteZone(){
+  const z=zoneById(editId); if(!z) return;
+  const n=stopsInZone(z.sifra).length;
+  let msg='Obrisati zonu „'+z.naziv+'"?';
+  if(n) msg+='\n\nNapomena: '+n+' stajališta trenutno ima ovaj zone_id i ostat će bez zone dok im je u Stajališta ne promijeniš.';
+  if(!confirm(msg)) return;
+  ZONE=ZONE.filter(x=>x.id!==z.id); closeCard(); renderTable();
+}
+
+/* ─── Tema ─── */
+function toggleTheme(){
+  const html=document.documentElement; const dark=html.getAttribute("data-theme")==="dark";
+  html.setAttribute("data-theme",dark?"light":"dark");
+  document.getElementById("themeIc").innerHTML = dark
+    ? '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'
+    : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/>';
+}
+
+document.getElementById("cardBg").addEventListener("click",function(e){ if(e.target===this) closeCard(); });
+renderTable();
+</script>
+</body>
+</html>
