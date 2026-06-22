@@ -55,6 +55,16 @@
               "locked": true
             },
             {
+              "name": "Kategorije putnika",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Terminali",
+              "file": "",
+              "locked": false
+            },
+            {
               "name": "Kupci",
               "file": "",
               "locked": false
@@ -479,6 +489,11 @@
               "locked": false
             },
             {
+              "name": "Validacije",
+              "file": "",
+              "locked": false
+            },
+            {
               "name": "Provjera karata",
               "file": "",
               "locked": false
@@ -596,46 +611,54 @@
       ]
     },
     {
-      "name": "Prihod",
+      "name": "Prodaja",
       "modules": [
         {
-          "id": "prodaja",
-          "label": "Prodaja karata",
+          "id": "prodaja_katalog",
+          "label": "Katalog",
           "icon": "prodaja",
           "type": "flat",
           "pages": [
-            {
-              "name": "Tarifni sustav",
-              "file": "",
-              "locked": false
-            },
             {
               "name": "Vrste karata",
               "file": "",
               "locked": false
             },
             {
-              "name": "Pretplate",
+              "name": "Pretplate — izdavanje pokaza",
               "file": "",
               "locked": false
             },
             {
-              "name": "Prepaid kartice",
+              "name": "Prepaid / e-novčanik",
               "file": "",
               "locked": false
             },
             {
-              "name": "QR karte",
+              "name": "↪ Tarife (CORE)",
               "file": "",
               "locked": false
             },
             {
-              "name": "NFC kartice",
+              "name": "↪ Kategorije putnika (CORE)",
               "file": "",
               "locked": false
             },
             {
-              "name": "Prodaja kod vozača",
+              "name": "↪ Subvencije (Financije)",
+              "file": "",
+              "locked": false
+            }
+          ]
+        },
+        {
+          "id": "prodaja_kanali",
+          "label": "Prodajni kanali",
+          "icon": "prodaja",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Prodaja kod vozača (POS)",
               "file": "",
               "locked": false
             },
@@ -660,25 +683,36 @@
               "locked": false
             },
             {
-              "name": "Kiosci",
-              "file": "",
-              "locked": false
-            },
-            {
               "name": "Vanjski partneri",
               "file": "",
               "locked": false
-            },
+            }
+          ]
+        },
+        {
+          "id": "prodaja_promet",
+          "label": "Promet i transakcije",
+          "icon": "blagajne",
+          "type": "flat",
+          "pages": [
             {
-              "name": "Agregatori",
+              "name": "Transakcije prodaje",
               "file": "",
               "locked": false
             },
             {
-              "name": "Fiskalizacija",
+              "name": "Načini plaćanja",
               "file": "",
               "locked": false
-            },
+            }
+          ]
+        },
+        {
+          "id": "prodaja_korekcije",
+          "label": "Korekcije",
+          "icon": "fin",
+          "type": "flat",
+          "pages": [
             {
               "name": "Povrati",
               "file": "",
@@ -686,11 +720,6 @@
             },
             {
               "name": "Storna",
-              "file": "",
-              "locked": false
-            },
-            {
-              "name": "Reklamacije karata",
               "file": "",
               "locked": false
             }
@@ -764,6 +793,47 @@
             },
             {
               "name": "Izvještaj po mjestu",
+              "file": "",
+              "locked": false
+            }
+          ]
+        },
+        {
+          "id": "prodaja_izvjestaji",
+          "label": "Izvještaji prodaje",
+          "icon": "bi",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Pregled prodaje",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Po kanalu",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Po vrsti i kategoriji",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Po danu / mjesecu",
+              "file": "",
+              "locked": false
+            }
+          ]
+        },
+        {
+          "id": "prodaja_postavke",
+          "label": "Postavke / servisi",
+          "icon": "it",
+          "type": "flat",
+          "pages": [
+            {
+              "name": "Fiskalizacija (JIR/ZKI)",
               "file": "",
               "locked": false
             }
@@ -1229,6 +1299,11 @@
             },
             {
               "name": "Subvencije županije",
+              "file": "",
+              "locked": false
+            },
+            {
+              "name": "Subvencije i povlastice — pravila",
               "file": "",
               "locked": false
             },
