@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="hr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liburnija — Kupci</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+html[data-theme="dark"]{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2330;--bgh:#212936;--tp:#f0f4f8;--ts:#8b95a1;--tm:#4b5563;--bdr:#2d3748;--bdr2:#374151;--accent:#f97316;--accent-soft:rgba(249,115,22,.14);--blue:#3b82f6;--blue-soft:rgba(59,130,246,.14);--green:#22c55e;--green-soft:rgba(34,197,94,.14);--red:#ef4444;--red-soft:rgba(239,68,68,.14);--yellow:#eab308;--yellow-soft:rgba(234,179,8,.15);--purple:#a855f7;--purple-soft:rgba(168,85,247,.15)}
+html[data-theme="light"]{--bg:#f1f4f8;--bg2:#ffffff;--bg3:#f7f9fc;--bgh:#eaeef4;--tp:#0f172a;--ts:#475569;--tm:#94a3b8;--bdr:#d8dee6;--bdr2:#c5cdd7;--accent:#ea580c;--accent-soft:rgba(234,88,12,.12);--blue:#2563eb;--blue-soft:rgba(37,99,235,.1);--green:#16a34a;--green-soft:rgba(22,163,74,.1);--red:#dc2626;--red-soft:rgba(220,38,38,.1);--yellow:#ca8a04;--yellow-soft:rgba(202,138,4,.14);--purple:#9333ea;--purple-soft:rgba(147,51,234,.12)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--tp);height:100vh;display:flex;flex-direction:column;font-size:13px;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:5px}::-webkit-scrollbar-track{background:transparent}
+
+.top{display:flex;align-items:center;gap:12px;padding:11px 18px;background:var(--bg2);border-bottom:1.5px solid var(--bdr);flex-shrink:0}
+.brand{display:flex;align-items:center;gap:9px}
+.brand-ic{width:30px;height:30px;border-radius:8px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center}
+.brand-ic svg{width:17px;height:17px;stroke:var(--accent);stroke-width:2.2;fill:none}
+.brand-tit{font-size:14px;font-weight:800;letter-spacing:.2px}
+.brand-sub{font-size:10px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px}
+.crumb{font-size:11px;color:var(--ts);font-weight:600;margin-left:6px}.crumb b{color:var(--accent)}
+.top-sp{flex:1}
+.tbtn{display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:8px;color:var(--ts)}
+.tbtn:hover{border-color:var(--accent);color:var(--accent)}.tbtn svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none}
+
+.wrap{flex:1;overflow-y:auto;min-height:0}
+.inner{max-width:1180px;margin:0 auto;padding:20px 24px 70px}
+.hd{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.hd h1{font-size:22px;font-weight:800;letter-spacing:.2px}
+.hd .eyebrow{font-size:10px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:8px;font-size:12px;font-weight:700;padding:9px 14px;transition:all .12s}
+.btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.4;fill:none}
+.btn-acc{background:var(--accent);color:#fff}.btn-acc:hover{filter:brightness(1.06)}
+.btn-ghost{background:var(--bg2);border:1.5px solid var(--bdr);color:var(--ts)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:11px;padding:13px 15px}
+.kpi-n{font-size:21px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.kpi-l{font-size:10px;color:var(--ts);font-weight:600;margin-top:6px;text-transform:uppercase;letter-spacing:.3px}
+
+.toolbar{display:flex;align-items:center;gap:9px;margin-bottom:13px;flex-wrap:wrap}
+.search{position:relative;display:flex;align-items:center;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;padding:0 11px;height:38px;flex:1;min-width:220px}
+.search:focus-within{border-color:var(--accent)}
+.search svg{width:15px;height:15px;stroke:var(--ts);stroke-width:2;fill:none;flex-shrink:0;margin-right:8px}
+.search input{flex:1;background:transparent;border:0;outline:0;font-family:inherit;font-size:13px;font-weight:500;color:var(--tp)}
+.fchips{display:flex;gap:6px;flex-wrap:wrap}
+.fchip{padding:8px 13px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:9px;font-size:11.5px;font-weight:700;color:var(--ts);transition:all .12s}
+.fchip:hover{border-color:var(--accent);color:var(--tp)}
+.fchip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+
+.tblwrap{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:13px;overflow:hidden}
+table.tb{width:100%;border-collapse:collapse;font-size:12.5px}
+table.tb th{font-size:9.5px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.4px;text-align:center;padding:11px 12px;border-bottom:1.5px solid var(--bdr);white-space:nowrap;background:var(--bg3)}
+table.tb td{padding:9px 12px;border-bottom:1px solid var(--bdr);vertical-align:middle;text-align:center}
+table.tb th.lft,table.tb td.lft{text-align:left}
+table.tb tfoot td{padding:12px;border-top:1.5px solid var(--bdr);background:var(--bg3);font-weight:800;font-size:12px}
+.dug{color:var(--red);font-variant-numeric:tabular-nums}
+.dug.zero{color:var(--ts)}
+.pginfo{font-size:11.5px;color:var(--ts);font-weight:600;margin-top:10px;text-align:center}
+.pager{display:flex;align-items:center;gap:6px;justify-content:center;margin-top:8px;flex-wrap:wrap}
+.pgbtn{min-width:32px;height:32px;padding:0 9px;border:1.5px solid var(--bdr);background:var(--bg2);border-radius:8px;font-size:12px;font-weight:700;color:var(--ts)}
+.pgbtn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.pgbtn.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.pgbtn:disabled{opacity:.4;cursor:default}
+.pgdots{min-width:20px;text-align:center;color:var(--tm);font-weight:700}
+table.tb tbody tr.row{cursor:pointer;transition:background .1s}
+table.tb tbody tr.row:hover{background:var(--bgh)}
+table.tb tr:last-child td{border-bottom:none}
+.sifra{font-family:"DM Mono",monospace;font-weight:600;font-size:11.5px;color:var(--ts)}
+.nm{font-weight:700}
+.nm small{display:block;font-size:10.5px;color:var(--ts);font-weight:600;margin-top:1px}
+.mono{font-family:"DM Mono",monospace;font-variant-numeric:tabular-nums}
+.right{text-align:right}
+.tag{font-size:9.5px;font-weight:700;letter-spacing:.2px;padding:3px 8px;border-radius:6px;display:inline-block;white-space:nowrap;margin:1px;background:var(--bg3);color:var(--ts);border:1px solid var(--bdr)}
+.tags{display:inline-flex;gap:3px;flex-wrap:wrap}
+.pill{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:20px;display:inline-block;white-space:nowrap}
+.pill.aktivan{background:var(--green-soft);color:var(--green)}
+.pill.neaktivan{background:var(--bg3);color:var(--tm);border:1px solid var(--bdr)}
+.pill.blokiran{background:var(--red-soft);color:var(--red)}
+.pill.otvoren{background:var(--blue-soft);color:var(--blue)}
+.pill.dospjelo{background:var(--red-soft);color:var(--red)}
+.pill.placen{background:var(--green-soft);color:var(--green)}
+.saldo-pos{color:var(--red);font-weight:700}
+.saldo-zero{color:var(--ts)}
+.empty-tbl{padding:40px;text-align:center;color:var(--ts);font-weight:600}
+
+/* detail */
+.ed-hd{display:flex;align-items:center;gap:14px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:13px;padding:16px 18px;margin-bottom:16px;flex-wrap:wrap}
+.ed-av{width:46px;height:46px;border-radius:11px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;flex-shrink:0}
+.ed-hd-main{flex:1;min-width:160px}
+.ed-hd-tit{font-size:19px;font-weight:800}
+.ed-hd-sub{font-size:11.5px;color:var(--ts);font-weight:600;margin-top:3px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.panel{background:var(--bg2);border:1.5px solid var(--bdr);border-radius:13px;margin-bottom:14px;overflow:hidden}
+.panel-hd{display:flex;align-items:center;gap:11px;padding:13px 18px;border-bottom:1.5px solid var(--bdr)}
+.panel-hd h3{font-size:13px;font-weight:800;letter-spacing:.2px}
+.panel-hd .sub{font-size:11px;color:var(--ts);font-weight:600}
+.panel-sp{flex:1}
+.panel-bd{padding:16px 18px}
+.form{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field.full{grid-column:1/-1}
+.lbl{font-size:10px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.4px}
+.inp{font-family:inherit;font-size:13px;font-weight:500;color:var(--tp);background:var(--bg3);border:1.5px solid var(--bdr);border-radius:8px;padding:9px 11px;width:100%}
+.inp:focus{outline:none;border-color:var(--accent)}
+textarea.inp{resize:vertical;min-height:62px}
+.inp.miss{border-color:var(--red);background:var(--red-soft)}
+.hint{font-size:10.5px;color:var(--tm);font-weight:600}
+
+.segpick{display:flex;gap:7px;flex-wrap:wrap}
+.segtog{padding:7px 12px;border:1.5px solid var(--bdr);background:var(--bg3);border-radius:8px;font-size:11.5px;font-weight:700;color:var(--ts);transition:all .12s}
+.segtog.on{background:var(--accent);color:#fff;border-color:transparent}
+
+.tg{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.tg-sw{width:38px;height:22px;border-radius:11px;background:var(--bdr);position:relative;transition:background .15s;flex-shrink:0}
+.tg-sw::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.tg.on .tg-sw{background:var(--green)}.tg.on .tg-sw::after{left:18px}
+.tg-lbl{font-size:12.5px;font-weight:600}
+
+.mini{width:100%;border-collapse:collapse;font-size:12px}
+.mini th{font-size:9px;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:6px 8px;border-bottom:1.5px solid var(--bdr)}
+.mini td{padding:6px 8px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.mini tr:last-child td{border-bottom:none}
+.mini .inp{padding:7px 9px;font-size:12.5px}
+.del{width:30px;height:30px;border:none;background:transparent;border-radius:7px;color:var(--tm);display:inline-flex;align-items:center;justify-content:center}
+.del:hover{background:var(--red-soft);color:var(--red)}.del svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none}
+.addrow{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:9px 14px;background:transparent;border:1.5px dashed var(--bdr);border-radius:8px;color:var(--ts);font-size:12px;font-weight:700;transition:all .12s}
+.addrow:hover{border-color:var(--accent);color:var(--accent);border-style:solid}.addrow svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.4;fill:none}
+
+.saldo-box{display:flex;align-items:center;gap:18px;padding:14px 16px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:11px;margin-bottom:14px;flex-wrap:wrap}
+.saldo-big{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+.saldo-cap{font-size:10px;color:var(--ts);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
+.ro-badge{font-size:9.5px;font-weight:700;color:var(--ts);background:var(--bg2);border:1px solid var(--bdr);border-radius:6px;padding:3px 8px;margin-left:auto}
+
+.savebar{position:sticky;bottom:0;display:flex;justify-content:flex-end;gap:9px;padding:14px 0 2px;background:linear-gradient(transparent,var(--bg) 40%)}
+.warn{display:flex;align-items:center;gap:9px;background:var(--red-soft);border:1.5px solid var(--red);border-radius:10px;padding:10px 13px;margin-bottom:13px;font-size:12px;color:var(--red);font-weight:700}
+.warn svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.2;fill:none;flex-shrink:0}
+@media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}.form{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">
+    <div class="brand-ic"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+    <div><div class="brand-tit">Liburnija</div><div class="brand-sub">Kupci</div></div>
+  </div>
+  <span class="crumb">CORE › <b>Kupci</b></span>
+  <div class="top-sp"></div>
+  <button class="tbtn" title="Tema" onclick="toggleTheme()"><svg id="themeIc" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+</div>
+
+<div class="wrap"><div class="inner">
+  <div id="view"></div>
+</div></div>
+
+<script>
+/* ════════ MOCK PODACI — jedina točka koju developer mijenja pravim izvorom ════════ */
+/* Kupci = pravne osobe / javni subjekti kojima se ispostavljaju računi (B2B/B2G).
+   Razlučeno od CRM › Korisnici (građani-putnici). racuni[] dolaze read-only iz Fakturiranja. */
+const SEG = {
+  subv:      { lbl:"Subvencija", c:"blue"   },
+  skola:     { lbl:"Škola",      c:"green"  },
+  ugovorni:  { lbl:"Ugovorni",   c:"accent" },
+  oglasivac: { lbl:"Oglašivač",  c:"purple" },
+  najam:     { lbl:"Najam",      c:"yellow" },
+  vanjski:   { lbl:"Vanjski",    c:"red"    }
+};
+
+let KUPCI = [
+  { id:"k1", sifra:"K-001", tip:"javni", naziv:"Grad Zadar", oib:"09933651854", mb:"02671983",
+    segmenti:["subv"], status:"aktivan",
+    adresa:{ulica:"Narodni trg 1", mjesto:"Zadar", posta:"23000", drzava:"Hrvatska"}, adresaRacun:"",
+    email:"pisarnica@grad-zadar.hr", emailRacun:"racuni@grad-zadar.hr", tel:"023 208 100", web:"grad-zadar.hr",
+    kontakti:[{ime:"Upravni odjel za komunalne djelatnosti", funkcija:"Naručitelj", email:"komunalno@grad-zadar.hr", tel:"023 208 130"}],
+    iban:"HR1223600001850021339", banka:"Zagrebačka banka", valuta:"EUR", nacin:"virman", rok:30, limit:null,
+    eracun:{prima:true, posrednik:"FINA e-Račun", gln:"HR09933651854", referencaObavezna:true, proracunskiKorisnik:"Grad Zadar"},
+    ugovori:[{broj:"UG-2024/118", predmet:"Subvencija javnog gradskog prijevoza", rok:"2026-12-31"}],
+    usluge:"Subvencija gradskih linija (1–11)", subvencija:{model:"iznos", vrijednost:"mjesečno po voz-km", razdoblje:"2024–2026"},
+    biljeske:"Mjesečno fakturiranje subvencije; referenca = broj ugovora.",
+    racuni:[{broj:"2026-0042", datum:"2026-05-31", dospijece:"2026-06-30", iznos:48250.00, status:"otvoren"},
+            {broj:"2026-0031", datum:"2026-04-30", dospijece:"2026-05-31", iznos:47980.00, status:"placen"}],
+    unos:"2024-01-12", izmjena:"2026-06-01" },
+
+  { id:"k2", sifra:"K-002", tip:"javni", naziv:"Zadarska županija", oib:"56204655363", mb:"02715905",
+    segmenti:["subv"], status:"aktivan",
+    adresa:{ulica:"Božidara Petranovića 8", mjesto:"Zadar", posta:"23000", drzava:"Hrvatska"}, adresaRacun:"",
+    email:"pisarnica@zadarska-zupanija.hr", emailRacun:"racunovodstvo@zadarska-zupanija.hr", tel:"023 350 350", web:"zadarska-zupanija.hr",
+    kontakti:[{ime:"Upravni odjel za promet", funkcija:"Naručitelj", email:"promet@zadarska-zupanija.hr", tel:"023 350 360"}],
+    iban:"HR3624070001100015060", banka:"OTP banka", valuta:"EUR", nacin:"virman", rok:30, limit:null,
+    eracun:{prima:true, posrednik:"FINA e-Račun", gln:"HR56204655363", referencaObavezna:true, proracunskiKorisnik:"Zadarska županija"},
+    ugovori:[{broj:"UG-2024/204", predmet:"Subvencija prigradskih i otočnih linija", rok:"2026-12-31"}],
+    usluge:"Subvencija prigradskih i otočnih linija", subvencija:{model:"iznos", vrijednost:"mjesečno po relaciji", razdoblje:"2024–2026"},
+    biljeske:"", racuni:[{broj:"2026-0040", datum:"2026-05-20", dospijece:"2026-06-10", iznos:21800.00, status:"dospjelo"}],
+    unos:"2024-01-12", izmjena:"2026-05-20" },
+
+  { id:"k3", sifra:"K-003", tip:"javni", naziv:"OŠ Šime Budinića", oib:"24018012345", mb:"01234567",
+    segmenti:["skola"], status:"aktivan",
+    adresa:{ulica:"Put Petrića 1", mjesto:"Zadar", posta:"23000", drzava:"Hrvatska"}, adresaRacun:"",
+    email:"ured@os-sbudinica-zd.skole.hr", emailRacun:"racuni@os-sbudinica-zd.skole.hr", tel:"023 333 110", web:"",
+    kontakti:[{ime:"Tajništvo", funkcija:"Tajnik", email:"tajnistvo@os-sbudinica-zd.skole.hr", tel:"023 333 111"}],
+    iban:"HR7723400091100099887", banka:"PBZ", valuta:"EUR", nacin:"virman", rok:30, limit:null,
+    eracun:{prima:true, posrednik:"Moj e-Račun", gln:"", referencaObavezna:true, proracunskiKorisnik:"OŠ Šime Budinića"},
+    ugovori:[{broj:"UG-2025/047", predmet:"Školski prijevoz učenika", rok:"2026-06-30"}],
+    usluge:"Školski prijevoz — relacija Crno → Zadar", subvencija:null,
+    biljeske:"", racuni:[{broj:"2026-0038", datum:"2026-05-31", dospijece:"2026-06-30", iznos:3120.00, status:"otvoren"}],
+    unos:"2025-09-01", izmjena:"2026-05-31" },
+
+  { id:"k4", sifra:"K-004", tip:"javni", naziv:"OŠ Krune Krstića", oib:"30187456789", mb:"02345678",
+    segmenti:["skola"], status:"aktivan",
+    adresa:{ulica:"Jurja Bijankinija 21", mjesto:"Zadar", posta:"23000", drzava:"Hrvatska"}, adresaRacun:"",
+    email:"ured@os-kkrstica-zd.skole.hr", emailRacun:"", tel:"023 300 400", web:"",
+    kontakti:[], iban:"HR1023600001110002233", banka:"Zagrebačka banka", valuta:"EUR", nacin:"virman", rok:30, limit:null,
+    eracun:{prima:true, posrednik:"Moj e-Račun", gln:"", referencaObavezna:true, proracunskiKorisnik:"OŠ Krune Krstića"},
+    ugovori:[], usluge:"Školski prijevoz — relacija Diklo → Zadar", subvencija:null,
+    biljeske:"", racuni:[], unos:"2025-09-01", izmjena:"2025-09-01" },
+
+  { id:"k5", sifra:"K-005", tip:"pravna", naziv:"Tankerska plovidba d.d.", oib:"58843582750", mb:"03456789",
+    segmenti:["ugovorni"], status:"aktivan",
+    adresa:{ulica:"Božidara Petranovića 4", mjesto:"Zadar", posta:"23000", drzava:"Hrvatska"}, adresaRacun:"",
+    email:"info@tankerska.hr", emailRacun:"racuni@tankerska.hr", tel:"023 202 000", web:"tankerska.hr",
+    kontakti:[{ime:"Ured za logistiku", funkcija:"Voditelj", email:"logistika@tankerska.hr", tel:"023 202 010"}],
+    iban:"HR9024020061100078945", banka:"Erste banka", valuta:"EUR", nacin:"virman", rok:15, limit:20000,
+    eracun:{prima:true, posrednik:"FINA e-Račun", gln:"HR58843582750", referencaObavezna:false, proracunskiKorisnik:""},
+    ugovori:[{broj:"UG-2025/091", predmet:"Ugovorni prijevoz radnika", rok:"2026-12-31"}],
+    usluge:"Posebna linija — prijevoz radnika (smjene)", subvencija:null,
+    biljeske:"", racuni:[{broj:"2026-0039", datum:"2026-06-05", dospijece:"2026-06-20", iznos:5400.00, status:"otvoren"}],
+    unos:"2025-02-15", izmjena:"2026-06-05" },
+
+  { id:"k6", sifra:"K-006", tip:"pravna", naziv:"Maraska d.d.", oib:"47654321098", mb:"04567890",
+    segmenti:["ugovorni","oglasivac"], status:"aktivan",
+    adresa:{ulica:"Biogradska 64", mjesto:"Zadar", posta:"23000", drzava:"Hrvatska"}, adresaRacun:"",
+    email:"info@maraska.hr", emailRacun:"racuni@maraska.hr", tel:"023 209 000", web:"maraska.hr",
+    kontakti:[], iban:"HR4123900011100045612", banka:"HPB", valuta:"EUR", nacin:"virman", rok:30, limit:10000,
+    eracun:{prima:true, posrednik:"FINA e-Račun", gln:"", referencaObavezna:false, proracunskiKorisnik:""},
+    ugovori:[{broj:"UG-2026/006", predmet:"Oglašavanje u vozilima", rok:"2026-12-31"}],
+    usluge:"Oglašavanje (vanjske plohe 4 vozila) + povremeni ugovorni prijevoz", subvencija:null,
+    biljeske:"", racuni:[], unos:"2026-01-20", izmjena:"2026-02-01" },
+
+  { id:"k7", sifra:"K-007", tip:"pravna", naziv:"Reklamne plohe d.o.o.", oib:"33221100998", mb:"05678901",
+    segmenti:["oglasivac"], status:"blokiran",
+    adresa:{ulica:"Splitska 12", mjesto:"Zadar", posta:"23000", drzava:"Hrvatska"}, adresaRacun:"",
+    email:"ured@reklamne-plohe.hr", emailRacun:"racuni@reklamne-plohe.hr", tel:"023 444 555", web:"",
+    kontakti:[], iban:"HR6624840081100033221", banka:"RBA", valuta:"EUR", nacin:"virman", rok:30, limit:5000,
+    eracun:{prima:false, posrednik:"", gln:"", referencaObavezna:false, proracunskiKorisnik:""},
+    ugovori:[{broj:"UG-2025/130", predmet:"Oglašavanje na stajalištima", rok:"2026-09-30"}],
+    usluge:"Oglasne plohe na 12 stajališta", subvencija:null,
+    biljeske:"Blokiran zbog dospjelog duga — provjeriti prije nove prodaje.",
+    racuni:[{broj:"2026-0021", datum:"2026-03-31", dospijece:"2026-04-30", iznos:1250.00, status:"dospjelo"},
+            {broj:"2026-0029", datum:"2026-04-30", dospijece:"2026-05-31", iznos:1250.00, status:"dospjelo"}],
+    unos:"2025-06-10", izmjena:"2026-05-31" },
+
+  { id:"k8", sifra:"K-008", tip:"pravna", naziv:"Tisak plus d.o.o.", oib:"10120120120", mb:"06789012",
+    segmenti:["najam"], status:"aktivan",
+    adresa:{ulica:"Slavka Kolara 1", mjesto:"Zagreb", posta:"10000", drzava:"Hrvatska"}, adresaRacun:"",
+    email:"info@tisak.hr", emailRacun:"eracuni@tisak.hr", tel:"01 600 0000", web:"tisak.hr",
+    kontakti:[], iban:"HR1010010051863000160", banka:"Zagrebačka banka", valuta:"EUR", nacin:"virman", rok:30, limit:null,
+    eracun:{prima:true, posrednik:"Moj e-Račun", gln:"HR10120120120", referencaObavezna:false, proracunskiKorisnik:""},
+    ugovori:[{broj:"UG-2023/088", predmet:"Najam kioska na kolodvoru", rok:"2027-01-31"}],
+    usluge:"Najam poslovnog prostora (kiosk) na autobusnom kolodvoru", subvencija:null,
+    biljeske:"", racuni:[], unos:"2023-02-01", izmjena:"2026-01-31" },
+
+  { id:"k9", sifra:"K-009", tip:"pravna", naziv:"Autotrans d.o.o.", oib:"81234509876", mb:"07890123",
+    segmenti:["vanjski"], status:"neaktivan",
+    adresa:{ulica:"Šetalište 20. travnja 18", mjesto:"Rijeka", posta:"51000", drzava:"Hrvatska"}, adresaRacun:"",
+    email:"info@autotrans.hr", emailRacun:"racuni@autotrans.hr", tel:"051 660 300", web:"autotrans.hr",
+    kontakti:[], iban:"HR2024020061100099001", banka:"Erste banka", valuta:"EUR", nacin:"virman", rok:30, limit:null,
+    eracun:{prima:true, posrednik:"FINA e-Račun", gln:"", referencaObavezna:false, proracunskiKorisnik:""},
+    ugovori:[], usluge:"Kolodvorske naknade (peron, najava) — vanjski prijevoznik", subvencija:null,
+    biljeske:"Sezonski; trenutno neaktivan izvan sezone.", racuni:[], unos:"2024-05-01", izmjena:"2025-10-01" },
+
+  { id:"k10", sifra:"K-010", tip:"javni", naziv:"OŠ Bartula Kašića", oib:"22019033441", mb:"08901234",
+    segmenti:["skola"], status:"aktivan", adresa:{ulica:"Bartula Kašića 2", mjesto:"Zadar", posta:"23000", drzava:"Hrvatska"}, adresaRacun:"",
+    email:"ured@os-bkasica-zd.skole.hr", emailRacun:"", tel:"023 311 220", web:"", kontakti:[], iban:"HR1123600001110005544", banka:"Zagrebačka banka", valuta:"EUR", nacin:"virman", rok:30, limit:null,
+    eracun:{prima:true, posrednik:"Moj e-Račun", gln:"", referencaObavezna:true, proracunskiKorisnik:"OŠ Bartula Kašića"}, ugovori:[], usluge:"Školski prijevoz — relacija Bokanjac → Zadar", subvencija:null,
+    biljeske:"", racuni:[{broj:"2026-0044", datum:"2026-05-31", dospijece:"2026-06-30", iznos:2480.00, status:"otvoren"}], unos:"2025-09-01", izmjena:"2026-05-31" },
+
+  { id:"k11", sifra:"K-011", tip:"javni", naziv:"OŠ Voštarnica", oib:"31044122556", mb:"09012345",
+    segmenti:["skola"], status:"aktivan", adresa:{ulica:"Ulica Domovinskog rata 5", mjesto:"Zadar", posta:"23000", drzava:"Hrvatska"}, adresaRacun:"",
+    email:"ured@os-vostarnica-zd.skole.hr", emailRacun:"", tel:"023 312 330", web:"", kontakti:[], iban:"HR4423400091110006655", banka:"PBZ", valuta:"EUR", nacin:"virman", rok:30, limit:null,
+    eracun:{prima:true, posrednik:"Moj e-Račun", gln:"", referencaObavezna:true, proracunskiKorisnik:"OŠ Voštarnica"}, ugovori:[], usluge:"Školski prijevoz — relacija Crvene kuće → Zadar", subvencija:null,
+    biljeske:"", racuni:[], unos:"2025-09-01", izmjena:"2025-09-01" },
+
+  { id:"k12", sifra:"K-012", tip:"javni", naziv:"Gimnazija Jurja Barakovića", oib:"48055133667", mb:"10123456",
+    segmenti:["skola"], status:"aktivan", adresa:{ulica:"Perivoj Vladimira Nazora 3", mjesto:"Zadar", posta:"23000", drzava:"Hrvatska"}, adresaRacun:"",
+    email:"ured@gimnazija-jbarakovica.hr", emailRacun:"", tel:"023 313 440", web:"", kontakti:[], iban:"HR7724020061110007766", banka:"Erste banka", valuta:"EUR", nacin:"virman", rok:30, limit:null,
+    eracun:{prima:true, posrednik:"FINA e-Račun", gln:"", referencaObavezna:true, proracunskiKorisnik:"Gimnazija Jurja Barakovića"}, ugovori:[{broj:"UG-2025/061", predmet:"Školski prijevoz srednjoškolaca", rok:"2026-06-30"}], usluge:"Školski prijevoz — više relacija", subvencija:null,
+    biljeske:"", racuni:[{broj:"2026-0045", datum:"2026-05-31", dospijece:"2026-06-30", iznos:4150.00, status:"otvoren"}], unos:"2025-09-01", izmjena:"2026-05-31" },
+
+  { id:"k13", sifra:"K-013", tip:"pravna", naziv:"Adria Oil d.o.o.", oib:"59066144778", mb:"11234567",
+    segmenti:["ugovorni"], status:"aktivan", adresa:{ulica:"Gaženička cesta 12", mjesto:"Zadar", posta:"23000", drzava:"Hrvatska"}, adresaRacun:"",
+    email:"info@adria-oil.hr", emailRacun:"racuni@adria-oil.hr", tel:"023 250 100", web:"", kontakti:[], iban:"HR9224020061110008877", banka:"Erste banka", valuta:"EUR", nacin:"virman", rok:15, limit:8000,
+    eracun:{prima:true, posrednik:"FINA e-Račun", gln:"", referencaObavezna:false, proracunskiKorisnik:""}, ugovori:[{broj:"UG-2026/012", predmet:"Prijevoz radnika u smjenama", rok:"2026-12-31"}], usluge:"Posebna linija — terminal Gaženica", subvencija:null,
+    biljeske:"", racuni:[{broj:"2026-0046", datum:"2026-06-10", dospijece:"2026-06-25", iznos:3650.00, status:"otvoren"}], unos:"2026-02-01", izmjena:"2026-06-10" },
+
+  { id:"k14", sifra:"K-014", tip:"pravna", naziv:"JadranTours d.o.o.", oib:"60077155889", mb:"12345670",
+    segmenti:["vanjski"], status:"neaktivan", adresa:{ulica:"Obala kneza Branimira 1", mjesto:"Šibenik", posta:"22000", drzava:"Hrvatska"}, adresaRacun:"",
+    email:"info@jadrantours.hr", emailRacun:"racuni@jadrantours.hr", tel:"022 200 100", web:"", kontakti:[], iban:"HR1124840081110009988", banka:"RBA", valuta:"EUR", nacin:"virman", rok:30, limit:null,
+    eracun:{prima:true, posrednik:"FINA e-Račun", gln:"", referencaObavezna:false, proracunskiKorisnik:""}, ugovori:[], usluge:"Kolodvorske naknade — vanjski prijevoznik (sezonski)", subvencija:null,
+    biljeske:"", racuni:[], unos:"2024-06-01", izmjena:"2025-10-01" },
+
+  { id:"k15", sifra:"K-015", tip:"pravna", naziv:"City Light Media d.o.o.", oib:"71088166990", mb:"13456701",
+    segmenti:["oglasivac"], status:"aktivan", adresa:{ulica:"Put Bokanjca 26", mjesto:"Zadar", posta:"23000", drzava:"Hrvatska"}, adresaRacun:"",
+    email:"info@citylight.hr", emailRacun:"racuni@citylight.hr", tel:"023 260 200", web:"citylight.hr", kontakti:[], iban:"HR3323900011110001122", banka:"HPB", valuta:"EUR", nacin:"virman", rok:30, limit:6000,
+    eracun:{prima:true, posrednik:"FINA e-Račun", gln:"", referencaObavezna:false, proracunskiKorisnik:""}, ugovori:[{broj:"UG-2026/018", predmet:"Oglašavanje na vozilima i stajalištima", rok:"2026-12-31"}], usluge:"City-light plohe (8 stajališta) + 6 vozila", subvencija:null,
+    biljeske:"", racuni:[{broj:"2026-0047", datum:"2026-05-31", dospijece:"2026-06-15", iznos:1980.00, status:"dospjelo"}], unos:"2026-01-15", izmjena:"2026-06-01" }
+];
+
+/* ════════ LOGIKA ════════ */
+const esc = s => (s==null?"":(""+s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money = n => "€" + (Number(n)||0).toLocaleString("hr-HR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const kById = id => KUPCI.find(k=>k.id===id);
+const tipLbl = t => t==="javni"?"Javni subjekt":"Pravna osoba";
+const segTag = key => { const s=SEG[key]; if(!s) return ""; return '<span class="tag">'+s.lbl+'</span>'; };
+const initials = nm => (nm||"?").replace(/[^A-Za-zŠĐČĆŽšđčćž ]/g,"").trim().split(/\s+/).slice(0,2).map(w=>w[0]||"").join("").toUpperCase()||"?";
+function saldoOf(k){ return (k.racuni||[]).filter(r=>r.status!=="placen").reduce((s,r)=>s+(Number(r.iznos)||0),0); }
+function openCount(k){ return (k.racuni||[]).filter(r=>r.status!=="placen").length; }
+function statusPill(s){ const lbl={aktivan:"Aktivan",neaktivan:"Neaktivan",blokiran:"Blokiran"}[s]||s; return '<span class="pill '+s+'">'+lbl+'</span>'; }
+function invPill(s){ const lbl={otvoren:"Otvoren",dospjelo:"Dospjelo",placen:"Plaćeno"}[s]||s; return '<span class="pill '+s+'">'+lbl+'</span>'; }
+
+/* ─── Pregled ─── */
+let q="", fSeg="", fStatus="", page=1; const PAGE=10;
+const inOstalo = k => k.segmenti.some(s=>["oglasivac","najam","vanjski"].includes(s));
+function setQ(){ q=(document.getElementById("q").value||"").toLowerCase().trim(); page=1; renderOverview(); }
+function setSeg(s){ fSeg=s; page=1; renderOverview(); }
+function setStatusF(s){ fStatus=s; page=1; renderOverview(); }
+function gotoPage(p){ page=p; renderOverview(); }
+function buildPager(tp){
+  let h='<div class="pager"><button class="pgbtn" '+(page===1?'disabled':'')+' onclick="gotoPage('+(page-1)+')">‹</button>';
+  let pages=[];
+  if(tp<=7){ for(let i=1;i<=tp;i++) pages.push(i); }
+  else { pages.push(1); let s=Math.max(2,page-1),e=Math.min(tp-1,page+1); if(page<=3){s=2;e=4;} if(page>=tp-2){s=tp-3;e=tp-1;} if(s>2)pages.push("…"); for(let i=s;i<=e;i++)pages.push(i); if(e<tp-1)pages.push("…"); pages.push(tp); }
+  pages.forEach(p=> h+= p==="…" ? '<span class="pgdots">…</span>' : '<button class="pgbtn'+(p===page?' on':'')+'" onclick="gotoPage('+p+')">'+p+'</button>');
+  return h+'<button class="pgbtn" '+(page===tp?'disabled':'')+' onclick="gotoPage('+(page+1)+')">›</button></div>';
+}
+function renderOverview(){
+  const ukupno=KUPCI.length, aktivni=KUPCI.filter(k=>k.status==="aktivan").length, blok=KUPCI.filter(k=>k.status==="blokiran").length;
+  const otvorenoUk=KUPCI.reduce((s,k)=>s+saldoOf(k),0);
+  const kpi=(n,l)=>'<div class="kpi"><div class="kpi-n">'+n+'</div><div class="kpi-l">'+l+'</div></div>';
+  const cnt = s => s===""?KUPCI.length : (s==="ostalo"?KUPCI.filter(inOstalo).length:KUPCI.filter(k=>k.segmenti.includes(s)).length);
+  const chip=(s,l)=>'<button class="fchip'+(fSeg===s?' on':'')+'" onclick="setSeg(\''+s+'\')">'+l+' · '+cnt(s)+'</button>';
+  let rows=KUPCI.filter(k=>{
+    const segOk = fSeg===""||(fSeg==="ostalo"?inOstalo(k):k.segmenti.includes(fSeg));
+    const statOk = fStatus===""||k.status===fStatus;
+    const qOk = (k.naziv+" "+k.oib+" "+k.sifra).toLowerCase().includes(q);
+    return segOk && statOk && qOk;
+  });
+  const sc=(s,l)=>'<button class="fchip'+(fStatus===s?' on':'')+'" onclick="setStatusF(\''+s+'\')">'+l+'</button>';
+  const totalDug = rows.reduce((s,k)=>s+saldoOf(k),0);
+  const totalPages = Math.max(1, Math.ceil(rows.length/PAGE));
+  if(page>totalPages) page=totalPages; if(page<1) page=1;
+  const start=(page-1)*PAGE; const pageRows=rows.slice(start,start+PAGE);
+  let body;
+  if(!rows.length){ body='<tr><td colspan="5" class="empty-tbl">Nema kupaca za zadane uvjete.</td></tr>'; }
+  else body=pageRows.map(k=>{
+    const sal=saldoOf(k);
+    return '<tr class="row" onclick="openKupac(\''+k.id+'\')">'
+      + '<td><span class="sifra">'+esc(k.sifra)+'</span></td>'
+      + '<td class="nm lft">'+esc(k.naziv)+'<small>'+tipLbl(k.tip)+' · OIB '+esc(k.oib||"—")+'</small></td>'
+      + '<td><span class="tags">'+k.segmenti.map(segTag).join("")+'</span></td>'
+      + '<td class="mono'+(sal>0?'':' saldo-zero')+'">'+(sal>0?money(sal):"—")+'</td>'
+      + '<td>'+statusPill(k.status)+'</td></tr>';
+  }).join("");
+  const tfoot = rows.length ? '<tfoot><tr><td class="lft" colspan="3">Ukupan dug (filtrirano)</td><td class="mono dug'+(totalDug>0?'':' zero')+'">'+money(totalDug)+'</td><td></td></tr></tfoot>' : '';
+  const info = rows.length ? '<div class="pginfo">Prikaz '+(start+1)+'–'+Math.min(start+PAGE,rows.length)+' od '+rows.length+' kupaca</div>' : '';
+  const pager = totalPages>1 ? buildPager(totalPages) : '';
+  document.getElementById("view").innerHTML =
+    '<div class="hd"><div><div class="eyebrow">CORE · matični podaci</div><h1>Kupci</h1></div>'
+    + '<button class="btn btn-acc" onclick="newKupac()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Novi kupac</button></div>'
+    + '<div class="kpis">'+kpi(ukupno,"kupaca")+kpi(aktivni,"aktivnih")+kpi(blok,"blokiranih")+kpi(money(otvorenoUk),"otvoreno ukupno")+'</div>'
+    + '<div class="toolbar"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>'
+    + '<input id="q" placeholder="Traži po nazivu, OIB-u ili šifri…" oninput="setQ()" value="'+esc(q)+'"></div></div>'
+    + '<div class="toolbar"><div class="fchips">'+chip("","Svi")+chip("subv","Grad/Županija")+chip("skola","Škole")+chip("ugovorni","Tvrtke")+chip("ostalo","Ostalo")+'</div>'
+    + '<div style="flex:1"></div><div class="fchips">'+sc("","Svi statusi")+sc("aktivan","Aktivan")+sc("neaktivan","Neaktivan")+sc("blokiran","Blokiran")+'</div></div>'
+    + '<div class="tblwrap"><table class="tb"><thead><tr><th>Šifra</th><th class="lft">Kupac</th><th>Segment</th><th>Saldo (otvoreno)</th><th>Status</th></tr></thead><tbody>'+body+'</tbody>'+tfoot+'</table></div>'
+    + info + pager;
+  if(q){ const el=document.getElementById("q"); el.focus(); el.setSelectionRange(el.value.length,el.value.length); }
+}
+
+/* ─── Kartica ─── */
+let cur=null;
+const curK = () => kById(cur);
+function openKupac(id){ cur=id; renderDetail(); }
+function backToList(){ cur=null; renderOverview(); }
+function setPath(obj,path,val){ const p=path.split("."); let o=obj; for(let i=0;i<p.length-1;i++){ if(o[p[i]]==null) o[p[i]]={}; o=o[p[i]]; } o[p[p.length-1]]=val; }
+function getPath(obj,path){ const p=path.split("."); let o=obj; for(let i=0;i<p.length;i++){ if(o==null) return undefined; o=o[p[i]]; } return o; }
+function setF(path,val,type){ const k=curK(); if(type==="num"){ val=(""+val).trim()===""?null:parseFloat((""+val).replace(",",".")); } setPath(k,path,val); }
+function toggleF(path){ const k=curK(); setPath(k,path,!getPath(k,path)); renderDetail(); }
+function toggleSeg(key){ const k=curK(); const i=k.segmenti.indexOf(key); if(i<0) k.segmenti.push(key); else k.segmenti.splice(i,1); renderDetail(); }
+function setStatus(v){ setF("status",v); renderDetail(); }
+function setTip(v){ setF("tip",v); renderDetail(); }
+
+function addKontakt(){ curK().kontakti.push({ime:"",funkcija:"",email:"",tel:""}); renderDetail(); }
+function delKontakt(i){ curK().kontakti.splice(i,1); renderDetail(); }
+function setKontakt(i,f,v){ curK().kontakti[i][f]=v; }
+function addUgovor(){ curK().ugovori.push({broj:"",predmet:"",rok:""}); renderDetail(); }
+function delUgovor(i){ curK().ugovori.splice(i,1); renderDetail(); }
+function setUgovor(i,f,v){ curK().ugovori[i][f]=v; }
+
+function fInp(lbl,path,opt){ opt=opt||{}; const k=curK(); const v=getPath(k,path); const val=(v==null?"":v);
+  return '<div class="field'+(opt.full?' full':'')+'"><span class="lbl">'+lbl+'</span><input class="inp" data-path="'+path+'" '+(opt.ph?'placeholder="'+esc(opt.ph)+'" ':'')+'value="'+esc(val)+'" onchange="setF(\''+path+'\',this.value'+(opt.num?",'num'":"")+')"></div>'; }
+function fSel(lbl,path,options,opt){ opt=opt||{}; const k=curK(); const v=getPath(k,path);
+  const opts=options.map(o=>'<option value="'+o[0]+'"'+(o[0]===v?' selected':'')+'>'+esc(o[1])+'</option>').join("");
+  return '<div class="field'+(opt.full?' full':'')+'"><span class="lbl">'+lbl+'</span><select class="inp" onchange="'+(opt.handler||("setF('"+path+"',this.value)"))+'">'+opts+'</select></div>'; }
+function fArea(lbl,path){ const v=getPath(curK(),path)||""; return '<div class="field full"><span class="lbl">'+lbl+'</span><textarea class="inp" onchange="setF(\''+path+'\',this.value)">'+esc(v)+'</textarea></div>'; }
+
+function renderDetail(){
+  const k=curK(); if(!k) return backToList();
+  const isJavni = k.tip==="javni";
+  const isSubv = k.segmenti.includes("subv");
+  const sal=saldoOf(k);
+
+  // header
+  let h='<button class="btn btn-ghost" style="margin-bottom:14px" onclick="backToList()"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Svi kupci</button>';
+  h+='<div id="warn"></div>';
+  h+='<div class="ed-hd"><div class="ed-av">'+esc(initials(k.naziv))+'</div>'
+   + '<div class="ed-hd-main"><div class="ed-hd-tit">'+esc(k.naziv||"(novi kupac)")+'</div>'
+   + '<div class="ed-hd-sub"><span class="sifra">'+esc(k.sifra)+'</span> · '+tipLbl(k.tip)+' '+statusPill(k.status)
+   + ' <span class="tags">'+k.segmenti.map(segTag).join("")+'</span></div></div>'
+   + '<div style="text-align:right"><div class="saldo-cap">Saldo</div><div class="mono '+(sal>0?'saldo-pos':'saldo-zero')+'" style="font-size:18px;font-weight:800">'+(sal>0?money(sal):money(0))+'</div></div></div>';
+
+  // 1 Identitet
+  h+='<div class="panel"><div class="panel-hd"><h3>Identitet</h3></div><div class="panel-bd"><div class="form">'
+   + fSel("Tip kupca","tip",[["pravna","Pravna osoba"],["javni","Javni subjekt (grad, županija, škola)"]],{handler:"setTip(this.value)"})
+   + fInp("Šifra kupca","sifra")
+   + fInp("Naziv","naziv",{full:true,ph:"Puni naziv subjekta"})
+   + fInp("OIB","oib",{ph:"11 znamenki"})
+   + fInp("MB / MBS","mb")
+   + '<div class="field full"><span class="lbl">Segment</span><div class="segpick">'
+   + Object.keys(SEG).map(key=>{ const on=k.segmenti.includes(key);
+       return '<button class="segtog'+(on?' on':'')+'" onclick="toggleSeg(\''+key+'\')">'+SEG[key].lbl+'</button>'; }).join("")
+   + '</div></div>'
+   + '</div></div></div>';
+
+  // 2 Kontakt i adrese
+  h+='<div class="panel"><div class="panel-hd"><h3>Kontakt i adrese</h3></div><div class="panel-bd"><div class="form">'
+   + fInp("Adresa (ulica i broj)","adresa.ulica",{full:true})
+   + fInp("Mjesto","adresa.mjesto") + fInp("Poštanski broj","adresa.posta")
+   + fInp("Država","adresa.drzava")
+   + fInp("Adresa za račune (ako različita)","adresaRacun",{full:true})
+   + fInp("E-mail (opći)","email") + fInp("E-mail za račune","emailRacun")
+   + fInp("Telefon","tel") + fInp("Web","web")
+   + '</div>';
+  // kontakti mini-table
+  h+='<div style="margin-top:14px"><span class="lbl">Kontakt osobe</span><table class="mini" style="margin-top:7px"><thead><tr><th>Ime / odjel</th><th>Funkcija</th><th>E-mail</th><th>Telefon</th><th></th></tr></thead><tbody>';
+  if(!k.kontakti.length) h+='<tr><td colspan="5" style="color:var(--ts);padding:8px">Nema kontakata.</td></tr>';
+  else k.kontakti.forEach((c,i)=>{ h+='<tr>'
+    + '<td><input class="inp" value="'+esc(c.ime)+'" onchange="setKontakt('+i+',\'ime\',this.value)"></td>'
+    + '<td><input class="inp" value="'+esc(c.funkcija)+'" onchange="setKontakt('+i+',\'funkcija\',this.value)"></td>'
+    + '<td><input class="inp" value="'+esc(c.email)+'" onchange="setKontakt('+i+',\'email\',this.value)"></td>'
+    + '<td><input class="inp" value="'+esc(c.tel)+'" onchange="setKontakt('+i+',\'tel\',this.value)"></td>'
+    + '<td><button class="del" onclick="delKontakt('+i+')"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></td></tr>'; });
+  h+='</tbody></table><button class="addrow" onclick="addKontakt()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Dodaj kontakt</button></div>';
+  h+='</div></div>';
+
+  // 3 Naplata i financije
+  h+='<div class="panel"><div class="panel-hd"><h3>Naplata i financije</h3></div><div class="panel-bd"><div class="form">'
+   + fInp("IBAN","iban") + fInp("Banka","banka")
+   + fSel("Način plaćanja","nacin",[["virman","Virman / transakcijski"],["gotovina","Gotovina"],["kompenzacija","Kompenzacija"]])
+   + fInp("Rok plaćanja (dana)","rok",{num:true})
+   + fInp("Valuta","valuta") + fInp("Kreditni limit (€)","limit",{num:true})
+   + '</div>'
+   // saldo + računi (read-only iz Fakturiranja)
+   + '<div class="saldo-box" style="margin-top:16px"><div><div class="saldo-cap">Otvoreni saldo</div><div class="saldo-big '+(sal>0?'saldo-pos':'saldo-zero')+'">'+money(sal)+'</div></div>'
+   + '<div><div class="saldo-cap">Otvorenih računa</div><div class="saldo-big">'+openCount(k)+'</div></div>'
+   + '<span class="ro-badge">read-only · iz Fakturiranja</span></div>';
+  h+='<table class="mini"><thead><tr><th>Račun</th><th>Datum</th><th>Dospijeće</th><th class="right">Iznos</th><th>Status</th></tr></thead><tbody>';
+  if(!k.racuni.length) h+='<tr><td colspan="5" style="color:var(--ts);padding:8px">Nema izlaznih računa.</td></tr>';
+  else k.racuni.forEach(r=>{ h+='<tr><td class="mono">'+esc(r.broj)+'</td><td>'+esc(r.datum)+'</td><td>'+esc(r.dospijece)+'</td><td class="mono right">'+money(r.iznos)+'</td><td>'+invPill(r.status)+'</td></tr>'; });
+  h+='</tbody></table></div></div>';
+
+  // 4 E-račun
+  h+='<div class="panel"><div class="panel-hd"><h3>E-račun</h3><div class="panel-sp"></div></div><div class="panel-bd">'
+   + '<label class="tg'+(k.eracun&&k.eracun.prima?' on':'')+'" onclick="toggleF(\'eracun.prima\')"><span class="tg-sw"></span><span class="tg-lbl">Prima e-račun</span></label>';
+  if(k.eracun&&k.eracun.prima){
+    h+='<div class="form" style="margin-top:14px">'
+     + fSel("Posrednik","eracun.posrednik",[["","—"],["FINA e-Račun","FINA e-Račun"],["Moj e-Račun","Moj e-Račun"],["eRačun za državu","eRačun za državu"]])
+     + fInp("ID / GLN","eracun.gln")
+     + '<div class="field"><span class="lbl">Obavezna referenca na računu</span><label class="tg'+(k.eracun.referencaObavezna?' on':'')+'" onclick="toggleF(\'eracun.referencaObavezna\')" style="margin-top:6px"><span class="tg-sw"></span><span class="tg-lbl">'+(k.eracun.referencaObavezna?"Da — broj ugovora/narudžbe":"Ne")+'</span></label></div>'
+     + (isJavni? fInp("Šifra proračunskog korisnika","eracun.proracunskiKorisnik") : '')
+     + '</div>';
+  }
+  h+='</div></div>';
+
+  // 5 Ugovori i usluge
+  h+='<div class="panel"><div class="panel-hd"><h3>Ugovori i usluge</h3><div class="panel-sp"></div><span class="sub">veza na DMS › Ugovori</span></div><div class="panel-bd">';
+  h+='<table class="mini"><thead><tr><th>Ugovor</th><th>Predmet</th><th>Vrijedi do</th><th></th></tr></thead><tbody>';
+  if(!k.ugovori.length) h+='<tr><td colspan="4" style="color:var(--ts);padding:8px">Nema vezanih ugovora.</td></tr>';
+  else k.ugovori.forEach((u,i)=>{ h+='<tr>'
+    + '<td><input class="inp mono" value="'+esc(u.broj)+'" onchange="setUgovor('+i+',\'broj\',this.value)"></td>'
+    + '<td><input class="inp" value="'+esc(u.predmet)+'" onchange="setUgovor('+i+',\'predmet\',this.value)"></td>'
+    + '<td><input class="inp" value="'+esc(u.rok)+'" placeholder="GGGG-MM-DD" onchange="setUgovor('+i+',\'rok\',this.value)"></td>'
+    + '<td><button class="del" onclick="delUgovor('+i+')"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></td></tr>'; });
+  h+='</tbody></table><button class="addrow" onclick="addUgovor()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Dodaj ugovor</button>';
+  h+='<div class="form" style="margin-top:16px">'+fArea("Što kupac plaća (usluge / relacije / plohe / prostor)","usluge")+'</div>';
+  if(isSubv){
+    h+='<div class="form" style="margin-top:4px">'
+     + fSel("Subvencija — model","subvencija.model",[["iznos","Fiksni iznos"],["postotak","Postotak"]])
+     + fInp("Vrijednost / osnova","subvencija.vrijednost")
+     + fInp("Razdoblje","subvencija.razdoblje")
+     + '</div>';
+  }
+  h+='</div></div>';
+
+  // 6 Status i bilješke
+  h+='<div class="panel"><div class="panel-hd"><h3>Status i bilješke</h3></div><div class="panel-bd"><div class="form">'
+   + fSel("Status","status",[["aktivan","Aktivan"],["neaktivan","Neaktivan"],["blokiran","Blokiran (naplata)"]],{handler:"setStatus(this.value)"})
+   + '<div class="field"><span class="lbl">Evidencija</span><div class="hint" style="padding-top:8px">Unesen: '+esc(k.unos||"—")+' · Zadnja izmjena: '+esc(k.izmjena||"—")+'</div></div>'
+   + fArea("Bilješke","biljeske")
+   + '</div></div></div>';
+
+  // save bar
+  h+='<div class="savebar"><button class="btn btn-ghost" onclick="backToList()">Odustani</button><button class="btn btn-acc" onclick="saveKupac()">Spremi kupca</button></div>';
+
+  document.getElementById("view").innerHTML=h;
+}
+
+function saveKupac(){
+  const k=curK(); const miss=[];
+  if(!k.naziv||!k.naziv.trim()) miss.push("naziv");
+  if(!k.oib||!/^\d{11}$/.test((""+k.oib).trim())) miss.push("oib");
+  if(miss.length){
+    document.getElementById("warn").innerHTML='<div class="warn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Provjeri obavezna polja: naziv i OIB (11 znamenki).</div>';
+    document.querySelectorAll(".inp").forEach(el=>{ const p=el.getAttribute("data-path"); if(p&&miss.includes(p)) el.classList.add("miss"); });
+    window.scrollTo({top:0,behavior:"smooth"});
+    return;
+  }
+  k.izmjena = new Date().toISOString().slice(0,10);
+  backToList();
+}
+
+function newKupac(){
+  const n = KUPCI.reduce((m,k)=>{ const x=parseInt((k.sifra||"").replace(/\D/g,""))||0; return Math.max(m,x); },0)+1;
+  const id="k"+Date.now();
+  KUPCI.push({ id, sifra:"K-"+String(n).padStart(3,"0"), tip:"pravna", naziv:"", oib:"", mb:"",
+    segmenti:[], status:"aktivan", adresa:{ulica:"",mjesto:"",posta:"",drzava:"Hrvatska"}, adresaRacun:"",
+    email:"", emailRacun:"", tel:"", web:"", kontakti:[], iban:"", banka:"", valuta:"EUR", nacin:"virman", rok:30, limit:null,
+    eracun:{prima:false,posrednik:"",gln:"",referencaObavezna:false,proracunskiKorisnik:""},
+    ugovori:[], usluge:"", subvencija:null, biljeske:"",
+    racuni:[], unos:new Date().toISOString().slice(0,10), izmjena:new Date().toISOString().slice(0,10) });
+  openKupac(id);
+}
+
+function toggleTheme(){
+  const html=document.documentElement; const dark=html.getAttribute("data-theme")==="dark";
+  html.setAttribute("data-theme",dark?"light":"dark");
+  document.getElementById("themeIc").innerHTML = dark
+    ? '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'
+    : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/>';
+}
+
+renderOverview();
+</script>
+</body>
+</html>
