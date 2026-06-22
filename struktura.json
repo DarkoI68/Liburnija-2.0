@@ -46,16 +46,16 @@
             },
             {
               "name": "Zone",
-              "file": "",
-              "locked": false
+              "file": "Zone.html",
+              "locked": true
             },
             {
               "name": "Tarife",
-              "file": "",
-              "locked": false
+              "file": "Tarife.html",
+              "locked": true
             },
             {
-              "name": "Partneri",
+              "name": "Kupci",
               "file": "",
               "locked": false
             },
